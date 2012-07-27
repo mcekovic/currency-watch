@@ -17,7 +17,7 @@ public abstract class BaseCurrencyRate {
 	public abstract Map<Date, RateValue> getRates();
 
 	public Map<Date, RateValue> getRates(Iterable<Date> dates) {
-		Map<Date, RateValue> dateRates = new TreeMap<Date, RateValue>();
+		Map<Date, RateValue> dateRates = new TreeMap<>();
 		for (Date date : dates) {
 			RateValue rateValue = getRate(date);
 			if (rateValue != null)

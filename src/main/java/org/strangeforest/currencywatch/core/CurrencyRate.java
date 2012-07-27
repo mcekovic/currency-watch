@@ -19,7 +19,7 @@ public class CurrencyRate extends BaseCurrencyRate implements Disposable {
 
 	public CurrencyRate(String symbolFrom, String symbolTo, CurrencyRateProvider provider) {
 		super(symbolFrom, symbolTo);
-		dateRates = new LockableHashMap<Date, RateValue>();
+		dateRates = new LockableHashMap<>();
 		this.provider = provider;
 		isProviderObservable = provider instanceof ObservableCurrencyRateProvider;
 		if (isProviderObservable) {

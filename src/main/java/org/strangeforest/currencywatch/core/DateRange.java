@@ -33,7 +33,7 @@ public class DateRange extends Range<Date> implements Iterable<Date> {
 		return isBothBounded() ? dates().size() : -1;
 	}
 
-	public Iterator<Date> iterator() {
+	@Override public Iterator<Date> iterator() {
 		return iterator(1);
 	}
 
