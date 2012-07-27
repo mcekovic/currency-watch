@@ -1,0 +1,125 @@
+package org.strangeforest.currencywatch.core;
+
+import java.util.*;
+
+import com.finsoft.util.*;
+
+public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvider implements Disposable {
+
+	private final UpdatableCurrencyRateProvider localProvider;
+	private final CurrencyRateProvider remoteProvider;
+	private final boolean isLocalProviderObservable;
+	private final boolean isRemoteProviderObservable;
+	private final CurrencyRateListener localProviderListener;
+	private final CurrencyRateListener remoteProviderListener;
+
+	public ChainedCurrencyRateProvider(UpdatableCurrencyRateProvider localProvider, CurrencyRateProvider remoteProvider) {
+		super();
+		this.localProvider = localProvider;
+		this.remoteProvider = remoteProvider;
+
+		isLocalProviderObservable = localProvider instanceof ObservableCurrencyRateProvider;
+		if (isLocalProviderObservable) {
+			localProviderListener = new CurrencyRateListener() {
+				@Override public void newRate(CurrencyRateEvent rateEvent) {
+					notifyListeners(rateEvent);
+				}
+			};
+		}
+		else
+			localProviderListener = null;
+
+		isRemoteProviderObservable = remoteProvider instanceof ObservableCurrencyRateProvider;
+		if (isRemoteProviderObservable) {
+			remoteProviderListener = new CurrencyRateListener() {
+				@Override public void newRate(CurrencyRateEvent rateEvent) {
+					notifyListeners(rateEvent);
+				}
+			};
+		}
+		else
+			remoteProviderListener = null;
+	}
+
+	@Override public void init() throws CurrencyRateException {
+		localProvider.init();
+		remoteProvider.init();
+	}
+
+	@Override public void dispose() {
+		unsubscribeFromLocalProvider();
+		localProvider.dispose();
+		unsubscribeFromRemoteProvider();
+		remoteProvider.dispose();
+	}
+
+	@Override public RateValue getRate(String symbolFrom, String symbolTo, Date date) throws CurrencyRateException {
+		RateValue rateValue = localProvider.getRate(symbolFrom, symbolTo, date);
+		if (rateValue == null) {
+			rateValue = remoteProvider.getRate(symbolFrom, symbolTo, date);
+			if (rateValue != null)
+				localProvider.setRate(symbolFrom, symbolTo, date, rateValue);
+				if (hasAnyListener() && !isRemoteProviderObservable)
+					notifyListeners(new CurrencyRateEvent(this, symbolFrom, symbolTo, date, rateValue));
+		}
+		else if (hasAnyListener() && !isLocalProviderObservable)
+			notifyListeners(new CurrencyRateEvent(this, symbolFrom, symbolTo, date, rateValue));
+		return rateValue;
+	}
+
+	@Override public Map<Date, RateValue> getRates(String symbolFrom, String symbolTo, Collection<Date> dates) throws CurrencyRateException {
+		Map<Date, RateValue> dateRates = localProvider.getRates(symbolFrom, symbolTo, dates);
+		if (hasAnyListener() && !isLocalProviderObservable) {
+			for (Map.Entry<Date, RateValue> dateRate : dateRates.entrySet())
+				notifyListeners(new CurrencyRateEvent(this, symbolFrom, symbolTo, dateRate.getKey(), dateRate.getValue()));
+		}
+		Collection<Date> missingDates = new HashSet<>(dates);
+		missingDates.removeAll(dateRates.keySet());
+		if (!missingDates.isEmpty()) {
+			Map<Date, RateValue> newDateRates = remoteProvider.getRates(symbolFrom, symbolTo, missingDates);
+			if (hasAnyListener() && !isRemoteProviderObservable) {
+				for (Map.Entry<Date, RateValue> dateRate : dateRates.entrySet())
+					notifyListeners(new CurrencyRateEvent(this, symbolFrom, symbolTo, dateRate.getKey(), dateRate.getValue()));
+			}
+			dateRates.putAll(newDateRates);
+			localProvider.setRates(symbolFrom, symbolTo, newDateRates);
+		}
+		return dateRates;
+	}
+
+	@Override public void addListener(CurrencyRateListener listener) {
+		if (!hasAnyListener()) {
+			subscribeToLocalProvider();
+			subscribeToRemoteProvider();
+		}
+		super.addListener(listener);
+	}
+
+	private void subscribeToLocalProvider() {
+		if (isLocalProviderObservable)
+			((ObservableCurrencyRateProvider)localProvider).addListener(localProviderListener);
+	}
+
+	private void subscribeToRemoteProvider() {
+		if (isRemoteProviderObservable)
+			((ObservableCurrencyRateProvider)remoteProvider).addListener(remoteProviderListener);
+	}
+
+	@Override public void removeListener(CurrencyRateListener listener) {
+		super.removeListener(listener);
+		if (!hasAnyListener()) {
+			unsubscribeFromLocalProvider();
+			unsubscribeFromRemoteProvider();
+		}
+	}
+
+	private void unsubscribeFromLocalProvider() {
+		if (isLocalProviderObservable)
+			((ObservableCurrencyRateProvider)localProvider).removeListener(localProviderListener);
+	}
+
+	private void unsubscribeFromRemoteProvider() {
+		if (isRemoteProviderObservable)
+			((ObservableCurrencyRateProvider)remoteProvider).removeListener(remoteProviderListener);
+	}
+}

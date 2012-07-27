@@ -1,0 +1,72 @@
+package org.strangeforest.currencywatch.core;
+
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+
+public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRateProviderProxy {
+
+	private static final int RETRY_COUNT = 2;
+	private final ExecutorService executor;
+
+	public ParallelCurrencyRateProviderProxy(CurrencyRateProvider provider, int threadCount) {
+		super(provider);
+		executor = Executors.newFixedThreadPool(threadCount);
+	}
+
+	@Override public void dispose() {
+		super.dispose();
+		executor.shutdownNow();
+	}
+
+	@Override public Map<Date, RateValue> getRates(final String symbolFrom, final String symbolTo, Collection<Date> dates) throws CurrencyRateException {
+		Map<Date, RateValue> dateValues = new TreeMap<>();
+		final AtomicInteger retryCount = new AtomicInteger(RETRY_COUNT);
+		final Queue<Future<DateRateValue>> results = new ArrayDeque<>();
+		for (final Date date : dates) {
+			Callable<DateRateValue> task = new Callable<DateRateValue>() {
+				@Override public DateRateValue call() throws Exception {
+					try {
+						RateValue rateValue = provider.getRate(symbolFrom, symbolTo, date);
+						if (!isProviderObservable && hasAnyListener())
+							notifyListeners(new CurrencyRateEvent(provider, symbolFrom, symbolTo, date, rateValue));
+						return new DateRateValue(date, rateValue);
+					}
+					catch (Exception ex) {
+						int left = retryCount.decrementAndGet();
+						if (left >= 0) {
+							results.add(executor.submit(this));
+							return null;
+						}
+						else
+							throw ex;
+					}
+				}
+			};
+			results.add(executor.submit(task));
+		}
+		while (!results.isEmpty()) {
+			try {
+				DateRateValue dateValue = results.remove().get();
+				if (dateValue != null)
+					dateValues.put(dateValue.date, dateValue.value);
+			}
+			catch (Exception ex) {
+				throw new CurrencyRateException(ex);
+			}
+		}
+		return dateValues;
+	}
+
+	private static class DateRateValue {
+
+		public final Date date;
+		public final RateValue value;
+
+		public DateRateValue(Date date, RateValue value) {
+			super();
+			this.date = date;
+			this.value = value;
+		}
+	}
+}
