@@ -1,5 +1,6 @@
 package org.strangeforest.currencywatch.db4o;
 
+import java.io.*;
 import java.util.*;
 
 import org.strangeforest.currencywatch.core.*;
@@ -13,6 +14,7 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 
 	public Db4oCurrencyRateProvider(String dbFileName) {
 		super();
+		new File(dbFileName).getParentFile().mkdirs();
 		EmbeddedConfiguration dbConfig = Db4oEmbedded.newConfiguration();
 		ObjectClass currencyRateConfig = dbConfig.common().objectClass(CurrencyRateObject.class);
 		currencyRateConfig.objectField("symbolFrom").indexed(true);

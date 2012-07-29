@@ -97,20 +97,29 @@ public class CurrencyRatePresenter implements Disposable {
 		});
 	}
 
-	public void inputDataChanged(String symbolTo, String period, String quality, boolean showMovAvg, int movAvgPeriod) {
+	public void inputDataChanged(String symbolTo, String period, String quality, boolean showMovAvg, boolean showBollBands, int movAvgPeriod) {
 		TimeSeries currencySeries = new TimeSeries(symbolTo);
 		TimeSeries movAvgSeries = null;
+		TimeSeries[] bollBandsSeries = null;
 		TimeSeriesCollection dataSet = new TimeSeriesCollection(currencySeries);
 		if (showMovAvg) {
 			movAvgSeries = new TimeSeries(String.format("MovAvg(%s)", symbolTo));
 			dataSet.addSeries(movAvgSeries);
 		}
-		CurrencyRate currencyRate = getCurrencyRate(symbolTo, currencySeries, movAvgSeries, movAvgPeriod);
+		if (showBollBands) {
+			bollBandsSeries = new TimeSeries[] {
+				new TimeSeries(String.format("BBLow(%s)", symbolTo)),
+				new TimeSeries(String.format("BBHigh(%s)", symbolTo))
+			};
+			dataSet.addSeries(bollBandsSeries[0]);
+			dataSet.addSeries(bollBandsSeries[1]);
+		}
+		CurrencyRate currencyRate = getCurrencyRate(symbolTo, currencySeries, movAvgSeries, bollBandsSeries, movAvgPeriod);
 		applyPeriod(currencyRate, currencySeries, PERIOD_MAP.get(period), QUALITY_MAP.get(quality));
 		chartPanel.getChart().getXYPlot().setDataset(dataSet);
 	}
 
-	private CurrencyRate getCurrencyRate(String symbolTo, final TimeSeries series, final TimeSeries movAvgSeries, final int movAvgPeriod) {
+	private CurrencyRate getCurrencyRate(String symbolTo, final TimeSeries series, final TimeSeries movAvgSeries, final TimeSeries[] bollBandsSeries, final int movAvgPeriod) {
 		if (currencyRate != null)
 			currencyRate.dispose();
 		currencyRate = new CurrencyRate("DIN", symbolTo, provider);
@@ -121,8 +130,12 @@ public class CurrencyRatePresenter implements Disposable {
 						series.addOrUpdate(new Day(rateEvent.getDate()), rateEvent.getRate().getMiddle());
 						currItems++;
 						updateProgressBar();
-						if (movAvgSeries != null && currItems == itemCount)
-							applyMovingAvgerage(series, movAvgSeries, movAvgPeriod);
+						if (currItems == itemCount) {
+							if (movAvgSeries != null)
+								new MovingAveragePoints(movAvgPeriod).applyToSeries(series, movAvgSeries);
+							if (bollBandsSeries != null)
+								new BollingerBandsPoints(movAvgPeriod, 2.0).applyToSeries(series, bollBandsSeries);
+						}
 					}
 				});
 			}
@@ -158,48 +171,12 @@ public class CurrencyRatePresenter implements Disposable {
 		}).start();
 	}
 
-	private void applyMovingAvgerage(TimeSeries series, TimeSeries movAvgSeries, int movAvgPeriod) {
-		long halfPeriod = (movAvgPeriod / 2) * DateUtil.MILLISECONDS_PER_DAY;
-		List<TimeSeriesDataItem> items = series.getItems();
-		int count = items.size();
-		MovAvgItem[] movAvgs = new MovAvgItem[count];
-		for (int i = 0; i < count; i++)
-			movAvgs[i] = new MovAvgItem(items.get(i).getPeriod().getFirstMillisecond());
-		for (TimeSeriesDataItem item : items) {
-			long x = item.getPeriod().getFirstMillisecond();
-			double y = item.getValue().doubleValue();
-			for (MovAvgItem movAvg : movAvgs) {
-				if (x >= movAvg.x - halfPeriod && x <= movAvg.x + halfPeriod) {
-					movAvg.count++;
-					movAvg.sum += y;
-				}
-			}
-		}
-		for (int i = 0; i < count; i++)
-			movAvgSeries.addOrUpdate(items.get(i).getPeriod(), movAvgs[i].y());
-	}
-
 	private static Calendar getLastDate() {
 		Calendar now = new GregorianCalendar();
-		GregorianCalendar lastDate = new GregorianCalendar(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+		Calendar lastDate = new GregorianCalendar(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
 		if (now.get(Calendar.HOUR_OF_DAY) < 8)
 			lastDate.add(Calendar.DATE, -1);
 		return lastDate;
-	}
-
-	private static class MovAvgItem {
-
-		public long x;
-		public int count;
-		public double sum;
-
-		public MovAvgItem(long x) {
-			this.x = x;
-		}
-
-		public double y() {
-			return sum/count;
-		}
 	}
 
 	private void updateProgressBar() {

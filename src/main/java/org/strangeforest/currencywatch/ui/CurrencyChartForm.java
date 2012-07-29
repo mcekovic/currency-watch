@@ -1,5 +1,6 @@
 package org.strangeforest.currencywatch.ui;
 
+import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.text.*;
@@ -16,16 +17,17 @@ public class CurrencyChartForm {
 
 	private JButton exitButton;
 	private JPanel formPanel;
-	private ChartPanel chartPanel;
-	private JComboBox<String> periodComboBox;
-	private JComboBox<String> currencyComboBox;
 	private JPanel toolPanel;
-	private JProgressBar progressBar;
+	private JComboBox<String> currencyComboBox;
+	private JComboBox<String> periodComboBox;
 	private JComboBox<String> qualityComboBox;
 	private JCheckBox movAvgCheckBox;
+	private JCheckBox bollingerBandsCheckBox;
 	private JComboBox<Integer> movAvgPeriodComboBox;
+	private ChartPanel chartPanel;
 	private JPanel statusPanel;
 	private JLabel speedLabel;
+	private JProgressBar progressBar;
 
 	private CurrencyRatePresenter presenter;
 
@@ -71,7 +73,13 @@ public class CurrencyChartForm {
 		});
 		movAvgCheckBox.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				movAvgPeriodComboBox.setEnabled(movAvgCheckBox.isSelected());
+				setPeriodComboBoxEnabled();
+				inputDataChanged();
+			}
+		});
+		bollingerBandsCheckBox.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent e) {
+				setPeriodComboBoxEnabled();
 				inputDataChanged();
 			}
 		});
@@ -87,6 +95,7 @@ public class CurrencyChartForm {
 	private void createUIComponents() {
 		JFreeChart chart = ChartFactory.createXYLineChart(null, "Date", "Middle", null, PlotOrientation.VERTICAL, false, true, false);
 		chart.setAntiAlias(true);
+		chart.setBackgroundPaint(SystemColor.control);
 		chart.getXYPlot().setDomainAxis(new DateAxis("Date"));
 		NumberAxis rangeAxis = ((NumberAxis)chart.getXYPlot().getRangeAxis());
 		rangeAxis.setAutoRangeIncludesZero(false);
@@ -103,7 +112,12 @@ public class CurrencyChartForm {
 			(String)periodComboBox.getSelectedItem(),
 			(String)qualityComboBox.getSelectedItem(),
 			movAvgCheckBox.isSelected(),
+			bollingerBandsCheckBox.isSelected(),
 			(Integer)movAvgPeriodComboBox.getSelectedItem()
 		);
+	}
+
+	private void setPeriodComboBoxEnabled() {
+		movAvgPeriodComboBox.setEnabled(movAvgCheckBox.isSelected() || bollingerBandsCheckBox.isSelected());
 	}
 }
