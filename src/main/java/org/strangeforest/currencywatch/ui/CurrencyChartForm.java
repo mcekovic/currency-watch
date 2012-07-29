@@ -10,6 +10,7 @@ import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.labels.*;
 import org.jfree.chart.plot.*;
+import org.jfree.chart.renderer.xy.*;
 
 import com.finsoft.util.*;
 
@@ -90,19 +91,40 @@ public class CurrencyChartForm {
 				inputDataChanged();
 			}
 		});
+		formPanel.addComponentListener(new ComponentAdapter() {
+			@Override public void componentResized(ComponentEvent e) {
+				chartPanel.setSize(new Dimension(
+					formPanel.getWidth(),
+					formPanel.getHeight() - toolPanel.getHeight() - statusPanel.getHeight() - 5
+				));
+			}
+		});
 	}
 
 	private void createUIComponents() {
-		JFreeChart chart = ChartFactory.createXYLineChart(null, "Date", "Middle", null, PlotOrientation.VERTICAL, false, true, false);
-		chart.setAntiAlias(true);
-		chart.setBackgroundPaint(SystemColor.control);
-		chart.getXYPlot().setDomainAxis(new DateAxis("Date"));
-		NumberAxis rangeAxis = ((NumberAxis)chart.getXYPlot().getRangeAxis());
-		rangeAxis.setAutoRangeIncludesZero(false);
-		chart.getXYPlot().getRenderer().setBaseToolTipGenerator(new StandardXYToolTipGenerator(
+		DateAxis xAxis = new DateAxis("Date");
+		NumberAxis yAxis = new NumberAxis("Middle");
+		yAxis.setAutoRangeIncludesZero(false);
+
+		XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
+		renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator(
 			StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT,
 			new SimpleDateFormat("d-MMM-yyyy"), new DecimalFormat("0.00")
 		));
+
+		XYAreaRenderer2 bbRenderer = new XYAreaRenderer2();
+		bbRenderer.setSeriesPaint(0, new Color(255, 255, 255, 0));
+		bbRenderer.setSeriesPaint(1, new Color(255, 255, 255, 255));
+		bbRenderer.setSeriesPaint(2, new Color(192, 224, 255, 64));
+		bbRenderer.setOutline(false);
+
+		XYPlot plot = new XYPlot(null, xAxis, yAxis, renderer);
+		plot.setOrientation(PlotOrientation.VERTICAL);
+		plot.setRenderer(1, bbRenderer);
+
+		JFreeChart chart = new JFreeChart(null, JFreeChart.DEFAULT_TITLE_FONT, plot, false);
+		chart.setAntiAlias(true);
+		chart.setBackgroundPaint(SystemColor.control);
 		chartPanel = new ChartPanel(chart);
 	}
 

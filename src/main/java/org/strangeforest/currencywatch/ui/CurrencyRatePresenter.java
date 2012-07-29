@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.Timer;
 
 import org.jfree.chart.*;
+import org.jfree.chart.plot.*;
 import org.jfree.data.time.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.core.DateRange;
@@ -98,6 +99,7 @@ public class CurrencyRatePresenter implements Disposable {
 	}
 
 	public void inputDataChanged(String symbolTo, String period, String quality, boolean showMovAvg, boolean showBollBands, int movAvgPeriod) {
+		XYPlot plot = chartPanel.getChart().getXYPlot();
 		TimeSeries currencySeries = new TimeSeries(symbolTo);
 		TimeSeries movAvgSeries = null;
 		TimeSeries[] bollBandsSeries = null;
@@ -107,16 +109,20 @@ public class CurrencyRatePresenter implements Disposable {
 			dataSet.addSeries(movAvgSeries);
 		}
 		if (showBollBands) {
+			TimeSeriesCollection bbDataSet = new TimeSeriesCollection(currencySeries);
 			bollBandsSeries = new TimeSeries[] {
 				new TimeSeries(String.format("BBLow(%s)", symbolTo)),
 				new TimeSeries(String.format("BBHigh(%s)", symbolTo))
 			};
-			dataSet.addSeries(bollBandsSeries[0]);
-			dataSet.addSeries(bollBandsSeries[1]);
+			bbDataSet.addSeries(bollBandsSeries[0]);
+			bbDataSet.addSeries(bollBandsSeries[1]);
+			plot.setDataset(1, bbDataSet);
 		}
+		else
+			plot.setDataset(1, null);
 		CurrencyRate currencyRate = getCurrencyRate(symbolTo, currencySeries, movAvgSeries, bollBandsSeries, movAvgPeriod);
 		applyPeriod(currencyRate, currencySeries, PERIOD_MAP.get(period), QUALITY_MAP.get(quality));
-		chartPanel.getChart().getXYPlot().setDataset(dataSet);
+		plot.setDataset(0, dataSet);
 	}
 
 	private CurrencyRate getCurrencyRate(String symbolTo, final TimeSeries series, final TimeSeries movAvgSeries, final TimeSeries[] bollBandsSeries, final int movAvgPeriod) {
