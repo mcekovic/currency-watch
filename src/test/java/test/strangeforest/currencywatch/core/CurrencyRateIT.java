@@ -12,7 +12,7 @@ public class CurrencyRateIT {
 	@Test
 	public void test() throws CurrencyRateException {
 		ObservableCurrencyRateProvider nbsProvider = new NBSCurrencyRateProvider();
-		nbsProvider.addListener(new CurrencyRateListener() {
+		nbsProvider.addListener(new CurrencyRateAdapter() {
 			@Override public void newRate(CurrencyRateEvent rateEvent) {
 				System.out.println(rateEvent);
 			}

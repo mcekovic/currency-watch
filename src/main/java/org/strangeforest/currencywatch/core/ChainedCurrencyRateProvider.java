@@ -10,8 +10,7 @@ public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvi
 	private final CurrencyRateProvider remoteProvider;
 	private final boolean isLocalProviderObservable;
 	private final boolean isRemoteProviderObservable;
-	private final CurrencyRateListener localProviderListener;
-	private final CurrencyRateListener remoteProviderListener;
+	private final CurrencyRateListener rateListener;
 
 	public ChainedCurrencyRateProvider(UpdatableCurrencyRateProvider localProvider, CurrencyRateProvider remoteProvider) {
 		super();
@@ -19,26 +18,15 @@ public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvi
 		this.remoteProvider = remoteProvider;
 
 		isLocalProviderObservable = localProvider instanceof ObservableCurrencyRateProvider;
-		if (isLocalProviderObservable) {
-			localProviderListener = new CurrencyRateListener() {
-				@Override public void newRate(CurrencyRateEvent rateEvent) {
-					notifyListeners(rateEvent);
-				}
-			};
-		}
-		else
-			localProviderListener = null;
-
 		isRemoteProviderObservable = remoteProvider instanceof ObservableCurrencyRateProvider;
-		if (isRemoteProviderObservable) {
-			remoteProviderListener = new CurrencyRateListener() {
-				@Override public void newRate(CurrencyRateEvent rateEvent) {
-					notifyListeners(rateEvent);
-				}
-			};
-		}
-		else
-			remoteProviderListener = null;
+		rateListener = new CurrencyRateListener() {
+			@Override public void newRate(CurrencyRateEvent rateEvent) {
+				notifyListeners(rateEvent);
+			}
+			@Override public void newRates(CurrencyRateEvent[] rateEvents) {
+				notifyListeners(rateEvents);
+			}
+		};
 	}
 
 	@Override public void init() throws CurrencyRateException {
@@ -97,12 +85,12 @@ public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvi
 
 	private void subscribeToLocalProvider() {
 		if (isLocalProviderObservable)
-			((ObservableCurrencyRateProvider)localProvider).addListener(localProviderListener);
+			((ObservableCurrencyRateProvider)localProvider).addListener(rateListener);
 	}
 
 	private void subscribeToRemoteProvider() {
 		if (isRemoteProviderObservable)
-			((ObservableCurrencyRateProvider)remoteProvider).addListener(remoteProviderListener);
+			((ObservableCurrencyRateProvider)remoteProvider).addListener(rateListener);
 	}
 
 	@Override public void removeListener(CurrencyRateListener listener) {
@@ -115,11 +103,11 @@ public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvi
 
 	private void unsubscribeFromLocalProvider() {
 		if (isLocalProviderObservable)
-			((ObservableCurrencyRateProvider)localProvider).removeListener(localProviderListener);
+			((ObservableCurrencyRateProvider)localProvider).removeListener(rateListener);
 	}
 
 	private void unsubscribeFromRemoteProvider() {
 		if (isRemoteProviderObservable)
-			((ObservableCurrencyRateProvider)remoteProvider).removeListener(remoteProviderListener);
+			((ObservableCurrencyRateProvider)remoteProvider).removeListener(rateListener);
 	}
 }

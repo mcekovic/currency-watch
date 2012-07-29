@@ -22,4 +22,9 @@ public abstract class BaseObservableCurrencyRateProvider extends BaseCurrencyRat
 		for (CurrencyRateListener listener : listeners)
 			listener.newRate(rateEvent);
 	}
+
+	protected void notifyListeners(CurrencyRateEvent[] rateEvents) {
+		for (CurrencyRateListener listener : listeners)
+			listener.newRates(rateEvents);
+	}
 }

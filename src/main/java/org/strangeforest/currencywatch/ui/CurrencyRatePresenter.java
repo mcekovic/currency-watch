@@ -75,7 +75,7 @@ public class CurrencyRatePresenter implements Disposable {
 		this.progressBar = progressBar;
 		this.speedLabel = speedLabel;
 		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider();
-		remoteProvider.addListener(new CurrencyRateListener() {
+		remoteProvider.addListener(new CurrencyRateAdapter() {
 			@Override public void newRate(CurrencyRateEvent rateEvent) {
 				currRemoteItems++;
 				System.out.println(rateEvent);
@@ -133,17 +133,34 @@ public class CurrencyRatePresenter implements Disposable {
 			@Override public void newRate(final CurrencyRateEvent rateEvent) {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override public void run() {
-						series.addOrUpdate(new Day(rateEvent.getDate()), rateEvent.getRate().getMiddle());
+						updateSeries(rateEvent);
 						currItems++;
 						updateProgressBar();
-						if (currItems == itemCount) {
-							if (movAvgSeries != null)
-								new MovingAveragePoints(movAvgPeriod).applyToSeries(series, movAvgSeries);
-							if (bollBandsSeries != null)
-								new BollingerBandsPoints(movAvgPeriod, 2.0).applyToSeries(series, bollBandsSeries);
-						}
+						updateChart();
 					}
 				});
+			}
+			@Override public void newRates(final CurrencyRateEvent[] rateEvents) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override public void run() {
+						for (CurrencyRateEvent rateEvent : rateEvents)
+							updateSeries(rateEvent);
+						currItems += rateEvents.length;
+						updateProgressBar();
+						updateChart();
+					}
+				});
+			}
+
+			private void updateSeries(CurrencyRateEvent rateEvent) {
+				series.addOrUpdate(new Day(rateEvent.getDate()), rateEvent.getRate().getMiddle());
+			}
+
+			private void updateChart() {
+				if (movAvgSeries != null)
+					new MovingAveragePoints(movAvgPeriod).applyToSeries(series, movAvgSeries);
+				if (bollBandsSeries != null)
+					new BollingerBandsPoints(movAvgPeriod, 2.0).applyToSeries(series, bollBandsSeries);
 			}
 		});
 		return currencyRate;

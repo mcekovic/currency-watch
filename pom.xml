@@ -5,7 +5,7 @@
 	<groupId>org.strangeforest</groupId>
 	<artifactId>currency-watch</artifactId>
 	<packaging>jar</packaging>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>1.2.0-SNAPSHOT</version>
 	<name>Currency Watch</name>
 	<url>https://github.com/mcekovic/currency-watch</url>
 	<prerequisites>

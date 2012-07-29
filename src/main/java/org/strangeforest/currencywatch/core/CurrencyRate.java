@@ -25,7 +25,20 @@ public class CurrencyRate extends BaseCurrencyRate implements Disposable {
 		if (isProviderObservable) {
 			providerListener = new CurrencyRateListener() {
 				@Override public void newRate(CurrencyRateEvent rateEvent) {
-					setRate(rateEvent.getDate(), rateEvent.getRate(), true);
+					RateValue rateValue = rateEvent.getRate();
+					if (rateValue != null) {
+						RateValue oldRateValue = dateRates.lockedPut(rateEvent.getDate(), rateValue);
+						if (oldRateValue == null || !oldRateValue.equals(rateValue))
+							notifyListeners(rateEvent);
+					}
+				}
+				@Override public void newRates(CurrencyRateEvent[] rateEvents) {
+					for (CurrencyRateEvent rateEvent : rateEvents) {
+						RateValue rateValue = rateEvent.getRate();
+						if (rateValue != null)
+							dateRates.lockedPut(rateEvent.getDate(), rateValue);
+					}
+					notifyListeners(rateEvents);
 				}
 			};
 			((ObservableCurrencyRateProvider)provider).addListener(providerListener);
@@ -50,14 +63,6 @@ public class CurrencyRate extends BaseCurrencyRate implements Disposable {
 		}
 		finally {
 			dateRates.unlock(date);
-		}
-	}
-
-	private void setRate(Date date, RateValue rateValue, boolean locked) {
-		if (rateValue != null) {
-			RateValue oldRateValue = locked ? dateRates.lockedPut(date, rateValue) : dateRates.put(date, rateValue);
-			if (oldRateValue == null || !oldRateValue.equals(rateValue))
-				notifyListeners(date, rateValue);
 		}
 	}
 
@@ -99,12 +104,30 @@ public class CurrencyRate extends BaseCurrencyRate implements Disposable {
 		return resultRates;
 	}
 
+	private void setRate(Date date, RateValue rateValue, boolean locked) {
+		if (rateValue != null) {
+			RateValue oldRateValue = locked ? dateRates.lockedPut(date, rateValue) : dateRates.put(date, rateValue);
+			if (oldRateValue == null || !oldRateValue.equals(rateValue))
+				notifyListeners(date, rateValue);
+		}
+	}
+
 	public void addListener(CurrencyRateListener listener) {
 		listeners.add(listener);
 	}
 
 	public void removeListener(CurrencyRateListener listener) {
 		listeners.remove(listener);
+	}
+
+	protected void notifyListeners(CurrencyRateEvent rateEvent) {
+		for (CurrencyRateListener listener : listeners)
+			listener.newRate(rateEvent);
+	}
+
+	protected void notifyListeners(CurrencyRateEvent[] rateEvents) {
+		for (CurrencyRateListener listener : listeners)
+			listener.newRates(rateEvents);
 	}
 
 	private void notifyListeners(Date date, RateValue rate) {

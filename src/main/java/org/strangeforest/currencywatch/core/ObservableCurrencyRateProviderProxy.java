@@ -19,6 +19,9 @@ public class ObservableCurrencyRateProviderProxy extends BaseObservableCurrencyR
 				@Override public void newRate(CurrencyRateEvent rateEvent) {
 					notifyListeners(rateEvent);
 				}
+				@Override public void newRates(CurrencyRateEvent[] rateEvents) {
+					notifyListeners(rateEvents);
+				}
 			};
 		}
 		else
@@ -48,8 +51,11 @@ public class ObservableCurrencyRateProviderProxy extends BaseObservableCurrencyR
 	@Override public Map<Date, RateValue> getRates(String symbolFrom, String symbolTo, Collection<Date> dates) throws CurrencyRateException {
 		Map<Date, RateValue> dateRates = provider.getRates(symbolFrom, symbolTo, dates);
 		if (!isProviderObservable && hasAnyListener()) {
+			CurrencyRateEvent[] rateEvents = new CurrencyRateEvent[dateRates.size()];
+			int i = 0;
 			for (Map.Entry<Date, RateValue> dateRate : dateRates.entrySet())
-				notifyListeners(new CurrencyRateEvent(provider, symbolFrom, symbolTo, dateRate.getKey(), dateRate.getValue()));
+				rateEvents[i++] = new CurrencyRateEvent(provider, symbolFrom, symbolTo, dateRate.getKey(), dateRate.getValue());
+			notifyListeners(rateEvents);
 		}
 		return dateRates;
 	}
