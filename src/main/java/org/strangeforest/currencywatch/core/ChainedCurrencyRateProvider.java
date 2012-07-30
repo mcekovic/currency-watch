@@ -19,14 +19,18 @@ public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvi
 
 		isLocalProviderObservable = localProvider instanceof ObservableCurrencyRateProvider;
 		isRemoteProviderObservable = remoteProvider instanceof ObservableCurrencyRateProvider;
-		rateListener = new CurrencyRateListener() {
-			@Override public void newRate(CurrencyRateEvent rateEvent) {
-				notifyListeners(rateEvent);
-			}
-			@Override public void newRates(CurrencyRateEvent[] rateEvents) {
-				notifyListeners(rateEvents);
-			}
-		};
+		if (isLocalProviderObservable || isRemoteProviderObservable) {
+			rateListener = new CurrencyRateListener() {
+				@Override public void newRate(CurrencyRateEvent rateEvent) {
+					notifyListeners(rateEvent);
+				}
+				@Override public void newRates(CurrencyRateEvent[] rateEvents) {
+					notifyListeners(rateEvents);
+				}
+			};
+		}
+		else
+			rateListener = null;
 	}
 
 	@Override public void init() throws CurrencyRateException {

@@ -138,7 +138,7 @@ public class ChainedCurrencyRateProviderTest {
 		InOrder inOrder = inOrder(listener);
 //		inOrder.verify(listener).newRates(argThat(matchesEventCount(3)));
 //		inOrder.verify(listener).newRates(argThat(matchesEventCount(2)));
-		inOrder.verify(listener, times(2)).newRates(any(CurrencyRateEvent[].class)); // Mockito bug workaround
+		inOrder.verify(listener, times(2)).newRates(any(CurrencyRateEvent[].class)); // Mockito/Hamcrest 1.3 incompatibility workaround
 		verifyNoMoreInteractions(listener);
 	}
 
