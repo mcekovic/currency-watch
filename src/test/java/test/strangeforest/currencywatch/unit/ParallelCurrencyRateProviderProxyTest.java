@@ -105,6 +105,8 @@ public class ParallelCurrencyRateProviderProxyTest {
 		}
 		catch (CurrencyRateException ex) {
 			verify(provider, times(3)).getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
+			verify(provider).dispose();
+			verify(provider).init();
 			verify(listener, never()).newRate(any(CurrencyRateEvent.class));
 		}
 	}
