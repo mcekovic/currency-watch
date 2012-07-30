@@ -1,4 +1,4 @@
-package test.strangeforest.currencywatch.core;
+package test.strangeforest.currencywatch.system;
 
 import java.io.*;
 import java.util.*;

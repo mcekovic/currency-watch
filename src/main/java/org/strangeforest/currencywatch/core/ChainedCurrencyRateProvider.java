@@ -48,29 +48,30 @@ public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvi
 			if (rateValue != null)
 				localProvider.setRate(symbolFrom, symbolTo, date, rateValue);
 				if (hasAnyListener() && !isRemoteProviderObservable)
-					notifyListeners(new CurrencyRateEvent(this, symbolFrom, symbolTo, date, rateValue));
+					notifyListeners(symbolFrom, symbolTo, date, rateValue);
 		}
 		else if (hasAnyListener() && !isLocalProviderObservable)
-			notifyListeners(new CurrencyRateEvent(this, symbolFrom, symbolTo, date, rateValue));
+			notifyListeners(symbolFrom, symbolTo, date, rateValue);
 		return rateValue;
 	}
 
 	@Override public Map<Date, RateValue> getRates(String symbolFrom, String symbolTo, Collection<Date> dates) throws CurrencyRateException {
 		Map<Date, RateValue> dateRates = localProvider.getRates(symbolFrom, symbolTo, dates);
-		if (hasAnyListener() && !isLocalProviderObservable) {
-			for (Map.Entry<Date, RateValue> dateRate : dateRates.entrySet())
-				notifyListeners(new CurrencyRateEvent(this, symbolFrom, symbolTo, dateRate.getKey(), dateRate.getValue()));
-		}
 		Collection<Date> missingDates = new HashSet<>(dates);
-		missingDates.removeAll(dateRates.keySet());
+		if (!dateRates.isEmpty()) {
+			if (hasAnyListener() && !isLocalProviderObservable)
+				notifyListeners(symbolFrom, symbolTo, dateRates);
+			missingDates.removeAll(dateRates.keySet());
+		}
 		if (!missingDates.isEmpty()) {
 			Map<Date, RateValue> newDateRates = remoteProvider.getRates(symbolFrom, symbolTo, missingDates);
-			if (hasAnyListener() && !isRemoteProviderObservable) {
-				for (Map.Entry<Date, RateValue> dateRate : dateRates.entrySet())
-					notifyListeners(new CurrencyRateEvent(this, symbolFrom, symbolTo, dateRate.getKey(), dateRate.getValue()));
+			if (!newDateRates.isEmpty()) {
+				if (hasAnyListener() && !isRemoteProviderObservable)
+					notifyListeners(symbolFrom, symbolTo, newDateRates);
+				localProvider.setRates(symbolFrom, symbolTo, newDateRates);
+				dateRates = new HashMap<>(dateRates);
+				dateRates.putAll(newDateRates);
 			}
-			dateRates.putAll(newDateRates);
-			localProvider.setRates(symbolFrom, symbolTo, newDateRates);
 		}
 		return dateRates;
 	}

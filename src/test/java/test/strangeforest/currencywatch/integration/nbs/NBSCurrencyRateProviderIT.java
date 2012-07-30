@@ -1,4 +1,4 @@
-package test.strangeforest.currencywatch.nbs;
+package test.strangeforest.currencywatch.integration.nbs;
 
 import java.util.*;
 

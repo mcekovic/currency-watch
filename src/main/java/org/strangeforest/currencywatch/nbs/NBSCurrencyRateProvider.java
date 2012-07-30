@@ -122,7 +122,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 					double middle = Double.parseDouble(fields[6]) / Double.parseDouble(fields[5]);
 					RateValue rateValue = new RateValue(middle, middle, middle);
 					if (hasAnyListener())
-						notifyListeners(new CurrencyRateEvent(this, symbolFrom, symbolTo, date, rateValue));
+						notifyListeners(symbolFrom, symbolTo, date, rateValue);
 					return rateValue;
 				}
 			}

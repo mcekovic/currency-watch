@@ -1,4 +1,4 @@
-package test.strangeforest.currencywatch.db4o;
+package test.strangeforest.currencywatch.integration.db4o;
 
 import java.io.*;
 import java.util.*;

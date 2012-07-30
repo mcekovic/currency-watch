@@ -29,7 +29,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 					try {
 						RateValue rateValue = provider.getRate(symbolFrom, symbolTo, date);
 						if (!isProviderObservable && hasAnyListener())
-							notifyListeners(new CurrencyRateEvent(provider, symbolFrom, symbolTo, date, rateValue));
+							notifyListeners(symbolFrom, symbolTo, date, rateValue);
 						return new DateRateValue(date, rateValue);
 					}
 					catch (Exception ex) {
