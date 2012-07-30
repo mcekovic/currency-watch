@@ -6,8 +6,11 @@ import java.util.concurrent.atomic.*;
 
 public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRateProviderProxy {
 
-	private static final int RETRY_COUNT = 2;
 	private final ExecutorService executor;
+	private int retryCount = RETRY_COUNT;
+	private boolean resetProviderOnRetryFail = true;
+
+	private static final int RETRY_COUNT = 2;
 
 	public ParallelCurrencyRateProviderProxy(CurrencyRateProvider provider, int threadCount) {
 		super(provider);
@@ -19,9 +22,25 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 		executor.shutdownNow();
 	}
 
+	public int getRetryCount() {
+		return retryCount;
+	}
+
+	public void setRetryCount(int retryCount) {
+		this.retryCount = retryCount;
+	}
+
+	public boolean isResetProviderOnRetryFail() {
+		return resetProviderOnRetryFail;
+	}
+
+	public void setResetProviderOnRetryFail(boolean resetProviderOnRetryFail) {
+		this.resetProviderOnRetryFail = resetProviderOnRetryFail;
+	}
+
 	@Override public Map<Date, RateValue> getRates(final String symbolFrom, final String symbolTo, Collection<Date> dates) throws CurrencyRateException {
 		Map<Date, RateValue> dateValues = new TreeMap<>();
-		final AtomicInteger retryCount = new AtomicInteger(RETRY_COUNT);
+		final AtomicInteger retriesLeft = new AtomicInteger(retryCount);
 		final Queue<Future<DateRateValue>> results = new ArrayDeque<>();
 		for (final Date date : dates) {
 			Callable<DateRateValue> task = new Callable<DateRateValue>() {
@@ -33,13 +52,18 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 						return new DateRateValue(date, rateValue);
 					}
 					catch (Exception ex) {
-						int left = retryCount.decrementAndGet();
+						int left = retriesLeft.decrementAndGet();
 						if (left >= 0) {
 							results.add(executor.submit(this));
 							return null;
 						}
-						else
+						else {
+							if (resetProviderOnRetryFail) {
+								provider.dispose();
+								provider.init();
+							}
 							throw ex;
+						}
 					}
 				}
 			};

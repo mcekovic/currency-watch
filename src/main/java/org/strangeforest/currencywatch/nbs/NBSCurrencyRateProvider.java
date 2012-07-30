@@ -9,8 +9,8 @@ import org.strangeforest.currencywatch.core.*;
 //TODO: Use https://webservices.nbs.rs/CommunicationOfficeService1_0/ExchangeRateXmlService.asmx?WSDL
 public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider {
 
-	private String sessionId;
-	private String viewId;
+	private volatile String sessionId;
+	private volatile String viewId;
 
 	private static final String NBS_URL = "http://www.nbs.rs/kursnaListaModul/naZeljeniDan.faces";
 
