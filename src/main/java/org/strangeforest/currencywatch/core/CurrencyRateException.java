@@ -36,4 +36,8 @@ public class CurrencyRateException extends  Exception {
 	public boolean isRecoverable() {
 		return recoverable;
 	}
+
+	public static CurrencyRateException wrap(Throwable th) {
+		return th instanceof CurrencyRateException ? (CurrencyRateException)th : new CurrencyRateException(th);
+	}
 }

@@ -52,7 +52,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 					dateValues.put(dateValue.date, dateValue.value);
 			}
 			catch (Exception ex) {
-				throw new CurrencyRateException(ex);
+				throw CurrencyRateException.wrap(ex);
 			}
 		}
 		return dateValues;
