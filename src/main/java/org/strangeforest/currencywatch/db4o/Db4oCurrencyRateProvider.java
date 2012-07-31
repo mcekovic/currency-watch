@@ -11,6 +11,7 @@ import com.db4o.config.*;
 public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implements UpdatableCurrencyRateProvider {
 
 	private final EmbeddedObjectContainer db;
+	private boolean closed;
 
 	public Db4oCurrencyRateProvider(String dbFileName) {
 		super();
@@ -24,8 +25,9 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		db = Db4oEmbedded.openFile(dbConfig, dbFileName);
 	}
 
-	@Override public void close() {
+	@Override public synchronized void close() {
 		db.close();
+		closed = true;
 		super.close();
 	}
 
@@ -49,7 +51,7 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	}
 
 	@Override public Map<Date, RateValue> getRates(final String symbolFrom, final String symbolTo, final Collection<Date> dates) {
-		return queryDb4o(new Db4oQueryCallback<Map<Date, RateValue>>() {
+		Map<Date, RateValue> rates = queryDb4o(new Db4oQueryCallback<Map<Date, RateValue>>() {
 			@Override public Map<Date, RateValue> queryDb4o(ObjectContainer db) {
 				Map<Date, RateValue> dateRates = new HashMap<>();
 				CurrencyRateObject rate = getCurrencyRate(db, symbolFrom, symbolTo);
@@ -60,6 +62,7 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 				return dateRates;
 			}
 		});
+		return rates != null ? rates : new HashMap<Date, RateValue>();
 	}
 
 	@Override public void setRate(final String symbolFrom, final String symbolTo, final Date date, final RateValue rateValue) {
@@ -87,6 +90,7 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	}
 
 	private synchronized void doInDb4o(Db4oCallback callback) {
+		if (closed) return;
 		try {
 			callback.doInDb4o(db);
 			db.commit();
@@ -98,7 +102,7 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	}
 
 	private synchronized <T> T queryDb4o(Db4oQueryCallback<T> callback) {
-		return callback.queryDb4o(db);
+		return !closed ? callback.queryDb4o(db) : null;
 	}
 
 	private static interface Db4oCallback {

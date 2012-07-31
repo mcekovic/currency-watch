@@ -39,7 +39,6 @@ public class CurrencyChartForm {
 		frame.setContentPane(form.formPanel);
 		form.exitButton.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				form.presenter.close();
 				frame.dispose();
 			}
 		});
@@ -47,6 +46,11 @@ public class CurrencyChartForm {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override public void windowClosed(WindowEvent e) {
+				form.presenter.close();
+			}
+		});
 	}
 
 	public CurrencyChartForm() {
