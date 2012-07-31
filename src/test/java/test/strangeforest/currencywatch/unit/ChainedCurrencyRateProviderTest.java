@@ -20,12 +20,12 @@ import java.util.*;
 
 import org.hamcrest.*;
 import org.hamcrest.Matchers;
+import org.junit.*;
 import org.mockito.*;
 import org.strangeforest.currencywatch.core.*;
-import org.testng.annotations.*;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
 
 public class ChainedCurrencyRateProviderTest {
 
@@ -42,7 +42,7 @@ public class ChainedCurrencyRateProviderTest {
 	private static final Date DATE5 = new GregorianCalendar(2012, 4, 5).getTime();
 
 	@BeforeClass
-	public void setUp() {
+	public static void setUp() {
 		RATES.put(DATE1, new RateValue(120.0, 116.0, 118.0));
 		RATES.put(DATE2, new RateValue(121.0, 117.0, 119.0));
 		RATES.put(DATE3, new RateValue(120.5, 116.5, 118.5));
@@ -60,7 +60,7 @@ public class ChainedCurrencyRateProviderTest {
 		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
 			RateValue rate = chainedProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
 
-			assertEquals(rate, RATE);
+			assertEquals(RATE, rate);
 			verify(remoteProvider, never()).getRate(anyString(), anyString(), any(Date.class));
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 		}
@@ -77,7 +77,7 @@ public class ChainedCurrencyRateProviderTest {
 		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
 			RateValue rate = chainedProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
 
-			assertEquals(rate, RATE);
+			assertEquals(RATE, rate);
 			verify(localProvider).setRate(eq(SYMBOL_FROM), eq(SYMBOL_TO), eq(DATE), eq(RATE));
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 		}
@@ -93,7 +93,7 @@ public class ChainedCurrencyRateProviderTest {
 		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
 			Map<Date, RateValue> rates = chainedProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
 
-			assertEquals(rates, RATES);
+			assertEquals(RATES, rates);
 			verify(remoteProvider, never()).getRate(anyString(), anyString(), any(Date.class));
 			verify(remoteProvider, never()).getRates(anyString(), anyString(), any(Collection.class));
 			verify(listener).newRates(argThat(matchesEventCount(RATES.size())));
@@ -112,7 +112,7 @@ public class ChainedCurrencyRateProviderTest {
 		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
 			Map<Date, RateValue> rates = chainedProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
 
-			assertEquals(rates, RATES);
+			assertEquals(RATES, rates);
 			verify(listener).newRates(argThat(matchesEventCount(RATES.size())));
 			verifyNoMoreInteractions(listener);
 		}
@@ -132,7 +132,7 @@ public class ChainedCurrencyRateProviderTest {
 		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
 			Map<Date, RateValue> rates = chainedProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
 
-			assertEquals(rates, RATES);
+			assertEquals(RATES, rates);
 			verify(remoteProvider, never()).getRate(anyString(), anyString(), any(Date.class));
 			InOrder inOrder = inOrder(listener);
 	//		inOrder.verify(listener).newRates(argThat(matchesEventCount(3)));
@@ -155,8 +155,8 @@ public class ChainedCurrencyRateProviderTest {
 			RateValue rate = observableRemoteProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
 			Map<Date, RateValue> rates = observableRemoteProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
 
-			assertEquals(rate, RATE);
-			assertEquals(rates, RATES);
+			assertEquals(RATE, rate);
+			assertEquals(RATES, rates);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 			verify(listener).newRates(argThat(matchesEventCount(RATES.size())));
 		}

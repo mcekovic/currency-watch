@@ -19,11 +19,11 @@ package test.strangeforest.currencywatch.unit;
 import java.util.*;
 
 import org.hamcrest.*;
+import org.junit.*;
 import org.strangeforest.currencywatch.core.*;
-import org.testng.annotations.*;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
 
 public class CurrencyRateTest {
 
@@ -40,7 +40,7 @@ public class CurrencyRateTest {
 	private static final Date DATE5 = new GregorianCalendar(2012, 4, 5).getTime();
 
 	@BeforeClass
-	public void setUp() {
+	public static void setUp() {
 		RATES.put(DATE1, new RateValue(120.0, 116.0, 118.0));
 		RATES.put(DATE2, new RateValue(121.0, 117.0, 119.0));
 		RATES.put(DATE3, new RateValue(120.5, 116.5, 118.5));
@@ -57,12 +57,12 @@ public class CurrencyRateTest {
 		try (CurrencyRate currencyRate = createCurrencyRate(provider, listener)) {
 			RateValue rate = currencyRate.getRate(DATE);
 
-			assertEquals(rate, RATE);
+			assertEquals(RATE, rate);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 
 			RateValue cachedRate = currencyRate.getRate(DATE);
 
-			assertEquals(cachedRate, RATE);
+			assertEquals(RATE, cachedRate);
 			verifyNoMoreInteractions(listener);
 		}
 	}
@@ -76,13 +76,13 @@ public class CurrencyRateTest {
 		try (CurrencyRate currencyRate = createCurrencyRate(provider, listener)) {
 			Map<Date, RateValue> rates = currencyRate.getRates(RATES.keySet());
 
-			assertEquals(rates, RATES);
+			assertEquals(RATES, rates);
 			verify(listener).newRates(argThat(matchesEventCount(5)));
 
 			Map<Date, RateValue> cachedRates = currencyRate.getRates(RATES.keySet());
 
-			assertEquals(cachedRates, RATES);
-			assertEquals(currencyRate.getRates(), RATES);
+			assertEquals(RATES, cachedRates);
+			assertEquals(RATES, currencyRate.getRates());
 			verifyNoMoreInteractions(listener);
 		}
 	}
@@ -97,12 +97,12 @@ public class CurrencyRateTest {
 		try (CurrencyRate currencyRate = createCurrencyRate(observableProvider, listener)) {
 			RateValue rate = currencyRate.getRate(DATE);
 
-			assertEquals(rate, RATE);
+			assertEquals(RATE, rate);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 
 			RateValue cachedRate = currencyRate.getRate(DATE);
 
-			assertEquals(cachedRate, RATE);
+			assertEquals(RATE, cachedRate);
 			verifyNoMoreInteractions(listener);
 		}
 	}
@@ -117,13 +117,13 @@ public class CurrencyRateTest {
 		try (CurrencyRate currencyRate = createCurrencyRate(observableProvider, listener)) {
 			Map<Date, RateValue> rates = currencyRate.getRates(RATES.keySet());
 
-			assertEquals(rates, RATES);
+			assertEquals(RATES, rates);
 			verify(listener).newRates(argThat(matchesEventCount(5)));
 
 			Map<Date, RateValue> cachedRates = currencyRate.getRates(RATES.keySet());
 
-			assertEquals(cachedRates, RATES);
-			assertEquals(currencyRate.getRates(), RATES);
+			assertEquals(RATES, cachedRates);
+			assertEquals(RATES, currencyRate.getRates());
 			verifyNoMoreInteractions(listener);
 		}
 	}
@@ -138,14 +138,14 @@ public class CurrencyRateTest {
 		try (CurrencyRate currencyRate = createCurrencyRate(observableProvider, listener)) {
 			RateValue rate = observableProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
 
-			assertEquals(rate, RATE);
+			assertEquals(RATE, rate);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 
 			RateValue cachedRate = currencyRate.getRate(DATE);
 			RateValue rate2 = observableProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
 
-			assertEquals(cachedRate, RATE);
-			assertEquals(rate2, RATE);
+			assertEquals(RATE, cachedRate);
+			assertEquals(RATE, rate2);
 			verify(provider, times(2)).getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
 			verifyNoMoreInteractions(provider);
 			verifyNoMoreInteractions(listener);
@@ -162,14 +162,14 @@ public class CurrencyRateTest {
 		try (CurrencyRate currencyRate = createCurrencyRate(observableProvider, listener)) {
 			Map<Date, RateValue> rates = observableProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
 
-			assertEquals(rates, RATES);
+			assertEquals(RATES, rates);
 			verify(listener).newRates(argThat(matchesEventCount(5)));
 
 			Map<Date, RateValue> cachedRates = currencyRate.getRates(RATES.keySet());
 			Map<Date, RateValue> rates2 = observableProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
 
-			assertEquals(cachedRates, RATES);
-			assertEquals(rates2, RATES);
+			assertEquals(RATES, cachedRates);
+			assertEquals(RATES, rates2);
 			verify(provider, times(2)).getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
 			verifyNoMoreInteractions(provider);
 			verifyNoMoreInteractions(listener);

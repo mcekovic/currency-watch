@@ -18,14 +18,14 @@ package test.strangeforest.currencywatch.unit;
 
 import java.util.*;
 
+import org.junit.*;
 import org.mockito.*;
 import org.mockito.invocation.*;
 import org.mockito.stubbing.*;
 import org.strangeforest.currencywatch.core.*;
-import org.testng.annotations.*;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
 
 public class ParallelCurrencyRateProviderProxyTest {
 
@@ -36,7 +36,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 	private static final Map<Date,RateValue> RATES = new HashMap<>();
 
 	@BeforeClass
-	public void setUp() {
+	public static void setUp() {
 		RATES.put(new GregorianCalendar(2012, 4, 1).getTime(), new RateValue(120.0, 116.0, 118.0));
 		RATES.put(new GregorianCalendar(2012, 4, 2).getTime(), new RateValue(121.0, 117.0, 119.0));
 		RATES.put(new GregorianCalendar(2012, 4, 3).getTime(), new RateValue(120.5, 116.5, 118.5));
@@ -53,7 +53,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 		try (ParallelCurrencyRateProviderProxy parallelProvider = createParallelProvider(provider, listener, 1)) {
 			RateValue rate = parallelProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
 
-			assertEquals(rate, RATE);
+			assertEquals(RATE, rate);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 		}
 	}
@@ -71,7 +71,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 		try (ParallelCurrencyRateProviderProxy parallelProvider = createParallelProvider(provider, listener, 2)) {
 			Map<Date, RateValue> rates = parallelProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
 
-			assertEquals(rates, RATES);
+			assertEquals(RATES, rates);
 			verify(listener, times(RATES.size())).newRate(any(CurrencyRateEvent.class));
 		}
 	}
@@ -85,7 +85,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 		try (ParallelCurrencyRateProviderProxy parallelProvider = createParallelProvider(provider, listener, 1)) {
 			Map<Date, RateValue> rates = parallelProvider.getRates(SYMBOL_FROM, SYMBOL_TO, Collections.singleton(DATE));
 
-			assertEquals(rates, Collections.singletonMap(DATE, RATE));
+			assertEquals(Collections.singletonMap(DATE, RATE), rates);
 			verify(provider, times(2)).getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 		}
