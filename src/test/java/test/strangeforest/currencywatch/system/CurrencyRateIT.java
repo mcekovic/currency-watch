@@ -13,6 +13,8 @@ public class CurrencyRateIT {
 
 	private CurrencyRateProvider currencyRateProvider;
 
+	private static final String DB4O_DATA_FILE = "data/test-rates.db4o";
+
 	@BeforeClass
 	public void setUp() {
 		ObservableCurrencyRateProvider nbsProvider = new NBSCurrencyRateProvider();

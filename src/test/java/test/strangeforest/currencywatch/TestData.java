@@ -28,6 +28,4 @@ public class TestData {
 	}
 
 	public static final NavigableSet<Date> DATES = RATES.navigableKeySet();
-
-	public static final String DB4O_DATA_FILE = "data/test-rates-db4o.db4o";
 }

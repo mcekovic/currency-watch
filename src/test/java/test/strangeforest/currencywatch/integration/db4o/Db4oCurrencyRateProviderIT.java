@@ -14,6 +14,8 @@ public class Db4oCurrencyRateProviderIT {
 
 	private UpdatableCurrencyRateProvider currencyRateProvider;
 
+	private static final String DB4O_DATA_FILE = "data/test-rates-db4o.db4o";
+
 	@BeforeClass
 	private void setUp() {
 		deleteDb4oDataFile();
