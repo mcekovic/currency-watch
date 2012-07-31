@@ -11,10 +11,10 @@ import org.testng.annotations.*;
 public class CurrencyRateIT {
 
 	private CurrencyRateProvider currencyRateProvider;
-	private Date fromDate;
-	private Date toDate;
 
 	private static final String DB4O_DATA_FILE = "data/test-rates.db4o";
+	private static final Date FROM_DATE = new GregorianCalendar(2006, 11, 1).getTime();
+	private static final Date TO_DATE = new GregorianCalendar(2006, 11, 6).getTime();
 
 	@BeforeClass
 	public void setUp() {
@@ -32,8 +32,6 @@ public class CurrencyRateIT {
 			new Db4oCurrencyRateProvider(DB4O_DATA_FILE),
 			new ParallelCurrencyRateProviderProxy(nbsProvider, 5)
 		);
-		fromDate = new GregorianCalendar(2006, 11, 1).getTime();
-		toDate = new GregorianCalendar(2006, 11, 6).getTime();
 	}
 
 	@AfterClass
@@ -44,6 +42,6 @@ public class CurrencyRateIT {
 	@Test
 	public void test() {
 		CurrencyRate rate = new CurrencyRate("DIN", "EUR", currencyRateProvider);
-		System.out.println(rate.getRates(new DateRange(fromDate, toDate)));
+		System.out.println(rate.getRates(new DateRange(FROM_DATE, TO_DATE)));
 	}
 }

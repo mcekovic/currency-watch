@@ -54,7 +54,7 @@ public class CurrencyChartForm {
 	}
 
 	public CurrencyChartForm() {
-		presenter = new CurrencyRatePresenter(chartPanel, progressBar, speedLabel);
+		presenter = new CurrencyRatePresenter(chartPanel.getChart().getXYPlot(), new FormCurrencyRatePresenterListener());
 		currencyComboBox.setModel(new DefaultComboBoxModel<>(CurrencyRatePresenter.CURRENCIES));
 		currencyComboBox.setSelectedItem(CurrencyRatePresenter.DEFAULT_CURRENCY);
 		currencyComboBox.addActionListener(new ActionListener() {
@@ -97,10 +97,7 @@ public class CurrencyChartForm {
 		});
 		formPanel.addComponentListener(new ComponentAdapter() {
 			@Override public void componentResized(ComponentEvent e) {
-				chartPanel.setSize(new Dimension(
-					formPanel.getWidth(),
-					formPanel.getHeight() - toolPanel.getHeight() - statusPanel.getHeight() - 5
-				));
+				resizeChartPanel();
 			}
 		});
 	}
@@ -145,5 +142,25 @@ public class CurrencyChartForm {
 
 	private void setPeriodComboBoxEnabled() {
 		movAvgPeriodComboBox.setEnabled(movAvgCheckBox.isSelected() || bollingerBandsCheckBox.isSelected());
+	}
+
+	private void resizeChartPanel() {
+		Dimension size = new Dimension(
+			formPanel.getWidth(),
+			formPanel.getHeight() - toolPanel.getHeight() - statusPanel.getHeight() - 10
+		);
+		chartPanel.setSize(size);
+		chartPanel.setPreferredSize(size);
+		chartPanel.setMinimumSize(size);
+		chartPanel.setMaximumSize(size);
+	}
+
+	private class FormCurrencyRatePresenterListener implements CurrencyRatePresenterListener {
+		@Override public void progressChanged(int progress) {
+			progressBar.setValue(progress);
+		}
+		@Override public void ratesPerSecChanged(double ratesPerSec) {
+			speedLabel.setText(String.format("%8.1f", ratesPerSec) + " rate/s");
+		}
 	}
 }

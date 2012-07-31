@@ -5,7 +5,6 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.Timer;
 
-import org.jfree.chart.*;
 import org.jfree.chart.plot.*;
 import org.jfree.data.time.*;
 import org.strangeforest.currencywatch.core.*;
@@ -17,10 +16,9 @@ import com.finsoft.util.*;
 
 public class CurrencyRatePresenter implements AutoCloseable {
 
-	private CurrencyRateProvider provider;
-	private ChartPanel chartPanel;
-	private JProgressBar progressBar;
-	private final JLabel speedLabel;
+	private final CurrencyRateProvider provider;
+	private final XYPlot chartPlot;
+	private final CurrencyRatePresenterListener presenterListener;
 	private CurrencyRate currencyRate;
 	private Thread dataThread;
 	private Timer speedTimer;
@@ -70,11 +68,10 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		return QUALITY_MAP.keySet().toArray(new String[QUALITY_MAP.size()]);
 	}
 
-	public CurrencyRatePresenter(ChartPanel chartPanel, JProgressBar progressBar, JLabel speedLabel) {
+	public CurrencyRatePresenter(XYPlot chartPlot, CurrencyRatePresenterListener presenterListener) {
 		super();
-		this.chartPanel = chartPanel;
-		this.progressBar = progressBar;
-		this.speedLabel = speedLabel;
+		this.chartPlot = chartPlot;
+		this.presenterListener = presenterListener;
 		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider();
 		remoteProvider.addListener(new CurrencyRateAdapter() {
 			@Override public void newRate(CurrencyRateEvent rateEvent) {
@@ -95,7 +92,6 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	}
 
 	public void inputDataChanged(String symbolTo, String period, String quality, boolean showMovAvg, boolean showBollBands, int movAvgPeriod) {
-		XYPlot plot = chartPanel.getChart().getXYPlot();
 		TimeSeries currencySeries = new TimeSeries(symbolTo);
 		TimeSeries movAvgSeries = null;
 		TimeSeries[] bollBandsSeries = null;
@@ -112,13 +108,13 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			};
 			bbDataSet.addSeries(bollBandsSeries[0]);
 			bbDataSet.addSeries(bollBandsSeries[1]);
-			plot.setDataset(1, bbDataSet);
+			chartPlot.setDataset(1, bbDataSet);
 		}
 		else
-			plot.setDataset(1, null);
+			chartPlot.setDataset(1, null);
 		CurrencyRate currencyRate = getCurrencyRate(symbolTo, currencySeries, movAvgSeries, bollBandsSeries, movAvgPeriod);
 		applyPeriod(currencyRate, currencySeries, PERIOD_MAP.get(period), QUALITY_MAP.get(quality));
-		plot.setDataset(0, dataSet);
+		chartPlot.setDataset(0, dataSet);
 	}
 
 	private CurrencyRate getCurrencyRate(String symbolTo, final TimeSeries series, final TimeSeries movAvgSeries, final TimeSeries[] bollBandsSeries, final int movAvgPeriod) {
@@ -202,13 +198,13 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	}
 
 	private void updateProgressBar() {
-		progressBar.setValue((100*currItems)/itemCount);
+		presenterListener.progressChanged((100 * currItems) / itemCount);
 	}
 
 	private void updateSpeedLabel() {
 		long time = System.currentTimeMillis() - startTime;
-		double speed = time > 0L ? (1000.0*currRemoteItems)/time : 0.0;
-		speedLabel.setText(String.format("%8.1f", speed) + " rate/s");
+		double itemsPerSec = time > 0L ? (1000.0*currRemoteItems)/time : 0.0;
+		presenterListener.ratesPerSecChanged(itemsPerSec);
 	}
 
 	@Override public void close() {
