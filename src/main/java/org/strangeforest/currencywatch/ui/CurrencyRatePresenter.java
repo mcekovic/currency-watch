@@ -91,11 +91,18 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		});
 	}
 
-	public void inputDataChanged(String symbolTo, String period, String quality, boolean showMovAvg, boolean showBollBands, int movAvgPeriod) {
+	public void inputDataChanged(String symbolTo, String period, String quality, boolean showBidAsk, boolean showMovAvg, boolean showBollBands, int movAvgPeriod) {
 		TimeSeries currencySeries = new TimeSeries(symbolTo);
+		TimeSeries bidSeries = null, askSeries = null;
 		TimeSeries movAvgSeries = null;
 		TimeSeries[] bollBandsSeries = null;
 		TimeSeriesCollection dataSet = new TimeSeriesCollection(currencySeries);
+		if (showBidAsk) {
+			bidSeries = new TimeSeries(String.format("Bid(%s)", symbolTo));
+			askSeries = new TimeSeries(String.format("Ask(%s)", symbolTo));
+			dataSet.addSeries(bidSeries);
+			dataSet.addSeries(askSeries);
+		}
 		if (showMovAvg) {
 			movAvgSeries = new TimeSeries(String.format("MovAvg(%s)", symbolTo));
 			dataSet.addSeries(movAvgSeries);
@@ -112,12 +119,13 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		}
 		else
 			chartPlot.setDataset(1, null);
-		CurrencyRate currencyRate = getCurrencyRate(symbolTo, currencySeries, movAvgSeries, bollBandsSeries, movAvgPeriod);
+		CurrencyRate currencyRate = getCurrencyRate(symbolTo, currencySeries, bidSeries, askSeries, movAvgSeries, bollBandsSeries, movAvgPeriod);
 		applyPeriod(currencyRate, currencySeries, PERIOD_MAP.get(period), QUALITY_MAP.get(quality));
 		chartPlot.setDataset(0, dataSet);
 	}
 
-	private CurrencyRate getCurrencyRate(String symbolTo, final TimeSeries series, final TimeSeries movAvgSeries, final TimeSeries[] bollBandsSeries, final int movAvgPeriod) {
+	private CurrencyRate getCurrencyRate(String symbolTo, final TimeSeries series, final TimeSeries bidSeries, final TimeSeries askSeries,
+	                                     final TimeSeries movAvgSeries, final TimeSeries[] bollBandsSeries, final int movAvgPeriod) {
 		if (currencyRate != null)
 			currencyRate.close();
 		currencyRate = new CurrencyRate("DIN", symbolTo, provider);
@@ -125,10 +133,10 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			@Override public void newRate(final CurrencyRateEvent rateEvent) {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override public void run() {
-						updateSeries(rateEvent);
+						updateBaseSeries(rateEvent);
 						currItems++;
 						updateProgressBar();
-						updateChart();
+						updateDerivedSeries();
 					}
 				});
 			}
@@ -136,19 +144,25 @@ public class CurrencyRatePresenter implements AutoCloseable {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override public void run() {
 						for (CurrencyRateEvent rateEvent : rateEvents)
-							updateSeries(rateEvent);
+							updateBaseSeries(rateEvent);
 						currItems += rateEvents.length;
 						updateProgressBar();
-						updateChart();
+						updateDerivedSeries();
 					}
 				});
 			}
 
-			private void updateSeries(CurrencyRateEvent rateEvent) {
-				series.addOrUpdate(new Day(rateEvent.getDate()), rateEvent.getRate().getMiddle());
+			private void updateBaseSeries(CurrencyRateEvent rateEvent) {
+				Day day = new Day(rateEvent.getDate());
+				RateValue rate = rateEvent.getRate();
+				series.addOrUpdate(day, rate.getMiddle());
+				if (bidSeries != null)
+					bidSeries.addOrUpdate(day, rate.getBid());
+				if (askSeries != null)
+					askSeries.addOrUpdate(day, rate.getAsk());
 			}
 
-			private void updateChart() {
+			private void updateDerivedSeries() {
 				if (movAvgSeries != null)
 					new MovingAveragePoints(movAvgPeriod).applyToSeries(series, movAvgSeries);
 				if (bollBandsSeries != null)

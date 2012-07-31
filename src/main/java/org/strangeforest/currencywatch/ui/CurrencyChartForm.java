@@ -22,6 +22,7 @@ public class CurrencyChartForm {
 	private JComboBox<String> currencyComboBox;
 	private JComboBox<String> periodComboBox;
 	private JComboBox<String> qualityComboBox;
+	private JCheckBox bidAskCheckBox;
 	private JCheckBox movAvgCheckBox;
 	private JCheckBox bollingerBandsCheckBox;
 	private JComboBox<Integer> movAvgPeriodComboBox;
@@ -57,44 +58,19 @@ public class CurrencyChartForm {
 		presenter = new CurrencyRatePresenter(chartPanel.getChart().getXYPlot(), new FormCurrencyRatePresenterListener());
 		currencyComboBox.setModel(new DefaultComboBoxModel<>(CurrencyRatePresenter.CURRENCIES));
 		currencyComboBox.setSelectedItem(CurrencyRatePresenter.DEFAULT_CURRENCY);
-		currencyComboBox.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
-				inputDataChanged();
-			}
-		});
+		currencyComboBox.addActionListener(new InputDataListener());
 		periodComboBox.setModel(new DefaultComboBoxModel<>(CurrencyRatePresenter.periods()));
 		periodComboBox.setSelectedItem(CurrencyRatePresenter.DEFAULT_PERIOD);
-		periodComboBox.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
-				inputDataChanged();
-			}
-		});
+		periodComboBox.addActionListener(new InputDataListener());
 		qualityComboBox.setModel(new DefaultComboBoxModel<>(CurrencyRatePresenter.qualities()));
 		qualityComboBox.setSelectedItem(CurrencyRatePresenter.DEFAULT_QUALITY);
-		qualityComboBox.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
-				inputDataChanged();
-			}
-		});
-		movAvgCheckBox.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
-				setPeriodComboBoxEnabled();
-				inputDataChanged();
-			}
-		});
-		bollingerBandsCheckBox.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
-				setPeriodComboBoxEnabled();
-				inputDataChanged();
-			}
-		});
+		qualityComboBox.addActionListener(new InputDataListener());
+		bidAskCheckBox.addActionListener(new InputDataListener());
+		movAvgCheckBox.addActionListener(new PeriodComboBoxEnabledInputDataListener());
+		bollingerBandsCheckBox.addActionListener(new PeriodComboBoxEnabledInputDataListener());
 		movAvgPeriodComboBox.setModel(new DefaultComboBoxModel<>(CurrencyRatePresenter.MOV_AVG_PERIODS));
 		movAvgPeriodComboBox.setSelectedItem(CurrencyRatePresenter.DEFAULT_MOV_AVG_PERIOD);
-		movAvgPeriodComboBox.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
-				inputDataChanged();
-			}
-		});
+		movAvgPeriodComboBox.addActionListener(new InputDataListener());
 		formPanel.addComponentListener(new ComponentAdapter() {
 			@Override public void componentResized(ComponentEvent e) {
 				resizeChartPanel();
@@ -134,6 +110,7 @@ public class CurrencyChartForm {
 			(String)currencyComboBox.getSelectedItem(),
 			(String)periodComboBox.getSelectedItem(),
 			(String)qualityComboBox.getSelectedItem(),
+			bidAskCheckBox.isSelected(),
 			movAvgCheckBox.isSelected(),
 			bollingerBandsCheckBox.isSelected(),
 			(Integer)movAvgPeriodComboBox.getSelectedItem()
@@ -161,6 +138,19 @@ public class CurrencyChartForm {
 		}
 		@Override public void ratesPerSecChanged(double ratesPerSec) {
 			speedLabel.setText(String.format("%8.1f", ratesPerSec) + " rate/s");
+		}
+	}
+
+	private class InputDataListener implements ActionListener {
+		@Override public void actionPerformed(ActionEvent e) {
+			inputDataChanged();
+		}
+	}
+
+	private class PeriodComboBoxEnabledInputDataListener implements ActionListener {
+		@Override public void actionPerformed(ActionEvent e) {
+			setPeriodComboBoxEnabled();
+			inputDataChanged();
 		}
 	}
 }

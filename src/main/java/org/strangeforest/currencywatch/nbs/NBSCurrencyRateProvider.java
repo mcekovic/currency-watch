@@ -62,7 +62,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(conn.getOutputStream()))) {
 			out.print("index%3AbrKursneListe=&index%3Ayear=2010");
 			out.printf("&index%%3AinputCalendar1=%1$td.%1$tm.%1$tY.", date);
-			out.print("&index%3Avrsta=3&index%3Aprikaz=1&index%3AbuttonShow=Prika%C5%BEi");
+			out.print("&index%3Avrsta=1&index%3Aprikaz=5&index%3AbuttonShow=Prika%C5%BEi");
 			if (viewId != null)
 				out.printf("&com.sun.faces.VIEW=%1$s", viewId);
 			out.print("&index=index");
@@ -104,36 +104,23 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 
 	private RateValue findRate(BufferedReader reader, String symbolFrom, String symbolTo, Date date) throws IOException {
 		String line;
-		boolean foundCSV = false;
 		StringBuilder sb = new StringBuilder(500);
 		while ((line = reader.readLine()) != null) {
-			if (!foundCSV) {
-				foundCSV = line.trim().startsWith("BrojKursneListe");
-				if (!foundCSV) {
-					sb.append(line);
-					sb.append(Character.LINE_SEPARATOR);
-				}
-			}
-			else {
-				if (line.charAt(0) == ' ')
-					break;
-				String[] fields = line.split(",");
-				if (fields.length >= 7 && symbolTo.equals(fields[4])) {
-					double middle = Double.parseDouble(fields[6]) / Double.parseDouble(fields[5]);
-					RateValue rateValue = new RateValue(middle, middle, middle);
-					if (hasAnyListener())
-						notifyListeners(symbolFrom, symbolTo, date, rateValue);
-					return rateValue;
-				}
+			sb.append(line);
+			String[] fields = line.split(";");
+			if (fields.length >= 9 && symbolTo.equals(fields[4])) {
+				double bid = Double.parseDouble(fields[6]) / Double.parseDouble(fields[5]);
+				double ask = Double.parseDouble(fields[7]) / Double.parseDouble(fields[5]);
+				double middle = Double.parseDouble(fields[8]) / Double.parseDouble(fields[5]);
+				RateValue rateValue = new RateValue(bid, ask, middle);
+				if (hasAnyListener())
+					notifyListeners(symbolFrom, symbolTo, date, rateValue);
+				return rateValue;
 			}
 		}
-		if (!foundCSV) {
-			if (sb.toString().equals("null13"))
-				throw new CurrencyRateException(true);
-			else
-				throw new CurrencyRateException("Invalid response: " + sb.toString());
-		}
+		if (sb.toString().equals("null13"))
+			throw new CurrencyRateException(true);
 		else
-			throw new CurrencyRateException("Cannot find rate for " + symbolTo);
+			throw new CurrencyRateException("Cannot find rate for " + symbolTo + ". Invalid response: " + sb.toString());
 	}
 }
