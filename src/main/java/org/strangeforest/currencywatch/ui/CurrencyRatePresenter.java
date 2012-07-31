@@ -22,6 +22,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	private JProgressBar progressBar;
 	private final JLabel speedLabel;
 	private CurrencyRate currencyRate;
+	private Thread dataThread;
 	private Timer speedTimer;
 	private volatile int itemCount;
 	private volatile int currItems;
@@ -162,6 +163,8 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	}
 
 	private void applyPeriod(final CurrencyRate rate, TimeSeries series, int days, int maxPoints) {
+		if (dataThread != null)
+			dataThread.interrupt();
 		series.clear();
 		Calendar cal = getLastDate();
 		Date toDate = cal.getTime();
@@ -179,14 +182,15 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		updateProgressBar();
 		updateSpeedLabel();
 		speedTimer.start();
-		new Thread(new Runnable() {
+		dataThread = new Thread(new Runnable() {
 			@Override public void run() {
 				rate.getRates(dateRange.dates(step*10)); // Fetch outline first 
 				rate.getRates(dates);
 				speedTimer.stop();
 				updateSpeedLabel();
 			}
-		}).start();
+		});
+		dataThread.start();
 	}
 
 	private static Calendar getLastDate() {
@@ -208,6 +212,11 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	}
 
 	@Override public void close() {
-		provider.close();
+		if (provider != null)
+			provider.close();
+		if (dataThread != null)
+			dataThread.interrupt();
+		if (speedTimer != null)
+			speedTimer.stop();
 	}
 }

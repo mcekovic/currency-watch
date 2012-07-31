@@ -69,14 +69,17 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 			};
 			results.add(executor.submit(task));
 		}
-		while (!results.isEmpty()) {
+		while (!results.isEmpty() && !Thread.currentThread().isInterrupted()) {
 			try {
 				DateRateValue dateValue = results.remove().get();
 				if (dateValue != null)
 					dateValues.put(dateValue.date, dateValue.value);
 			}
-			catch (Exception ex) {
-				throw CurrencyRateException.wrap(ex);
+			catch (InterruptedException ignored) {
+				break;
+			}
+			catch (ExecutionException ex) {
+				throw new CurrencyRateException(ex);
 			}
 		}
 		return dateValues;
