@@ -6,7 +6,7 @@ public abstract class BaseCurrencyRateProvider implements CurrencyRateProvider {
 
 	@Override public void init() throws CurrencyRateException {}
 
-	@Override public void dispose() {}
+	@Override public void close() {}
 
 	@Override public Map<Date, RateValue> getRates(String symbolFrom, String symbolTo, Collection<Date> dates) throws CurrencyRateException {
 		Map<Date, RateValue> dateRates = new TreeMap<>();

@@ -54,68 +54,68 @@ public class ChainedCurrencyRateProviderTest {
 	public void getRateFromLocalProvider() throws CurrencyRateException {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
 		when(localProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenReturn(RATE);
-		UpdatableCurrencyRateProvider remoteProvider = mock(UpdatableCurrencyRateProvider.class);
+		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		ChainedCurrencyRateProvider chainedProvider = new ChainedCurrencyRateProvider(localProvider, remoteProvider);
-		chainedProvider.addListener(listener);
-		RateValue rate = chainedProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
+		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
+			RateValue rate = chainedProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
 
-		assertEquals(rate, RATE);
-		verify(remoteProvider, never()).getRate(anyString(), anyString(), any(Date.class));
-		verify(listener).newRate(any(CurrencyRateEvent.class));
+			assertEquals(rate, RATE);
+			verify(remoteProvider, never()).getRate(anyString(), anyString(), any(Date.class));
+			verify(listener).newRate(any(CurrencyRateEvent.class));
+		}
 	}
 
 	@Test
 	public void getRateFromRemoteProvider() throws CurrencyRateException {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
 		when(localProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenReturn(null);
-		UpdatableCurrencyRateProvider remoteProvider = mock(UpdatableCurrencyRateProvider.class);
+		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
 		when(remoteProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenReturn(RATE);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		ChainedCurrencyRateProvider chainedProvider = new ChainedCurrencyRateProvider(localProvider, remoteProvider);
-		chainedProvider.addListener(listener);
-		RateValue rate = chainedProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
+		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
+			RateValue rate = chainedProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
 
-		assertEquals(rate, RATE);
-		verify(localProvider).setRate(eq(SYMBOL_FROM), eq(SYMBOL_TO), eq(DATE), eq(RATE));
-		verify(listener).newRate(any(CurrencyRateEvent.class));
+			assertEquals(rate, RATE);
+			verify(localProvider).setRate(eq(SYMBOL_FROM), eq(SYMBOL_TO), eq(DATE), eq(RATE));
+			verify(listener).newRate(any(CurrencyRateEvent.class));
+		}
 	}
 
 	@Test
 	public void getAllRatesFromLocalProvider() throws CurrencyRateException {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
 		when(localProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet())).thenReturn(RATES);
-		UpdatableCurrencyRateProvider remoteProvider = mock(UpdatableCurrencyRateProvider.class);
+		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		ChainedCurrencyRateProvider chainedProvider = new ChainedCurrencyRateProvider(localProvider, remoteProvider);
-		chainedProvider.addListener(listener);
-		Map<Date, RateValue> rates = chainedProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
+		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
+			Map<Date, RateValue> rates = chainedProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
 
-		assertEquals(rates, RATES);
-		verify(remoteProvider, never()).getRate(anyString(), anyString(), any(Date.class));
-		verify(remoteProvider, never()).getRates(anyString(), anyString(), any(Collection.class));
-		verify(listener).newRates(argThat(matchesEventCount(RATES.size())));
-		verifyNoMoreInteractions(listener);
+			assertEquals(rates, RATES);
+			verify(remoteProvider, never()).getRate(anyString(), anyString(), any(Date.class));
+			verify(remoteProvider, never()).getRates(anyString(), anyString(), any(Collection.class));
+			verify(listener).newRates(argThat(matchesEventCount(RATES.size())));
+			verifyNoMoreInteractions(listener);
+		}
 	}
 
 	@Test
 	public void getAllRatesFromRemoteProvider() throws CurrencyRateException {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
 		when(localProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet())).thenReturn(new HashMap<Date, RateValue>());
-		UpdatableCurrencyRateProvider remoteProvider = mock(UpdatableCurrencyRateProvider.class);
+		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
 		when(remoteProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet())).thenReturn(RATES);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		ChainedCurrencyRateProvider chainedProvider = new ChainedCurrencyRateProvider(localProvider, remoteProvider);
-		chainedProvider.addListener(listener);
-		Map<Date, RateValue> rates = chainedProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
+		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
+			Map<Date, RateValue> rates = chainedProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
 
-		assertEquals(rates, RATES);
-		verify(listener).newRates(argThat(matchesEventCount(RATES.size())));
-		verifyNoMoreInteractions(listener);
+			assertEquals(rates, RATES);
+			verify(listener).newRates(argThat(matchesEventCount(RATES.size())));
+			verifyNoMoreInteractions(listener);
+		}
 	}
 
 	@Test
@@ -125,21 +125,48 @@ public class ChainedCurrencyRateProviderTest {
 
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
 		when(localProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet())).thenReturn(localRates);
-		UpdatableCurrencyRateProvider remoteProvider = mock(UpdatableCurrencyRateProvider.class);
+		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
 		when(remoteProvider.getRates(SYMBOL_FROM, SYMBOL_TO, remoteRates.keySet())).thenReturn(remoteRates);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
+		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
+			Map<Date, RateValue> rates = chainedProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
+
+			assertEquals(rates, RATES);
+			verify(remoteProvider, never()).getRate(anyString(), anyString(), any(Date.class));
+			InOrder inOrder = inOrder(listener);
+	//		inOrder.verify(listener).newRates(argThat(matchesEventCount(3)));
+	//		inOrder.verify(listener).newRates(argThat(matchesEventCount(2)));
+			inOrder.verify(listener, times(2)).newRates(any(CurrencyRateEvent[].class)); // Mockito/Hamcrest 1.3 incompatibility workaround
+			verifyNoMoreInteractions(listener);
+		}
+	}
+
+	@Test
+	public void ratesFromObservableRemoteProviderArePropagated() throws CurrencyRateException {
+		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
+		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
+		when(remoteProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenReturn(RATE);
+		when(remoteProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet())).thenReturn(RATES);
+		ObservableCurrencyRateProviderProxy observableRemoteProvider = new ObservableCurrencyRateProviderProxy(remoteProvider);
+		CurrencyRateListener listener = mock(CurrencyRateListener.class);
+
+		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, observableRemoteProvider, listener)) {
+			RateValue rate = observableRemoteProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
+			Map<Date, RateValue> rates = observableRemoteProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
+
+			assertEquals(rate, RATE);
+			assertEquals(rates, RATES);
+			verify(listener).newRate(any(CurrencyRateEvent.class));
+			verify(listener).newRates(argThat(matchesEventCount(RATES.size())));
+		}
+	}
+
+	private ChainedCurrencyRateProvider createChainedProvider(UpdatableCurrencyRateProvider localProvider, CurrencyRateProvider remoteProvider, CurrencyRateListener listener) throws CurrencyRateException {
 		ChainedCurrencyRateProvider chainedProvider = new ChainedCurrencyRateProvider(localProvider, remoteProvider);
 		chainedProvider.addListener(listener);
-		Map<Date, RateValue> rates = chainedProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
-
-		assertEquals(rates, RATES);
-		verify(remoteProvider, never()).getRate(anyString(), anyString(), any(Date.class));
-		InOrder inOrder = inOrder(listener);
-//		inOrder.verify(listener).newRates(argThat(matchesEventCount(3)));
-//		inOrder.verify(listener).newRates(argThat(matchesEventCount(2)));
-		inOrder.verify(listener, times(2)).newRates(any(CurrencyRateEvent[].class)); // Mockito/Hamcrest 1.3 incompatibility workaround
-		verifyNoMoreInteractions(listener);
+		chainedProvider.init();
+		return chainedProvider;
 	}
 
 	private static Matcher<CurrencyRateEvent[]> matchesEventCount(int count) {

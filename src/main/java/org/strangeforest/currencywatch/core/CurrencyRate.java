@@ -3,9 +3,8 @@ package org.strangeforest.currencywatch.core;
 import java.util.*;
 
 import com.finsoft.concurrent.*;
-import com.finsoft.util.*;
 
-public class CurrencyRate extends BaseCurrencyRate implements Disposable {
+public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 
 	private final LockableMap<Date, RateValue> dateRates;
 	private final CurrencyRateProvider provider;
@@ -138,7 +137,7 @@ public class CurrencyRate extends BaseCurrencyRate implements Disposable {
 		}
 	}
 
-	@Override public void dispose() {
+	@Override public void close() {
 		listeners.clear();
 		if (isProviderObservable)
 			((ObservableCurrencyRateProvider)provider).removeListener(providerListener);

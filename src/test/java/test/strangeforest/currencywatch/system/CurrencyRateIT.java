@@ -38,7 +38,7 @@ public class CurrencyRateIT {
 
 	@AfterClass
 	public void cleanUp() {
-		currencyRateProvider.dispose();
+		currencyRateProvider.close();
 	}
 
 	@Test

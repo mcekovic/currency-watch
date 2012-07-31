@@ -39,7 +39,7 @@ public class CurrencyChartForm {
 		frame.setContentPane(form.formPanel);
 		form.exitButton.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				form.presenter.dispose();
+				form.presenter.close();
 				frame.dispose();
 			}
 		});

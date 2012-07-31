@@ -15,7 +15,7 @@ import org.strangeforest.currencywatch.nbs.*;
 
 import com.finsoft.util.*;
 
-public class CurrencyRatePresenter implements Disposable {
+public class CurrencyRatePresenter implements AutoCloseable {
 
 	private CurrencyRateProvider provider;
 	private ChartPanel chartPanel;
@@ -127,7 +127,7 @@ public class CurrencyRatePresenter implements Disposable {
 
 	private CurrencyRate getCurrencyRate(String symbolTo, final TimeSeries series, final TimeSeries movAvgSeries, final TimeSeries[] bollBandsSeries, final int movAvgPeriod) {
 		if (currencyRate != null)
-			currencyRate.dispose();
+			currencyRate.close();
 		currencyRate = new CurrencyRate("DIN", symbolTo, provider);
 		currencyRate.addListener(new CurrencyRateListener() {
 			@Override public void newRate(final CurrencyRateEvent rateEvent) {
@@ -212,7 +212,7 @@ public class CurrencyRatePresenter implements Disposable {
 		speedLabel.setText(String.format("%8.1f", speed) + " rate/s");
 	}
 
-	@Override public void dispose() {
-		provider.dispose();
+	@Override public void close() {
+		provider.close();
 	}
 }

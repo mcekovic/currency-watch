@@ -24,9 +24,9 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		db = Db4oEmbedded.openFile(dbConfig, dbFileName);
 	}
 
-	@Override public void dispose() {
+	@Override public void close() {
 		db.close();
-		super.dispose();
+		super.close();
 	}
 
 	private CurrencyRateObject getCurrencyRate(ObjectContainer db, String symbolFrom, String symbolTo) {

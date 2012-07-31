@@ -2,9 +2,7 @@ package org.strangeforest.currencywatch.core;
 
 import java.util.*;
 
-import com.finsoft.util.*;
-
-public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvider implements Disposable {
+public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvider {
 
 	private final UpdatableCurrencyRateProvider localProvider;
 	private final CurrencyRateProvider remoteProvider;
@@ -38,11 +36,11 @@ public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvi
 		remoteProvider.init();
 	}
 
-	@Override public void dispose() {
+	@Override public void close() {
 		unsubscribeFromLocalProvider();
-		localProvider.dispose();
+		localProvider.close();
 		unsubscribeFromRemoteProvider();
-		remoteProvider.dispose();
+		remoteProvider.close();
 	}
 
 	@Override public RateValue getRate(String symbolFrom, String symbolTo, Date date) throws CurrencyRateException {

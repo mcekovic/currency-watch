@@ -18,14 +18,14 @@ package test.strangeforest.currencywatch.unit;
 
 import java.util.*;
 
+import org.mockito.*;
 import org.mockito.invocation.*;
 import org.mockito.stubbing.*;
 import org.strangeforest.currencywatch.core.*;
-import org.testng.*;
 import org.testng.annotations.*;
 
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 public class ParallelCurrencyRateProviderProxyTest {
 
@@ -50,12 +50,12 @@ public class ParallelCurrencyRateProviderProxyTest {
 		when(provider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenReturn(RATE);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		ParallelCurrencyRateProviderProxy parallelProvider = new ParallelCurrencyRateProviderProxy(provider, 1);
-		parallelProvider.addListener(listener);
-		RateValue rate = parallelProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
+		try (ParallelCurrencyRateProviderProxy parallelProvider = createParallelProvider(provider, listener, 1)) {
+			RateValue rate = parallelProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
 
-		assertEquals(rate, RATE);
-		verify(listener).newRate(any(CurrencyRateEvent.class));
+			assertEquals(rate, RATE);
+			verify(listener).newRate(any(CurrencyRateEvent.class));
+		}
 	}
 
 	@Test
@@ -68,12 +68,12 @@ public class ParallelCurrencyRateProviderProxyTest {
 		});
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		ParallelCurrencyRateProviderProxy parallelProvider = new ParallelCurrencyRateProviderProxy(provider, 2);
-		parallelProvider.addListener(listener);
-		Map<Date, RateValue> rates = parallelProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
+		try (ParallelCurrencyRateProviderProxy parallelProvider = createParallelProvider(provider, listener, 2)) {
+			Map<Date, RateValue> rates = parallelProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
 
-		assertEquals(rates, RATES);
-		verify(listener, times(RATES.size())).newRate(any(CurrencyRateEvent.class));
+			assertEquals(rates, RATES);
+			verify(listener, times(RATES.size())).newRate(any(CurrencyRateEvent.class));
+		}
 	}
 
 	@Test
@@ -82,13 +82,13 @@ public class ParallelCurrencyRateProviderProxyTest {
 		when(provider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenThrow(new CurrencyRateException("Booom!")).thenReturn(RATE);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		ParallelCurrencyRateProviderProxy parallelProvider = new ParallelCurrencyRateProviderProxy(provider, 1);
-		parallelProvider.addListener(listener);
-		Map<Date, RateValue> rates = parallelProvider.getRates(SYMBOL_FROM, SYMBOL_TO, Collections.singleton(DATE));
+		try (ParallelCurrencyRateProviderProxy parallelProvider = createParallelProvider(provider, listener, 1)) {
+			Map<Date, RateValue> rates = parallelProvider.getRates(SYMBOL_FROM, SYMBOL_TO, Collections.singleton(DATE));
 
-		assertEquals(rates, Collections.singletonMap(DATE, RATE));
-		verify(provider, times(2)).getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
-		verify(listener).newRate(any(CurrencyRateEvent.class));
+			assertEquals(rates, Collections.singletonMap(DATE, RATE));
+			verify(provider, times(2)).getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
+			verify(listener).newRate(any(CurrencyRateEvent.class));
+		}
 	}
 
 	@Test
@@ -97,17 +97,26 @@ public class ParallelCurrencyRateProviderProxyTest {
 		when(provider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenThrow(new CurrencyRateException("Booom!"));
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		ParallelCurrencyRateProviderProxy parallelProvider = new ParallelCurrencyRateProviderProxy(provider, 1);
+		try (ParallelCurrencyRateProviderProxy parallelProvider = createParallelProvider(provider, listener, 1)) {
+			try {
+				parallelProvider.getRates(SYMBOL_FROM, SYMBOL_TO, Collections.singleton(DATE));
+				fail("Exception is not thrown.");
+			}
+			catch (CurrencyRateException ex) {
+				InOrder inOrder = inOrder(provider);
+				inOrder.verify(provider).init();
+				inOrder.verify(provider, times(3)).getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
+				inOrder.verify(provider).close();
+				inOrder.verify(provider).init();
+				verify(listener, never()).newRate(any(CurrencyRateEvent.class));
+			}
+		}
+	}
+
+	private ParallelCurrencyRateProviderProxy createParallelProvider(CurrencyRateProvider provider, CurrencyRateListener listener, int threadCount) throws CurrencyRateException {
+		ParallelCurrencyRateProviderProxy parallelProvider = new ParallelCurrencyRateProviderProxy(provider, threadCount);
 		parallelProvider.addListener(listener);
-		try {
-			parallelProvider.getRates(SYMBOL_FROM, SYMBOL_TO, Collections.singleton(DATE));
-			Assert.fail("Exception is not thrown.");
-		}
-		catch (CurrencyRateException ex) {
-			verify(provider, times(3)).getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
-			verify(provider).dispose();
-			verify(provider).init();
-			verify(listener, never()).newRate(any(CurrencyRateEvent.class));
-		}
+		parallelProvider.init();
+		return parallelProvider;
 	}
 }

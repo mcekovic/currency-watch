@@ -28,7 +28,7 @@ public class Db4oCurrencyRateProviderIT {
 
 	@AfterClass
 	private void cleanUp() {
-		currencyRateProvider.dispose();
+		currencyRateProvider.close();
 	}
 
 	@Test

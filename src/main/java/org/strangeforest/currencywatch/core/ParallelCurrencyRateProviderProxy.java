@@ -17,8 +17,8 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 		executor = Executors.newFixedThreadPool(threadCount);
 	}
 
-	@Override public void dispose() {
-		super.dispose();
+	@Override public void close() {
+		super.close();
 		executor.shutdownNow();
 	}
 
@@ -59,7 +59,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 						}
 						else {
 							if (resetProviderOnRetryFail) {
-								provider.dispose();
+								provider.close();
 								provider.init();
 							}
 							throw ex;

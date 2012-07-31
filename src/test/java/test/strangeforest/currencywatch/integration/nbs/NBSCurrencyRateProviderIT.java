@@ -18,7 +18,7 @@ public class NBSCurrencyRateProviderIT {
 
 	@AfterClass
 	public void cleanUp() {
-		currencyRateProvider.dispose();
+		currencyRateProvider.close();
 	}
 
 	@Test
