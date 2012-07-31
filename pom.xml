@@ -165,6 +165,11 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.5.9.201207300726</version>
+				<configuration>
+					<includes>
+						<include>org/strangeforest/**</include>
+					</includes>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -178,9 +183,6 @@
 						</goals>
 						<configuration>
 							<propertyName>jacoco.agent.argLine</propertyName>
-							<includes>
-								<include>org/strangeforest/**</include>
-							</includes>
 							<destFile>${project.build.directory}/jacoco-it.exec</destFile>
 						</configuration>
 					</execution>
