@@ -1,12 +1,13 @@
 package test.strangeforest.currencywatch.integration.db4o;
 
-import java.io.*;
 import java.util.*;
 
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.db4o.*;
 import org.testng.*;
 import org.testng.annotations.*;
+
+import test.strangeforest.currencywatch.integration.*;
 
 import static test.strangeforest.currencywatch.TestData.*;
 
@@ -18,7 +19,7 @@ public class Db4oCurrencyRateProviderIT {
 
 	@BeforeClass
 	private void setUp() {
-		deleteDb4oDataFile();
+		ITUtil.deleteFile(DB4O_DATA_FILE);
 		currencyRateProvider = new Db4oCurrencyRateProvider(DB4O_DATA_FILE);
 	}
 
@@ -47,11 +48,5 @@ public class Db4oCurrencyRateProviderIT {
 	public void getRates() {
 		Map<Date, RateValue> fetchedRates = currencyRateProvider.getRates(SYMBOL_FROM, SYMBOL_TO, DATES);
 		Assert.assertEquals(fetchedRates, RATES);
-	}
-
-	public static void deleteDb4oDataFile() {
-		File file = new File(DB4O_DATA_FILE);
-		file.delete();
-		file.deleteOnExit();
 	}
 }

@@ -1,11 +1,11 @@
-package test.strangeforest.currencywatch.system;
+package test.strangeforest.currencywatch.integration.system;
 
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.db4o.*;
 import org.strangeforest.currencywatch.nbs.*;
 import org.testng.annotations.*;
 
-import test.strangeforest.currencywatch.integration.db4o.*;
+import test.strangeforest.currencywatch.integration.*;
 
 import static test.strangeforest.currencywatch.TestData.*;
 
@@ -24,7 +24,7 @@ public class CurrencyRateIT {
 			}
 		});
 		nbsProvider.init();
-		Db4oCurrencyRateProviderIT.deleteDb4oDataFile();
+		ITUtil.deleteFile(DB4O_DATA_FILE);
 		currencyRateProvider = new ChainedCurrencyRateProvider(
 			new Db4oCurrencyRateProvider(DB4O_DATA_FILE),
 			new ParallelCurrencyRateProviderProxy(nbsProvider, 5)
