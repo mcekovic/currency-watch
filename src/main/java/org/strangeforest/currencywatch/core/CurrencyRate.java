@@ -24,20 +24,18 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 		if (isProviderObservable) {
 			providerListener = new CurrencyRateListener() {
 				@Override public void newRate(CurrencyRateEvent rateEvent) {
-					RateValue rateValue = rateEvent.getRate();
-					if (rateValue != null) {
-						RateValue oldRateValue = dateRates.lockedPut(rateEvent.getDate(), rateValue);
-						if (oldRateValue == null || !oldRateValue.equals(rateValue))
-							notifyListeners(rateEvent);
-					}
+					if (putRate(rateEvent.getDate(), rateEvent.getRate()))
+						notifyListeners(rateEvent);
 				}
 				@Override public void newRates(CurrencyRateEvent[] rateEvents) {
+					int eventCount = rateEvents.length;
+					List<CurrencyRateEvent> newRateEvents = new ArrayList<>(eventCount);
 					for (CurrencyRateEvent rateEvent : rateEvents) {
-						RateValue rateValue = rateEvent.getRate();
-						if (rateValue != null)
-							dateRates.lockedPut(rateEvent.getDate(), rateValue);
+						if (putRate(rateEvent.getDate(), rateEvent.getRate()))
+							newRateEvents.add(rateEvent);
 					}
-					notifyListeners(rateEvents);
+					if (!newRateEvents.isEmpty())
+						notifyListeners(newRateEvents.size() == eventCount ? rateEvents : newRateEvents.toArray(new CurrencyRateEvent[newRateEvents.size()]));
 				}
 			};
 			((ObservableCurrencyRateProvider)provider).addListener(providerListener);
@@ -52,8 +50,11 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 			RateValue rateValue = dateRates.get(date);
 			if (rateValue == null && provider != null) {
 				rateValue = provider.getRate(symbolFrom, symbolTo, date);
-				if (!isProviderObservable)
-					setRate(date, rateValue, false);
+				if (!isProviderObservable && rateValue != null) {
+					RateValue oldRateValue = dateRates.put(date, rateValue);
+					if (oldRateValue == null || !oldRateValue.equals(rateValue))
+						notifyListeners(date, rateValue);
+				}
 			}
 			return rateValue;
 		}
@@ -85,30 +86,31 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 				dateRates.unlock(date);
 			}
 		}
-		if (provider != null) {
-			try {
-				Map<Date, RateValue> fetchedRates = provider.getRates(symbolFrom, symbolTo, datesForFetch);
+		if (provider != null && !datesForFetch.isEmpty()) {
+			Map<Date, RateValue> fetchedRates = provider.getRates(symbolFrom, symbolTo, datesForFetch);
+			if (!isProviderObservable) {
+				List<CurrencyRateEvent> newRateEvents = new ArrayList<>(fetchedRates.size());
 				for (Map.Entry<Date, RateValue> dateRate : fetchedRates.entrySet()) {
 					Date date = dateRate.getKey();
-					RateValue rateValue = dateRate.getValue();
-					if (!isProviderObservable)
-						setRate(date, rateValue, true);
-					resultRates.put(date, rateValue);
+					RateValue rate = dateRate.getValue();
+					if (putRate(date, rate))
+						newRateEvents.add(new CurrencyRateEvent(this, symbolFrom, symbolTo, date, rate));
 				}
+				if (!newRateEvents.isEmpty())
+					notifyListeners(newRateEvents.toArray(new CurrencyRateEvent[newRateEvents.size()]));
 			}
-			catch (CurrencyRateException ex) {
-				ex.printStackTrace();
-			}
+			resultRates.putAll(fetchedRates);
 		}
 		return resultRates;
 	}
 
-	private void setRate(Date date, RateValue rateValue, boolean locked) {
+	private boolean putRate(Date date, RateValue rateValue) {
 		if (rateValue != null) {
-			RateValue oldRateValue = locked ? dateRates.lockedPut(date, rateValue) : dateRates.put(date, rateValue);
-			if (oldRateValue == null || !oldRateValue.equals(rateValue))
-				notifyListeners(date, rateValue);
+			RateValue oldRateValue = dateRates.lockedPut(date, rateValue);
+			return oldRateValue == null || !oldRateValue.equals(rateValue);
 		}
+		else
+			return false;
 	}
 
 	public void addListener(CurrencyRateListener listener) {
