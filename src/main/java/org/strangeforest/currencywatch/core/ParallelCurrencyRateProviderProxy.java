@@ -38,7 +38,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 		this.resetProviderOnRetryFail = resetProviderOnRetryFail;
 	}
 
-	@Override public Map<Date, RateValue> getRates(final String symbolFrom, final String symbolTo, Collection<Date> dates) throws CurrencyRateException {
+	@Override public Map<Date, RateValue> getRates(final String symbolFrom, final String symbolTo, Collection<Date> dates) {
 		Map<Date, RateValue> dateValues = new TreeMap<>();
 		final AtomicInteger retriesLeft = new AtomicInteger(retryCount);
 		final Queue<Future<DateRateValue>> results = new ArrayDeque<>();

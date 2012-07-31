@@ -45,7 +45,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 	}
 
 	@Test
-	public void getRate() throws CurrencyRateException {
+	public void getRate() {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
 		when(provider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenReturn(RATE);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
@@ -59,7 +59,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 	}
 
 	@Test
-	public void getRates() throws CurrencyRateException {
+	public void getRates() {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
 		when(provider.getRate(eq(SYMBOL_FROM), eq(SYMBOL_TO), any(Date.class))).thenAnswer(new Answer<Object>() {
 			@Override public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -77,7 +77,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 	}
 
 	@Test
-	public void getRatesRetried() throws CurrencyRateException {
+	public void getRatesRetried() {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
 		when(provider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenThrow(new CurrencyRateException("Booom!")).thenReturn(RATE);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
@@ -92,7 +92,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 	}
 
 	@Test
-	public void getRatesRetryFail() throws CurrencyRateException {
+	public void getRatesRetryFail() {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
 		when(provider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenThrow(new CurrencyRateException("Booom!"));
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
@@ -113,7 +113,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 		}
 	}
 
-	private ParallelCurrencyRateProviderProxy createParallelProvider(CurrencyRateProvider provider, CurrencyRateListener listener, int threadCount) throws CurrencyRateException {
+	private ParallelCurrencyRateProviderProxy createParallelProvider(CurrencyRateProvider provider, CurrencyRateListener listener, int threadCount) {
 		ParallelCurrencyRateProviderProxy parallelProvider = new ParallelCurrencyRateProviderProxy(provider, threadCount);
 		parallelProvider.addListener(listener);
 		parallelProvider.init();

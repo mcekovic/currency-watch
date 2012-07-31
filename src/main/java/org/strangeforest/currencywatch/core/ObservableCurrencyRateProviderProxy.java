@@ -30,7 +30,7 @@ public class ObservableCurrencyRateProviderProxy extends BaseObservableCurrencyR
 		return provider;
 	}
 
-	@Override public void init() throws CurrencyRateException {
+	@Override public void init() {
 		provider.init();
 	}
 
@@ -39,14 +39,14 @@ public class ObservableCurrencyRateProviderProxy extends BaseObservableCurrencyR
 		provider.close();
 	}
 
-	@Override public RateValue getRate(String symbolFrom, String symbolTo, Date date) throws CurrencyRateException {
+	@Override public RateValue getRate(String symbolFrom, String symbolTo, Date date) {
 		RateValue rateValue = provider.getRate(symbolFrom, symbolTo, date);
 		if (!isProviderObservable && hasAnyListener())
 			notifyListeners(symbolFrom, symbolTo, date, rateValue);
 		return rateValue;
 	}
 
-	@Override public Map<Date, RateValue> getRates(String symbolFrom, String symbolTo, Collection<Date> dates) throws CurrencyRateException {
+	@Override public Map<Date, RateValue> getRates(String symbolFrom, String symbolTo, Collection<Date> dates) {
 		Map<Date, RateValue> dateRates = provider.getRates(symbolFrom, symbolTo, dates);
 		if (!isProviderObservable && hasAnyListener())
 			notifyListeners(symbolFrom, symbolTo, dateRates);

@@ -11,7 +11,7 @@ public class NBSCurrencyRateProviderIT {
 	private CurrencyRateProvider currencyRateProvider;
 
 	@BeforeClass
-	public void setUp() throws CurrencyRateException {
+	public void setUp() {
 		currencyRateProvider = new NBSCurrencyRateProvider();
 		currencyRateProvider.init();
 	}
@@ -22,7 +22,7 @@ public class NBSCurrencyRateProviderIT {
 	}
 
 	@Test
-	public void getRateTest() throws CurrencyRateException {
+	public void getRateTest() {
 		RateValue rate = currencyRateProvider.getRate("DIN", "EUR", new GregorianCalendar(2006, 11, 6).getTime());
 		System.out.println(rate);
 	}

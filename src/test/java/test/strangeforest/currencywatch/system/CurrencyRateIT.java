@@ -17,7 +17,7 @@ public class CurrencyRateIT {
 	private static final String DB4O_DATA_FILE = "data/test-rates.db4o";
 
 	@BeforeClass
-	public void setUp() throws CurrencyRateException {
+	public void setUp() {
 		ObservableCurrencyRateProvider nbsProvider = new NBSCurrencyRateProvider();
 		nbsProvider.addListener(new CurrencyRateAdapter() {
 			@Override public void newRate(CurrencyRateEvent rateEvent) {
@@ -42,7 +42,7 @@ public class CurrencyRateIT {
 	}
 
 	@Test
-	public void test() throws CurrencyRateException {
+	public void test() {
 		CurrencyRate rate = new CurrencyRate("DIN", "EUR", currencyRateProvider);
 		System.out.println(rate.getRates(new DateRange(fromDate, toDate)));
 	}

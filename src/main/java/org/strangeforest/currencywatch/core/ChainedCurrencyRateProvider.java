@@ -31,7 +31,7 @@ public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvi
 			rateListener = null;
 	}
 
-	@Override public void init() throws CurrencyRateException {
+	@Override public void init() {
 		localProvider.init();
 		remoteProvider.init();
 	}
@@ -43,7 +43,7 @@ public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvi
 		remoteProvider.close();
 	}
 
-	@Override public RateValue getRate(String symbolFrom, String symbolTo, Date date) throws CurrencyRateException {
+	@Override public RateValue getRate(String symbolFrom, String symbolTo, Date date) {
 		RateValue rateValue = localProvider.getRate(symbolFrom, symbolTo, date);
 		if (rateValue == null) {
 			rateValue = remoteProvider.getRate(symbolFrom, symbolTo, date);
@@ -57,7 +57,7 @@ public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvi
 		return rateValue;
 	}
 
-	@Override public Map<Date, RateValue> getRates(String symbolFrom, String symbolTo, Collection<Date> dates) throws CurrencyRateException {
+	@Override public Map<Date, RateValue> getRates(String symbolFrom, String symbolTo, Collection<Date> dates) {
 		Map<Date, RateValue> dateRates = localProvider.getRates(symbolFrom, symbolTo, dates);
 		Collection<Date> missingDates = new HashSet<>(dates);
 		if (!dateRates.isEmpty()) {

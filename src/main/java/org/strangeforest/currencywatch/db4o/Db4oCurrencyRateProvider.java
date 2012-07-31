@@ -39,7 +39,7 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		}
 	}
 
-	@Override public RateValue getRate(final String symbolFrom, final String symbolTo, final Date date) throws CurrencyRateException {
+	@Override public RateValue getRate(final String symbolFrom, final String symbolTo, final Date date) {
 		return queryDb4o(new Db4oQueryCallback<RateValue>() {
 			@Override public RateValue queryDb4o(ObjectContainer db) {
 				CurrencyRateObject rate = getCurrencyRate(db, symbolFrom, symbolTo);
@@ -48,7 +48,7 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		});
 	}
 
-	@Override public Map<Date, RateValue> getRates(final String symbolFrom, final String symbolTo, final Collection<Date> dates) throws CurrencyRateException {
+	@Override public Map<Date, RateValue> getRates(final String symbolFrom, final String symbolTo, final Collection<Date> dates) {
 		return queryDb4o(new Db4oQueryCallback<Map<Date, RateValue>>() {
 			@Override public Map<Date, RateValue> queryDb4o(ObjectContainer db) {
 				Map<Date, RateValue> dateRates = new HashMap<>();
@@ -62,7 +62,7 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		});
 	}
 
-	@Override public void setRate(final String symbolFrom, final String symbolTo, final Date date, final RateValue rateValue) throws CurrencyRateException {
+	@Override public void setRate(final String symbolFrom, final String symbolTo, final Date date, final RateValue rateValue) {
 		doInDb4o(new Db4oCallback() {
 			@Override public void doInDb4o(ObjectContainer db) {
 				CurrencyRateObject rate = getCurrencyRate(db, symbolFrom, symbolTo);
@@ -74,7 +74,7 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		});
 	}
 
-	@Override public void setRates(final String symbolFrom, final String symbolTo, final Map<Date, RateValue> dateRates) throws CurrencyRateException {
+	@Override public void setRates(final String symbolFrom, final String symbolTo, final Map<Date, RateValue> dateRates) {
 		doInDb4o(new Db4oCallback() {
 			@Override public void doInDb4o(ObjectContainer db) {
 				CurrencyRateObject rate = getCurrencyRate(db, symbolFrom, symbolTo);

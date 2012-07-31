@@ -51,7 +51,7 @@ public class ChainedCurrencyRateProviderTest {
 	}
 
 	@Test
-	public void getRateFromLocalProvider() throws CurrencyRateException {
+	public void getRateFromLocalProvider() {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
 		when(localProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenReturn(RATE);
 		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
@@ -67,7 +67,7 @@ public class ChainedCurrencyRateProviderTest {
 	}
 
 	@Test
-	public void getRateFromRemoteProvider() throws CurrencyRateException {
+	public void getRateFromRemoteProvider() {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
 		when(localProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenReturn(null);
 		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
@@ -84,7 +84,7 @@ public class ChainedCurrencyRateProviderTest {
 	}
 
 	@Test
-	public void getAllRatesFromLocalProvider() throws CurrencyRateException {
+	public void getAllRatesFromLocalProvider() {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
 		when(localProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet())).thenReturn(RATES);
 		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
@@ -102,7 +102,7 @@ public class ChainedCurrencyRateProviderTest {
 	}
 
 	@Test
-	public void getAllRatesFromRemoteProvider() throws CurrencyRateException {
+	public void getAllRatesFromRemoteProvider() {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
 		when(localProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet())).thenReturn(new HashMap<Date, RateValue>());
 		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
@@ -119,7 +119,7 @@ public class ChainedCurrencyRateProviderTest {
 	}
 
 	@Test
-	public void getRatesFromBothProviders() throws CurrencyRateException {
+	public void getRatesFromBothProviders() {
 		NavigableMap<Date, RateValue> localRates = RATES.subMap(DATE1, true, DATE3, true);
 		NavigableMap<Date, RateValue> remoteRates = RATES.subMap(DATE4, true, DATE5, true);
 
@@ -143,7 +143,7 @@ public class ChainedCurrencyRateProviderTest {
 	}
 
 	@Test
-	public void ratesFromObservableRemoteProviderArePropagated() throws CurrencyRateException {
+	public void ratesFromObservableRemoteProviderArePropagated() {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
 		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
 		when(remoteProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenReturn(RATE);
@@ -162,7 +162,7 @@ public class ChainedCurrencyRateProviderTest {
 		}
 	}
 
-	private ChainedCurrencyRateProvider createChainedProvider(UpdatableCurrencyRateProvider localProvider, CurrencyRateProvider remoteProvider, CurrencyRateListener listener) throws CurrencyRateException {
+	private ChainedCurrencyRateProvider createChainedProvider(UpdatableCurrencyRateProvider localProvider, CurrencyRateProvider remoteProvider, CurrencyRateListener listener) {
 		ChainedCurrencyRateProvider chainedProvider = new ChainedCurrencyRateProvider(localProvider, remoteProvider);
 		chainedProvider.addListener(listener);
 		chainedProvider.init();

@@ -1,6 +1,6 @@
 package org.strangeforest.currencywatch.core;
 
-public class CurrencyRateException extends  Exception {
+public class CurrencyRateException extends RuntimeException {
 
 	private boolean recoverable;
 

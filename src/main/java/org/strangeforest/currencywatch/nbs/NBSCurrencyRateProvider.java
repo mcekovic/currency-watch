@@ -14,7 +14,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 
 	private static final String NBS_URL = "http://www.nbs.rs/kursnaListaModul/naZeljeniDan.faces";
 
-	@Override public void init() throws CurrencyRateException {
+	@Override public void init() {
 		try {
 			URLConnection conn = new URL(NBS_URL + "?lang=lat").openConnection();
 			conn.setDoInput(true);
@@ -32,7 +32,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		}
 	}
 
-	@Override public RateValue getRate(String symbolFrom, String symbolTo, Date date) throws CurrencyRateException {
+	@Override public RateValue getRate(String symbolFrom, String symbolTo, Date date) {
 		try {
 			while (true) {
 				try {
@@ -49,7 +49,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		}
 	}
 
-	private RateValue doGetRate(String symbolFrom, String symbolTo, Date date) throws IOException, CurrencyRateException {
+	private RateValue doGetRate(String symbolFrom, String symbolTo, Date date) throws IOException {
 		URLConnection conn = new URL(NBS_URL).openConnection();
 		conn.setDoInput(true);
 		conn.setDoOutput(true);
@@ -102,7 +102,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		}
 	}
 
-	private RateValue findRate(BufferedReader reader, String symbolFrom, String symbolTo, Date date) throws IOException, CurrencyRateException {
+	private RateValue findRate(BufferedReader reader, String symbolFrom, String symbolTo, Date date) throws IOException {
 		String line;
 		boolean foundCSV = false;
 		StringBuilder sb = new StringBuilder(500);

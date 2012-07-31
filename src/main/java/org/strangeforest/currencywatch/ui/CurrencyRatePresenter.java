@@ -85,12 +85,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			new Db4oCurrencyRateProvider("data/currency-rates.db4o"),
 			new ParallelCurrencyRateProviderProxy(remoteProvider, REMOTE_PROVIDER_THREAD_COUNT)
 		);
-		try {
-			provider.init();
-		}
-		catch (CurrencyRateException ex) {
-			ex.printStackTrace();
-		}
+		provider.init();
 		speedTimer = new Timer(1000, new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
 				updateSpeedLabel();

@@ -32,12 +32,12 @@ public class Db4oCurrencyRateProviderIT {
 	}
 
 	@Test
-	public void setRateTest() throws CurrencyRateException {
+	public void setRateTest() {
 		currencyRateProvider.setRate("DIN", "EUR", date, rate);
 	}
 
 	@Test(dependsOnMethods = "setRateTest")
-	public void getRateTest() throws CurrencyRateException {
+	public void getRateTest() {
 		RateValue fetchedRate = currencyRateProvider.getRate("DIN", "EUR", date);
 		Assert.assertEquals(fetchedRate, rate);
 	}
