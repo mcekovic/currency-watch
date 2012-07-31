@@ -19,6 +19,7 @@ public class DateRange extends Range<Date> implements Iterable<Date> {
 	}
 
 	public Collection<Date> dates(final int step) {
+		checkBothBounded();
 		return new AbstractCollection<Date>() {
 			@Override public Iterator<Date> iterator() {
 				return DateRange.this.iterator(step);
@@ -38,9 +39,13 @@ public class DateRange extends Range<Date> implements Iterable<Date> {
 	}
 
 	public Iterator<Date> iterator(int step) {
+		checkBothBounded();
+		return new DateIterator(step);
+	}
+
+	private void checkBothBounded() {
 		if (!isBothBounded())
 			throw new IllegalStateException("Date range is not bounded from both sides.");
-		return new DateIterator(step);
 	}
 
 	private class DateIterator implements Iterator<Date> {
