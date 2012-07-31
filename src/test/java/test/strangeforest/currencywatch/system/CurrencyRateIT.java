@@ -1,20 +1,17 @@
 package test.strangeforest.currencywatch.system;
 
-import java.io.*;
-import java.util.*;
-
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.db4o.*;
 import org.strangeforest.currencywatch.nbs.*;
 import org.testng.annotations.*;
 
+import test.strangeforest.currencywatch.integration.db4o.*;
+
+import static test.strangeforest.currencywatch.TestData.*;
+
 public class CurrencyRateIT {
 
 	private CurrencyRateProvider currencyRateProvider;
-
-	private static final String DB4O_DATA_FILE = "data/test-rates.db4o";
-	private static final Date FROM_DATE = new GregorianCalendar(2006, 11, 1).getTime();
-	private static final Date TO_DATE = new GregorianCalendar(2006, 11, 6).getTime();
 
 	@BeforeClass
 	public void setUp() {
@@ -25,9 +22,7 @@ public class CurrencyRateIT {
 			}
 		});
 		nbsProvider.init();
-		File file = new File(DB4O_DATA_FILE);
-		file.delete();
-		file.deleteOnExit();
+		Db4oCurrencyRateProviderIT.deleteDb4oDataFile();
 		currencyRateProvider = new ChainedCurrencyRateProvider(
 			new Db4oCurrencyRateProvider(DB4O_DATA_FILE),
 			new ParallelCurrencyRateProviderProxy(nbsProvider, 5)
@@ -40,8 +35,16 @@ public class CurrencyRateIT {
 	}
 
 	@Test
-	public void test() {
-		CurrencyRate rate = new CurrencyRate("DIN", "EUR", currencyRateProvider);
-		System.out.println(rate.getRates(new DateRange(FROM_DATE, TO_DATE)));
+	public void getRate() {
+		CurrencyRate rate = new CurrencyRate(SYMBOL_FROM, SYMBOL_TO, currencyRateProvider);
+		rate.getRate(DATE);
+		System.out.println(rate);
+	}
+
+	@Test
+	public void getRates() {
+		CurrencyRate rate = new CurrencyRate(SYMBOL_FROM, SYMBOL_TO, currencyRateProvider);
+		rate.getRates(DATES);
+		System.out.println(rate);
 	}
 }

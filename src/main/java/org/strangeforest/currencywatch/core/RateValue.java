@@ -2,9 +2,9 @@ package org.strangeforest.currencywatch.core;
 
 public class RateValue {
 
-	private double ask;
-	private double bid;
-	private double middle;
+	private final double ask;
+	private final double bid;
+	private final double middle;
 
 	public RateValue(double ask, double bid, double middle) {
 		super();
@@ -17,24 +17,12 @@ public class RateValue {
 		return ask;
 	}
 
-	public void setAsk(double ask) {
-		this.ask = ask;
-	}
-
 	public double getBid() {
 		return bid;
 	}
 
-	public void setBid(double bid) {
-		this.bid = bid;
-	}
-
 	public double getMiddle() {
 		return middle;
-	}
-
-	public void setMiddle(double middle) {
-		this.middle = middle;
 	}
 
 

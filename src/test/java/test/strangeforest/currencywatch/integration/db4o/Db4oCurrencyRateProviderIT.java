@@ -8,22 +8,16 @@ import org.strangeforest.currencywatch.db4o.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
+import static test.strangeforest.currencywatch.TestData.*;
+
 public class Db4oCurrencyRateProviderIT {
 
 	private UpdatableCurrencyRateProvider currencyRateProvider;
-	private RateValue rate;
-	private Date date;
-
-	private static final String DB4O_DATA_FILE = "data/test-rates-db4o.db4o";
 
 	@BeforeClass
 	private void setUp() {
-		File file = new File(DB4O_DATA_FILE);
-		file.delete();
-		file.deleteOnExit();
+		deleteDb4oDataFile();
 		currencyRateProvider = new Db4oCurrencyRateProvider(DB4O_DATA_FILE);
-		rate = new RateValue(81.0, 79.0, 80.0);
-		date = new GregorianCalendar(2006, 11, 6).getTime();
 	}
 
 	@AfterClass
@@ -32,13 +26,30 @@ public class Db4oCurrencyRateProviderIT {
 	}
 
 	@Test
-	public void setRateTest() {
-		currencyRateProvider.setRate("DIN", "EUR", date, rate);
+	public void setRate() {
+		currencyRateProvider.setRate(SYMBOL_FROM, SYMBOL_TO, DATE, RATE);
 	}
 
-	@Test(dependsOnMethods = "setRateTest")
-	public void getRateTest() {
-		RateValue fetchedRate = currencyRateProvider.getRate("DIN", "EUR", date);
-		Assert.assertEquals(fetchedRate, rate);
+	@Test(dependsOnMethods = "setRate")
+	public void getRate() {
+		RateValue fetchedRate = currencyRateProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
+		Assert.assertEquals(fetchedRate, RATE);
+	}
+
+	@Test(dependsOnMethods = "getRate")
+	public void setRates() {
+		currencyRateProvider.setRates(SYMBOL_FROM, SYMBOL_TO, RATES);
+	}
+
+	@Test(dependsOnMethods = "setRates")
+	public void getRates() {
+		Map<Date, RateValue> fetchedRates = currencyRateProvider.getRates(SYMBOL_FROM, SYMBOL_TO, DATES);
+		Assert.assertEquals(fetchedRates, RATES);
+	}
+
+	public static void deleteDb4oDataFile() {
+		File file = new File(DB4O_DATA_FILE);
+		file.delete();
+		file.deleteOnExit();
 	}
 }
