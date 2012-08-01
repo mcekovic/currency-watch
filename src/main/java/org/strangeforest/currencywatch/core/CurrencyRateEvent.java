@@ -34,6 +34,6 @@ public class CurrencyRateEvent extends EventObject {
 	}
 
 	@Override public String toString() {
-		return String.format("CurrencyRateEvent{symbolFrom=%1$s, symbolTo=%2$s, date=%3$tY-%3$tm-%3$td, rate=%4$s}", symbolFrom, symbolTo, date, rate);
+		return String.format("CurrencyRateEvent{symbolFrom=%1$s, symbolTo=%2$s, date=%3$td-%3$tm-%3$tY, rate=%4$s}", symbolFrom, symbolTo, date, rate);
 	}
 }

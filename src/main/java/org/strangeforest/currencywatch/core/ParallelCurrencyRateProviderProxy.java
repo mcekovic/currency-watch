@@ -9,12 +9,14 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 	private final ExecutorService executor;
 	private int retryCount = RETRY_COUNT;
 	private boolean resetProviderOnRetryFail = true;
+	private int maxExceptions;
 
-	private static final int RETRY_COUNT = 2;
+	private static final int RETRY_COUNT = 20;
 
 	public ParallelCurrencyRateProviderProxy(CurrencyRateProvider provider, int threadCount) {
 		super(provider);
 		executor = Executors.newFixedThreadPool(threadCount);
+		maxExceptions = threadCount;
 	}
 
 	@Override public void close() {
@@ -38,6 +40,14 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 		this.resetProviderOnRetryFail = resetProviderOnRetryFail;
 	}
 
+	public int getMaxExceptions() {
+		return maxExceptions;
+	}
+
+	public void setMaxExceptions(int maxExceptions) {
+		this.maxExceptions = maxExceptions;
+	}
+
 	@Override public Map<Date, RateValue> getRates(final String symbolFrom, final String symbolTo, Collection<Date> dates) {
 		Map<Date, RateValue> dateValues = new TreeMap<>();
 		final AtomicInteger retriesLeft = new AtomicInteger(retryCount);
@@ -54,6 +64,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 					catch (Exception ex) {
 						int left = retriesLeft.decrementAndGet();
 						if (left >= 0) {
+							System.err.printf("Retrying request: getRate(%1$s, %2$s, %3$td-%3$tm-%3$tY): %4$s\n", symbolFrom, symbolTo, date, ex);
 							results.add(executor.submit(this));
 							return null;
 						}
@@ -69,6 +80,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 			};
 			results.add(executor.submit(task));
 		}
+		int exCount = 0;
 		while (!results.isEmpty() && !Thread.currentThread().isInterrupted()) {
 			try {
 				DateRateValue dateValue = results.remove().get();
@@ -79,7 +91,12 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 				break;
 			}
 			catch (ExecutionException ex) {
-				throw new CurrencyRateException(ex);
+				Throwable cause = ex.getCause();
+				cause = cause != null ? cause : ex;
+				if (++exCount > maxExceptions)
+					throw CurrencyRateException.wrap(cause);
+				else
+					cause.printStackTrace();
 			}
 		}
 		return dateValues;

@@ -33,6 +33,17 @@ public class CurrencyChartForm {
 
 	private CurrencyRatePresenter presenter;
 
+	private static final Color MIDDLE_COLOR = new Color(255, 0, 0);
+	private static final Color BID_COLOR = new Color(255, 128, 128);
+	private static final Color ASK_COLOR = new Color(255, 128, 128);
+	private static final Color MOV_AVG_COLOR = new Color(0, 0, 255);
+	private static final Color BOLL_BANDS_COLOR = new Color(192, 224, 255, 64);
+	private static final Color BOLL_BANDS_2_COLOR = new Color(255, 255, 255, 255);
+	private static final Color TRANSPARENT_PAINT = new Color(255, 255, 255, 0);
+
+	private static final BasicStroke BID_ASK_STROKE = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{4.0f, 4.0f}, 0.0f);
+	private static final BasicStroke MOV_AVG_STOKE = new BasicStroke(2);
+
 	public static void main(String[] args) throws IOException {
 		final CurrencyChartForm form = new CurrencyChartForm();
 		form.inputDataChanged();
@@ -88,11 +99,12 @@ public class CurrencyChartForm {
 			StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT,
 			new SimpleDateFormat("d-MMM-yyyy"), new DecimalFormat("0.00")
 		));
+		renderer.setSeriesPaint(0, MIDDLE_COLOR);
 
 		XYAreaRenderer2 bbRenderer = new XYAreaRenderer2();
-		bbRenderer.setSeriesPaint(0, new Color(255, 255, 255, 0));
-		bbRenderer.setSeriesPaint(1, new Color(255, 255, 255, 255));
-		bbRenderer.setSeriesPaint(2, new Color(192, 224, 255, 64));
+		bbRenderer.setSeriesPaint(0, TRANSPARENT_PAINT);
+		bbRenderer.setSeriesPaint(1, BOLL_BANDS_2_COLOR);
+		bbRenderer.setSeriesPaint(2, BOLL_BANDS_COLOR);
 		bbRenderer.setOutline(false);
 
 		XYPlot plot = new XYPlot(null, xAxis, yAxis, renderer);
@@ -106,15 +118,31 @@ public class CurrencyChartForm {
 	}
 
 	private void inputDataChanged() {
+		boolean showBidAsk = bidAskCheckBox.isSelected();
+		boolean showMovAvg = movAvgCheckBox.isSelected();
 		presenter.inputDataChanged(
 			(String)currencyComboBox.getSelectedItem(),
 			(String)periodComboBox.getSelectedItem(),
 			(String)qualityComboBox.getSelectedItem(),
-			bidAskCheckBox.isSelected(),
-			movAvgCheckBox.isSelected(),
+			showBidAsk,
+			showMovAvg,
 			bollingerBandsCheckBox.isSelected(),
 			(Integer)movAvgPeriodComboBox.getSelectedItem()
 		);
+		if (showBidAsk || showMovAvg) {
+			XYItemRenderer renderer = chartPanel.getChart().getXYPlot().getRenderer();
+			if (showBidAsk) {
+				renderer.setSeriesPaint(1, BID_COLOR);
+				renderer.setSeriesPaint(2, ASK_COLOR);
+				renderer.setSeriesStroke(1, BID_ASK_STROKE);
+				renderer.setSeriesStroke(2, BID_ASK_STROKE);
+			}
+			if (showMovAvg) {
+				int movAvgIndex = showBidAsk ? 3 : 1;
+				renderer.setSeriesPaint(movAvgIndex, MOV_AVG_COLOR);
+				renderer.setSeriesStroke(movAvgIndex, MOV_AVG_STOKE);
+			}
+		}
 	}
 
 	private void setPeriodComboBoxEnabled() {
