@@ -68,6 +68,8 @@ public class ParallelCurrencyRateProviderProxyTest {
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
 		try (ParallelCurrencyRateProviderProxy parallelProvider = createParallelProvider(provider, listener, 1)) {
+			parallelProvider.setRetryCount(2);
+			parallelProvider.setMaxExceptions(0);
 			try {
 				parallelProvider.getRates(SYMBOL_FROM, SYMBOL_TO, Collections.singleton(DATE));
 				fail("Exception is not thrown.");
