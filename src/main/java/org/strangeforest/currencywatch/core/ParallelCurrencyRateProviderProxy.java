@@ -64,12 +64,13 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 					catch (Exception ex) {
 						int left = retriesLeft.decrementAndGet();
 						if (left >= 0) {
-							System.err.printf("Retrying request: getRate(%1$s, %2$s, %3$td-%3$tm-%3$tY): %4$s\n", symbolFrom, symbolTo, date, ex);
+							System.out.printf("Retrying request: getRate(%1$s, %2$s, %3$td-%3$tm-%3$tY): %4$s\n", symbolFrom, symbolTo, date, ex);
 							results.add(executor.submit(this));
 							return null;
 						}
 						else {
 							if (resetProviderOnRetryFail) {
+								System.out.println("Too many retry failures, resetting provider.");
 								provider.close();
 								provider.init();
 							}
