@@ -10,12 +10,23 @@ import com.db4o.config.*;
 
 public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implements UpdatableCurrencyRateProvider {
 
-	private final EmbeddedObjectContainer db;
+	private final String dbFileName;
+	private ObjectContainer db;
 	private boolean closed;
+
+	private static final DataVersion CURRENT_VERSION = new DataVersion(1);
 
 	public Db4oCurrencyRateProvider(String dbFileName) {
 		super();
+		this.dbFileName = dbFileName;
 		new File(dbFileName).getParentFile().mkdirs();
+		openDb();
+		DataVersion version = exactlyOne(db.query(DataVersion.class), null);
+		if (version == null || version.compareTo(CURRENT_VERSION) < 0)
+			upgradeData(version);
+	}
+
+	private void openDb() {
 		EmbeddedConfiguration dbConfig = Db4oEmbedded.newConfiguration();
 		ObjectClass currencyRateConfig = dbConfig.common().objectClass(CurrencyRateObject.class);
 		currencyRateConfig.objectField("symbolFrom").indexed(true);
@@ -25,20 +36,25 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		db = Db4oEmbedded.openFile(dbConfig, dbFileName);
 	}
 
+	private void upgradeData(DataVersion version) {
+		if (version != null)
+			System.out.println("Upgrading cached data...");
+		db.close();
+		new File(dbFileName).delete();
+		openDb();
+		doInDb4o(new Db4oCallback() {
+			@Override public void doInDb4o(ObjectContainer db) {
+				db.store(CURRENT_VERSION);
+			}
+		});
+		if (version != null)
+			System.out.println("Cached data upgrade finished.");
+	}
+
 	@Override public synchronized void close() {
 		db.close();
 		closed = true;
 		super.close();
-	}
-
-	private CurrencyRateObject getCurrencyRate(ObjectContainer db, String symbolFrom, String symbolTo) {
-		CurrencyRateObject template = new CurrencyRateObject(symbolFrom, symbolTo);
-		ObjectSet<CurrencyRateObject> rates = db.queryByExample(template);
-		switch (rates.size()) {
-			case 0: return null;
-			case 1: return rates.get(0);
-			default: throw new IllegalStateException(String.format("Multiple currency rates found for %1$s.", template));
-		}
 	}
 
 	@Override public RateValue getRate(final String symbolFrom, final String symbolTo, final Date date) {
@@ -87,6 +103,19 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 				db.store(rate);
 			}
 		});
+	}
+
+	private CurrencyRateObject getCurrencyRate(ObjectContainer db, String symbolFrom, String symbolTo) {
+		CurrencyRateObject template = new CurrencyRateObject(symbolFrom, symbolTo);
+		return exactlyOne(db.<CurrencyRateObject>queryByExample(template), template);
+	}
+
+	private <T> T exactlyOne(ObjectSet<T> objectSet, T template) {
+		switch (objectSet.size()) {
+			case 0: return null;
+			case 1: return objectSet.get(0);
+			default: throw new IllegalStateException(String.format("Multiple objects found for template %1$s.", template));
+		}
 	}
 
 	private synchronized void doInDb4o(Db4oCallback callback) {
