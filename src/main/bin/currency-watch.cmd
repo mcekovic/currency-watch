@@ -1,1 +1,1 @@
-start javaw -jar lib/currency-watch-${project.version}.jar
+start javaw -jar lib\currency-watch-${project.version}.jar
