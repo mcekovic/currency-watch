@@ -12,8 +12,6 @@ import org.strangeforest.currencywatch.core.DateRange;
 import org.strangeforest.currencywatch.db4o.*;
 import org.strangeforest.currencywatch.nbs.*;
 
-import com.finsoft.util.*;
-
 public class CurrencyRatePresenter implements AutoCloseable {
 
 	private final CurrencyRateProvider provider;
@@ -28,45 +26,13 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	private volatile long startTime;
 
 	static final String[] CURRENCIES = {"EUR", "USD", "GBP", "CHF"};
-	private static final Map<String, Integer> PERIOD_MAP = new LinkedHashMap<>();
-	private static final Map<String, Integer> QUALITY_MAP = new LinkedHashMap<>();
 	static final Integer[] MOV_AVG_PERIODS = {10, 20, 50, 100, 200, 500};
 	static final String DEFAULT_CURRENCY = "EUR";
-	static final String DEFAULT_PERIOD = "Month";
-	static final String DEFAULT_QUALITY = "Normal";
+	static final Period DEFAULT_PERIOD = Period.MONTH;
+	static final SeriesQuality DEFAULT_QUALITY = SeriesQuality.NORMAL;
 	static final int DEFAULT_MOV_AVG_PERIOD = 20;
 
-	private static final Date START_DATE = new GregorianCalendar(2002, 5, 15).getTime();
 	private static final int REMOTE_PROVIDER_THREAD_COUNT = 10;
-
-	static {
-		PERIOD_MAP.put("Week", 7);
-		PERIOD_MAP.put("2 Weeks", 14);
-		PERIOD_MAP.put("Month", 30);
-		PERIOD_MAP.put("Quarter", 91);
-		PERIOD_MAP.put("2 Quarters", 182);
-		PERIOD_MAP.put("Year", 365);
-		PERIOD_MAP.put("2 Years", 730);
-		PERIOD_MAP.put("5 Years", 1826);
-//		PERIOD_MAP.put("10 Years", 3652);
-		PERIOD_MAP.put("Maximum", DateUtil.dayDifference(START_DATE, getLastDate().getTime()));
-
-		QUALITY_MAP.put("Minimum", 10);
-		QUALITY_MAP.put("Poor", 25);
-		QUALITY_MAP.put("Low", 50);
-		QUALITY_MAP.put("Normal", 100);
-		QUALITY_MAP.put("High", 200);
-		QUALITY_MAP.put("Extra", 400);
-		QUALITY_MAP.put("Maximum", 1000);
-	}
-
-	static String[] periods() {
-		return PERIOD_MAP.keySet().toArray(new String[PERIOD_MAP.size()]);
-	}
-
-	static String[] qualities() {
-		return QUALITY_MAP.keySet().toArray(new String[QUALITY_MAP.size()]);
-	}
 
 	public CurrencyRatePresenter(XYPlot chartPlot, CurrencyRatePresenterListener presenterListener) {
 		super();
@@ -91,7 +57,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		});
 	}
 
-	public void inputDataChanged(String symbolTo, String period, String quality, boolean showBidAsk, boolean showMovAvg, boolean showBollBands, int movAvgPeriod) {
+	public void inputDataChanged(String symbolTo, Period period, SeriesQuality quality, boolean showBidAsk, boolean showMovAvg, boolean showBollBands, int movAvgPeriod) {
 		TimeSeries currencySeries = new TimeSeries(symbolTo);
 		TimeSeries bidSeries = null, askSeries = null;
 		TimeSeries movAvgSeries = null;
@@ -120,7 +86,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		else
 			chartPlot.setDataset(1, null);
 		CurrencyRate currencyRate = getCurrencyRate(symbolTo, currencySeries, bidSeries, askSeries, movAvgSeries, bollBandsSeries, movAvgPeriod);
-		applyPeriod(currencyRate, currencySeries, PERIOD_MAP.get(period), QUALITY_MAP.get(quality));
+		applyPeriod(currencyRate, currencySeries, period.days(), quality.points());
 		chartPlot.setDataset(0, dataSet);
 	}
 
@@ -128,7 +94,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	                                     final TimeSeries movAvgSeries, final TimeSeries[] bollBandsSeries, final int movAvgPeriod) {
 		if (currencyRate != null)
 			currencyRate.close();
-		currencyRate = new CurrencyRate("DIN", symbolTo, provider);
+		currencyRate = new CurrencyRate(UIUtil.SYMBOL_FROM, symbolTo, provider);
 		currencyRate.addListener(new CurrencyRateListener() {
 			@Override public void newRate(final CurrencyRateEvent rateEvent) {
 				SwingUtilities.invokeLater(new Runnable() {
@@ -176,7 +142,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		if (dataThread != null)
 			dataThread.interrupt();
 		series.clear();
-		Calendar cal = getLastDate();
+		Calendar cal = UIUtil.getLastDate();
 		Date toDate = cal.getTime();
 		cal.add(Calendar.DATE, -days);
 		Date fromDate = cal.getTime();
@@ -201,14 +167,6 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			}
 		});
 		dataThread.start();
-	}
-
-	private static Calendar getLastDate() {
-		Calendar now = new GregorianCalendar();
-		Calendar lastDate = new GregorianCalendar(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
-		if (now.get(Calendar.HOUR_OF_DAY) < 8)
-			lastDate.add(Calendar.DATE, -1);
-		return lastDate;
 	}
 
 	private void updateProgressBar() {

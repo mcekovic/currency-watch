@@ -20,8 +20,8 @@ public class CurrencyChartForm {
 	private JPanel formPanel;
 	private JPanel toolPanel;
 	private JComboBox<String> currencyComboBox;
-	private JComboBox<String> periodComboBox;
-	private JComboBox<String> qualityComboBox;
+	private JComboBox<Period> periodComboBox;
+	private JComboBox<SeriesQuality> qualityComboBox;
 	private JCheckBox bidAskCheckBox;
 	private JCheckBox movAvgCheckBox;
 	private JCheckBox bollingerBandsCheckBox;
@@ -70,10 +70,10 @@ public class CurrencyChartForm {
 		currencyComboBox.setModel(new DefaultComboBoxModel<>(CurrencyRatePresenter.CURRENCIES));
 		currencyComboBox.setSelectedItem(CurrencyRatePresenter.DEFAULT_CURRENCY);
 		currencyComboBox.addActionListener(new InputDataListener());
-		periodComboBox.setModel(new DefaultComboBoxModel<>(CurrencyRatePresenter.periods()));
+		periodComboBox.setModel(new DefaultComboBoxModel<>(Period.values()));
 		periodComboBox.setSelectedItem(CurrencyRatePresenter.DEFAULT_PERIOD);
 		periodComboBox.addActionListener(new InputDataListener());
-		qualityComboBox.setModel(new DefaultComboBoxModel<>(CurrencyRatePresenter.qualities()));
+		qualityComboBox.setModel(new DefaultComboBoxModel<>(SeriesQuality.values()));
 		qualityComboBox.setSelectedItem(CurrencyRatePresenter.DEFAULT_QUALITY);
 		qualityComboBox.addActionListener(new InputDataListener());
 		bidAskCheckBox.addActionListener(new InputDataListener());
@@ -122,8 +122,8 @@ public class CurrencyChartForm {
 		boolean showMovAvg = movAvgCheckBox.isSelected();
 		presenter.inputDataChanged(
 			(String)currencyComboBox.getSelectedItem(),
-			(String)periodComboBox.getSelectedItem(),
-			(String)qualityComboBox.getSelectedItem(),
+			(Period)periodComboBox.getSelectedItem(),
+			(SeriesQuality)qualityComboBox.getSelectedItem(),
 			showBidAsk,
 			showMovAvg,
 			bollingerBandsCheckBox.isSelected(),

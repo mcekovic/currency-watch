@@ -29,9 +29,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 			URLConnection conn = new URL(NBS_URL + "?lang=lat").openConnection();
 			conn.setDoInput(true);
 			conn.setDoOutput(false);
-			conn.setUseCaches(false);
-			conn.setRequestProperty("Pragma", "no-cache");
-			conn.setRequestProperty("Cache-control", "no-cache");
+			disableCaching(conn);
 			conn.connect();
 
 			findSessionId(conn);
@@ -66,9 +64,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		URLConnection conn = new URL(NBS_URL).openConnection();
 		conn.setDoInput(true);
 		conn.setDoOutput(true);
-		conn.setUseCaches(false);
-		conn.setRequestProperty("Pragma", "no-cache");
-		conn.setRequestProperty("Cache-control", "no-cache");
+		disableCaching(conn);
 		if (sessionId != null)
 			conn.setRequestProperty("Cookie", "JSESSIONID=" + sessionId);
 
@@ -94,6 +90,12 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 					throw new IllegalStateException("Invalid NBS format: " + format);
 			}
 		}
+	}
+
+	private void disableCaching(URLConnection conn) {
+		conn.setUseCaches(false);
+		conn.setRequestProperty("Pragma", "no-cache");
+		conn.setRequestProperty("Cache-control", "no-cache");
 	}
 
 	private void findSessionId(URLConnection conn) {

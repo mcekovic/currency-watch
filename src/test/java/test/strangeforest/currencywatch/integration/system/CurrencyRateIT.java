@@ -17,17 +17,17 @@ public class CurrencyRateIT {
 
 	@BeforeClass
 	public void setUp() {
-		ObservableCurrencyRateProvider nbsProvider = new NBSCurrencyRateProvider();
-		nbsProvider.addListener(new CurrencyRateAdapter() {
+		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider();
+		remoteProvider.addListener(new CurrencyRateAdapter() {
 			@Override public void newRate(CurrencyRateEvent rateEvent) {
 				System.out.println(rateEvent);
 			}
 		});
-		nbsProvider.init();
+		remoteProvider.init();
 		ITUtil.deleteFile(DB4O_DATA_FILE);
 		currencyRateProvider = new ChainedCurrencyRateProvider(
 			new Db4oCurrencyRateProvider(DB4O_DATA_FILE),
-			new ParallelCurrencyRateProviderProxy(nbsProvider, 5)
+			new ParallelCurrencyRateProviderProxy(remoteProvider, 5)
 		);
 	}
 

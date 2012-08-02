@@ -255,6 +255,11 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.27</version>
+		</dependency>
+		<dependency>
 			<groupId>com.intellij</groupId>
 			<artifactId>forms_rt</artifactId>
 			<version>7.0.3</version>
@@ -308,6 +313,10 @@
 				<exclusion>
 					<artifactId>hamcrest-core</artifactId>
 					<groupId>org.hamcrest</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jcommander</artifactId>
+					<groupId>com.beust</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>

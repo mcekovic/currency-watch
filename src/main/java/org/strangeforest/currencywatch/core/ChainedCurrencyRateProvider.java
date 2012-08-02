@@ -31,6 +31,14 @@ public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvi
 			rateListener = null;
 	}
 
+	public UpdatableCurrencyRateProvider getLocalProvider() {
+		return localProvider;
+	}
+
+	public CurrencyRateProvider getRemoteProvider() {
+		return remoteProvider;
+	}
+
 	@Override public void init() {
 		localProvider.init();
 		remoteProvider.init();

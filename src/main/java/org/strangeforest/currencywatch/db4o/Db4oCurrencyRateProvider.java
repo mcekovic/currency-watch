@@ -19,11 +19,15 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	public Db4oCurrencyRateProvider(String dbFileName) {
 		super();
 		this.dbFileName = dbFileName;
-		new File(dbFileName).getParentFile().mkdirs();
+		File dbFile = new File(dbFileName);
+		dbFile.getParentFile().mkdirs();
+		boolean existed = dbFile.exists();
 		openDb();
-		DataVersion version = exactlyOne(db.query(DataVersion.class), null);
-		if (version == null || version.compareTo(CURRENT_VERSION) < 0)
-			upgradeData(version);
+		if (existed) {
+			DataVersion version = exactlyOne(db.query(DataVersion.class), null);
+			if (version == null || version.compareTo(CURRENT_VERSION) < 0)
+				upgradeData(version);
+		}
 	}
 
 	private void openDb() {
