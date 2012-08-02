@@ -25,6 +25,9 @@ public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvi
 				@Override public void newRates(CurrencyRateEvent[] rateEvents) {
 					notifyListeners(rateEvents);
 				}
+				@Override public void error(String message) {
+					notifyListeners(message);
+				}
 			};
 		}
 		else

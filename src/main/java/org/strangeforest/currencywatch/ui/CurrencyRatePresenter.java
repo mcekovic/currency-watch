@@ -12,14 +12,17 @@ import org.strangeforest.currencywatch.core.DateRange;
 import org.strangeforest.currencywatch.db4o.*;
 import org.strangeforest.currencywatch.nbs.*;
 
+import com.finsoft.util.*;
+
 public class CurrencyRatePresenter implements AutoCloseable {
 
 	private final CurrencyRateProvider provider;
 	private final XYPlot chartPlot;
 	private final CurrencyRatePresenterListener presenterListener;
-	private CurrencyRate currencyRate;
-	private Thread dataThread;
-	private Timer speedTimer;
+	private volatile CurrencyRate currencyRate;
+	private volatile Thread dataThread;
+	private volatile Timer speedTimer;
+	private volatile boolean loading;
 	private volatile int itemCount;
 	private volatile int currItems;
 	private volatile int currRemoteItems;
@@ -52,7 +55,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		provider.init();
 		speedTimer = new Timer(1000, new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				updateSpeedLabel();
+				updateSpeed();
 			}
 		});
 	}
@@ -73,6 +76,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			movAvgSeries = new TimeSeries(String.format("MovAvg(%s)", symbolTo));
 			dataSet.addSeries(movAvgSeries);
 		}
+		chartPlot.setDataset(0, dataSet);
 		if (showBollBands) {
 			TimeSeriesCollection bbDataSet = new TimeSeriesCollection(currencySeries);
 			bollBandsSeries = new TimeSeries[] {
@@ -87,7 +91,6 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			chartPlot.setDataset(1, null);
 		CurrencyRate currencyRate = getCurrencyRate(symbolTo, currencySeries, bidSeries, askSeries, movAvgSeries, bollBandsSeries, movAvgPeriod);
 		applyPeriod(currencyRate, currencySeries, period.days(), quality.points());
-		chartPlot.setDataset(0, dataSet);
 	}
 
 	private CurrencyRate getCurrencyRate(String symbolTo, final TimeSeries series, final TimeSeries bidSeries, final TimeSeries askSeries,
@@ -101,7 +104,8 @@ public class CurrencyRatePresenter implements AutoCloseable {
 					@Override public void run() {
 						updateBaseSeries(rateEvent);
 						currItems++;
-						updateProgressBar();
+						updateProgress();
+						setLoadingStatus();
 						updateDerivedSeries();
 					}
 				});
@@ -112,8 +116,16 @@ public class CurrencyRatePresenter implements AutoCloseable {
 						for (CurrencyRateEvent rateEvent : rateEvents)
 							updateBaseSeries(rateEvent);
 						currItems += rateEvents.length;
-						updateProgressBar();
+						updateProgress();
+						setLoadingStatus();
 						updateDerivedSeries();
+					}
+				});
+			}
+			@Override public void error(final String message) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override public void run() {
+						presenterListener.statusChanged(message, true);
 					}
 				});
 			}
@@ -155,28 +167,40 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		currItems = 0;
 		currRemoteItems = 0;
 		startTime = System.currentTimeMillis();
-		updateProgressBar();
-		updateSpeedLabel();
+		updateProgress();
+		updateSpeed();
 		speedTimer.start();
 		dataThread = new Thread(new Runnable() {
 			@Override public void run() {
-				rate.getRates(dateRange.dates(step*10)); // Fetch outline first 
-				rate.getRates(dates);
-				speedTimer.stop();
-				updateSpeedLabel();
+				loading = true;
+				try {
+					rate.getRates(dateRange.dates(step*10)); // Fetch outline first
+					rate.getRates(dates);
+				}
+				finally {
+					loading = false;
+					speedTimer.stop();
+					updateSpeed();
+					presenterListener.statusChanged(StringUtil.EMPTY, false);
+				}
 			}
 		});
 		dataThread.start();
 	}
 
-	private void updateProgressBar() {
+	private void updateProgress() {
 		presenterListener.progressChanged((100 * currItems) / itemCount);
 	}
 
-	private void updateSpeedLabel() {
+	private void updateSpeed() {
 		long time = System.currentTimeMillis() - startTime;
 		double itemsPerSec = time > 0L ? (1000.0*currRemoteItems)/time : 0.0;
 		presenterListener.ratesPerSecChanged(itemsPerSec);
+	}
+
+	private void setLoadingStatus() {
+		if (loading)
+			presenterListener.statusChanged("Loading...", false);
 	}
 
 	@Override public void close() {

@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
+import com.finsoft.util.*;
+
 public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRateProviderProxy {
 
 	private final ExecutorService executor;
@@ -65,10 +67,12 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 						int left = retriesLeft.decrementAndGet();
 						if (left >= 0) {
 							System.err.printf("Retrying request: getRate(%1$s, %2$s, %3$td-%3$tm-%3$tY): %4$s\n", symbolFrom, symbolTo, date, ex);
+							notifyListeners("Retrying...");
 							results.add(executor.submit(this));
 							return null;
 						}
 						else {
+							notifyListeners(ExceptionUtil.getRootMessage(ex));
 							if (resetProviderOnRetryFail) {
 								provider.close();
 								provider.init();

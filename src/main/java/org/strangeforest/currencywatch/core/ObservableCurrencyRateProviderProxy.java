@@ -20,6 +20,9 @@ public class ObservableCurrencyRateProviderProxy extends BaseObservableCurrencyR
 				@Override public void newRates(CurrencyRateEvent[] rateEvents) {
 					notifyListeners(rateEvents);
 				}
+				@Override public void error(String message) {
+					notifyListeners(message);
+				}
 			};
 		}
 		else

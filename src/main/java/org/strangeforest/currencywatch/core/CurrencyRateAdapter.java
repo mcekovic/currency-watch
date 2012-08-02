@@ -9,4 +9,6 @@ public abstract class CurrencyRateAdapter implements CurrencyRateListener {
 			newRate(rateEvent);
 		}
 	}
+
+	@Override public void error(String message) {}
 }

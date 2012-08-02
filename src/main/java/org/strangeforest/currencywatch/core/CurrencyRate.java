@@ -37,6 +37,9 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 					if (!newRateEvents.isEmpty())
 						notifyListeners(newRateEvents.size() == eventCount ? rateEvents : newRateEvents.toArray(new CurrencyRateEvent[newRateEvents.size()]));
 				}
+				@Override public void error(String message) {
+					notifyListeners(message);
+				}
 			};
 			((ObservableCurrencyRateProvider)provider).addListener(providerListener);
 		}
@@ -121,12 +124,12 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 		listeners.remove(listener);
 	}
 
-	protected void notifyListeners(CurrencyRateEvent rateEvent) {
+	private void notifyListeners(CurrencyRateEvent rateEvent) {
 		for (CurrencyRateListener listener : listeners)
 			listener.newRate(rateEvent);
 	}
 
-	protected void notifyListeners(CurrencyRateEvent[] rateEvents) {
+	private void notifyListeners(CurrencyRateEvent[] rateEvents) {
 		for (CurrencyRateListener listener : listeners)
 			listener.newRates(rateEvents);
 	}
@@ -137,6 +140,11 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 			for (CurrencyRateListener listener : listeners)
 				listener.newRate(event);
 		}
+	}
+
+	private void notifyListeners(String message) {
+		for (CurrencyRateListener listener : listeners)
+			listener.error(message);
 	}
 
 	@Override public void close() {

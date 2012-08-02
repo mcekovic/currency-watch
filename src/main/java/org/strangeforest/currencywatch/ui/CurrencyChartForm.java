@@ -30,6 +30,7 @@ public class CurrencyChartForm {
 	private JPanel statusPanel;
 	private JLabel speedLabel;
 	private JProgressBar progressBar;
+	private JLabel statusLabel;
 
 	private CurrencyRatePresenter presenter;
 
@@ -161,11 +162,15 @@ public class CurrencyChartForm {
 	}
 
 	private class FormCurrencyRatePresenterListener implements CurrencyRatePresenterListener {
+		@Override public void statusChanged(String status, boolean isError) {
+			statusLabel.setText(StringUtil.maxLength(status, 25));
+			statusLabel.setForeground(isError ? Color.RED : Color.BLACK);
+		}
 		@Override public void progressChanged(int progress) {
 			progressBar.setValue(progress);
 		}
 		@Override public void ratesPerSecChanged(double ratesPerSec) {
-			speedLabel.setText(String.format("%8.1f", ratesPerSec) + " rate/s");
+			speedLabel.setText(ratesPerSec > 0.0 ? String.format("%8.1f", ratesPerSec) + " rate/s" : StringUtil.EMPTY);
 		}
 	}
 

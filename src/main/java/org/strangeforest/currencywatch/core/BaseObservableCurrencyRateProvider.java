@@ -39,4 +39,9 @@ public abstract class BaseObservableCurrencyRateProvider extends BaseCurrencyRat
 			rateEvents[i++] = new CurrencyRateEvent(this, symbolFrom, symbolTo, dateRate.getKey(), dateRate.getValue());
 		notifyListeners(rateEvents);
 	}
+
+	protected final void notifyListeners(String message) {
+		for (CurrencyRateListener listener : listeners)
+			listener.error(message);
+	}
 }

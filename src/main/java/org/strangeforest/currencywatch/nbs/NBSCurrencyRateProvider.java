@@ -50,7 +50,9 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 					return rateValue;
 				}
 				catch (CurrencyRateException ex) {
-					if (!ex.isRecoverable())
+					if (ex.isRecoverable())
+						notifyListeners("Retrying...");
+					else
 						throw ex;
 				}
 			}
