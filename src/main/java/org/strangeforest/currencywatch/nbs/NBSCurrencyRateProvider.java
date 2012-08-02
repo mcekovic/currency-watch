@@ -44,7 +44,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		try {
 			while (true) {
 				try {
-					RateValue rateValue = doGetRate(symbolFrom, symbolTo, date);
+					RateValue rateValue = doGetRate(symbolTo, date);
 					if (hasAnyListener())
 						notifyListeners(symbolFrom, symbolTo, date, rateValue);
 					return rateValue;
@@ -62,7 +62,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		}
 	}
 
-	private RateValue doGetRate(String symbolFrom, String symbolTo, Date date) throws IOException {
+	private RateValue doGetRate(String symbolTo, Date date) throws IOException {
 		URLConnection conn = new URL(NBS_URL).openConnection();
 		conn.setDoInput(true);
 		conn.setDoOutput(true);
@@ -85,9 +85,9 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
 			switch(format) {
 				case CSV:
-					return findRateCSV(reader, symbolFrom, symbolTo, date);
+					return findRateCSV(reader, symbolTo);
 				case ASCII:
-					return findRateASCII(reader, symbolFrom, symbolTo, date);
+					return findRateASCII(reader, symbolTo);
 				default:
 					throw new IllegalStateException("Invalid NBS format: " + format);
 			}
@@ -126,7 +126,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		}
 	}
 
-	private RateValue findRateASCII(BufferedReader reader, String symbolFrom, String symbolTo, Date date) throws IOException {
+	private RateValue findRateASCII(BufferedReader reader, String symbolTo) throws IOException {
 		String line;
 		StringBuilder sb = new StringBuilder(500);
 		while ((line = reader.readLine()) != null) {
@@ -146,7 +146,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 			throw new CurrencyRateException("Cannot find rate for " + symbolTo + ". Invalid response: " + sb.toString());
 	}
 
-	private RateValue findRateCSV(BufferedReader reader, String symbolFrom, String symbolTo, Date date) throws IOException {
+	private RateValue findRateCSV(BufferedReader reader, String symbolTo) throws IOException {
 		String line;
 		boolean foundCSV = false;
 		StringBuilder sb = new StringBuilder(500);
