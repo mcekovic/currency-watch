@@ -6,7 +6,6 @@ import java.util.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.db4o.*;
 import org.strangeforest.currencywatch.nbs.*;
-import org.strangeforest.currencywatch.ui.*;
 
 import com.beust.jcommander.*;
 
@@ -39,10 +38,10 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	private String symbolTo = SYMBOL_TO;
 
 	@Parameter(names = "-from", description = "Date to fetch currency rates from in format dd-mm-yyyy.", converter = DateConverter.class)
-	private Date from = UIUtil.START_DATE.getTime();
+	private Date from = Util.START_DATE.getTime();
 
 	@Parameter(names = "-to", description = "Date to fetch currency rates to in format dd-mm-yyyy.", converter = DateConverter.class)
-	private Date to = UIUtil.getLastDate().getTime();
+	private Date to = Util.getLastDate().getTime();
 
 	@Parameter(names = {"-t", "-threads"}, description = "Number of threads to use for fetching.")
 	private int threadCount = THREAD_COUNT;
@@ -75,7 +74,7 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	public void fetch() {
 		System.out.printf("Fetching currency rates for symbol %1$s from %2$td-%2$tm-%2$tY to %3$td-%3$tm-%3$tY...\n", symbolTo, from, to);
 		initAndPrintProgress();
-		try (CurrencyRate currencyRate = new CurrencyRate(UIUtil.SYMBOL_FROM, symbolTo, provider)) {
+		try (CurrencyRate currencyRate = new CurrencyRate(Util.SYMBOL_FROM, symbolTo, provider)) {
 			currencyRate.getRates(dates);
 			System.out.println("\nFetching finished.");
 		}
@@ -87,7 +86,7 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	}
 
 	private synchronized void initAndPrintProgress() {
-		try (CurrencyRate currencyRate = new CurrencyRate(UIUtil.SYMBOL_FROM, symbolTo, provider.getLocalProvider())) {
+		try (CurrencyRate currencyRate = new CurrencyRate(Util.SYMBOL_FROM, symbolTo, provider.getLocalProvider())) {
 			fetchedDays = currencyRate.getRates(dates).size();
 		}
 		printProgress();

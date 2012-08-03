@@ -97,7 +97,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	                                     final TimeSeries movAvgSeries, final TimeSeries[] bollBandsSeries, final int movAvgPeriod) {
 		if (currencyRate != null)
 			currencyRate.close();
-		currencyRate = new CurrencyRate(UIUtil.SYMBOL_FROM, symbolTo, provider);
+		currencyRate = new CurrencyRate(Util.SYMBOL_FROM, symbolTo, provider);
 		currencyRate.addListener(new CurrencyRateListener() {
 			@Override public void newRate(final CurrencyRateEvent rateEvent) {
 				SwingUtilities.invokeLater(new Runnable() {
@@ -154,7 +154,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		if (dataThread != null)
 			dataThread.interrupt();
 		series.clear();
-		Calendar cal = UIUtil.getLastDate();
+		Calendar cal = Util.getLastDate();
 		Date toDate = cal.getTime();
 		cal.add(Calendar.DATE, -days);
 		Date fromDate = cal.getTime();

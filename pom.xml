@@ -161,6 +161,9 @@
 					<includes>
 						<include>org/strangeforest/**</include>
 					</includes>
+					<excludes>
+						<exclude>org/strangeforest/currencywatch/ui/**</exclude>
+					</excludes>
 				</configuration>
 				<executions>
 					<execution>
@@ -348,6 +351,9 @@
 							<includes>
 								<include>org/strangeforest/**</include>
 							</includes>
+							<excludes>
+								<exclude>org/strangeforest/currencywatch/ui/**</exclude>
+							</excludes>
 						</configuration>
 						<executions>
 							<execution>

@@ -1,5 +1,7 @@
 package org.strangeforest.currencywatch.ui;
 
+import org.strangeforest.currencywatch.core.*;
+
 public enum Period {
 
 	WEEK("Week", 7),
@@ -22,7 +24,7 @@ public enum Period {
 	}
 
 	private Period(String label) {
-		this(label, UIUtil.daysFromStart());
+		this(label, Util.daysFromStart());
 	}
 
 	public String label() {

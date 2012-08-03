@@ -1,10 +1,10 @@
-package org.strangeforest.currencywatch.ui;
+package org.strangeforest.currencywatch.core;
 
 import java.util.*;
 
 import com.finsoft.util.*;
 
-public abstract class UIUtil {
+public abstract class Util {
 
 	public static final String SYMBOL_FROM = "DIN";
 
