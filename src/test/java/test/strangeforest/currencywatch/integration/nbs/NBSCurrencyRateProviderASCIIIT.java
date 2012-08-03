@@ -8,13 +8,14 @@ import org.testng.annotations.*;
 
 import static test.strangeforest.currencywatch.TestData.*;
 
-public class NBSCurrencyRateProviderIT {
+public class NBSCurrencyRateProviderASCIIIT {
 
-	private CurrencyRateProvider currencyRateProvider;
+	private NBSCurrencyRateProvider currencyRateProvider;
 
 	@BeforeClass
 	public void setUp() {
 		currencyRateProvider = new NBSCurrencyRateProvider();
+		currencyRateProvider.setFormat(NBSCurrencyRateProvider.Format.ASCII);
 		currencyRateProvider.init();
 	}
 
@@ -24,14 +25,8 @@ public class NBSCurrencyRateProviderIT {
 	}
 
 	@Test
-	public void getRate() {
-		RateValue rate = currencyRateProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
-		System.out.println(rate);
-	}
-
-	@Test
 	public void getRates() {
-		Map<Date, RateValue> rates = currencyRateProvider.getRates(SYMBOL_FROM, SYMBOL_TO, Arrays.asList(DATE2, DATE3));
+		Map<Date, RateValue> rates = currencyRateProvider.getRates(SYMBOL_FROM, SYMBOL_TO, Arrays.asList(DATE5));
 		System.out.println(rates);
 	}
 }

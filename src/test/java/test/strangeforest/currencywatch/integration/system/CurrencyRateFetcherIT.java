@@ -3,10 +3,11 @@ package test.strangeforest.currencywatch.integration.system;
 import java.io.*;
 
 import org.strangeforest.currencywatch.cmd.*;
-import org.testng.*;
 import org.testng.annotations.*;
 
 import test.strangeforest.currencywatch.integration.*;
+
+import static org.testng.Assert.*;
 
 public class CurrencyRateFetcherIT {
 
@@ -20,12 +21,19 @@ public class CurrencyRateFetcherIT {
 	@Test
 	public void showUsage() {
 		CurrencyRateFetcher.main(new String[] {"-h"});
-		Assert.assertFalse(new File(DB4O_DATA_FILE).exists());
+		assertFalse(new File(DB4O_DATA_FILE).exists());
 	}
 
 	@Test(dependsOnMethods = "showUsage")
+	public void invalidArguments() {
+		CurrencyRateFetcher.main(new String[] {"-i"});
+		CurrencyRateFetcher.main(new String[] {"-from", "32-15-2005"});
+		assertFalse(new File(DB4O_DATA_FILE).exists());
+	}
+
+	@Test(dependsOnMethods = "invalidArguments")
 	public void fetchRates() {
 		CurrencyRateFetcher.main(new String[] {"-db", DB4O_DATA_FILE,"-from", "01-01-2012", "-to", "02-01-2012", "-t", "2"});
-		Assert.assertTrue(new File(DB4O_DATA_FILE).exists());
+		assertTrue(new File(DB4O_DATA_FILE).exists());
 	}
 }

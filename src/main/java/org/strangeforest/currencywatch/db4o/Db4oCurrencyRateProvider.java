@@ -14,20 +14,27 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	private ObjectContainer db;
 	private boolean closed;
 
-	private static final DataVersion CURRENT_VERSION = new DataVersion(1);
+	public static final int CURRENT_VERSION = 1;
 
 	public Db4oCurrencyRateProvider(String dbFileName) {
+		this(dbFileName, CURRENT_VERSION);
+	}
+
+	public Db4oCurrencyRateProvider(String dbFileName, int dataVersion) {
 		super();
 		this.dbFileName = dbFileName;
 		File dbFile = new File(dbFileName);
 		dbFile.getParentFile().mkdirs();
 		boolean existed = dbFile.exists();
 		openDb();
+		DataVersion newVersion = new DataVersion(dataVersion);
 		if (existed) {
-			DataVersion version = exactlyOne(db.query(DataVersion.class), null);
-			if (version == null || version.compareTo(CURRENT_VERSION) < 0)
-				upgradeData(version);
+			DataVersion oldVersion = exactlyOne(db.query(DataVersion.class), null);
+			if (oldVersion == null || oldVersion.compareTo(newVersion) < 0)
+				upgradeData(oldVersion, newVersion);
 		}
+		else
+			setDataVersion(newVersion);
 	}
 
 	private void openDb() {
@@ -40,19 +47,23 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		db = Db4oEmbedded.openFile(dbConfig, dbFileName);
 	}
 
-	private void upgradeData(DataVersion version) {
-		if (version != null)
+	private void upgradeData(DataVersion oldVersion, DataVersion newVersion) {
+		if (oldVersion != null)
 			System.out.println("Upgrading cached data...");
 		db.close();
 		new File(dbFileName).delete();
 		openDb();
+		setDataVersion(newVersion);
+		if (oldVersion != null)
+			System.out.println("Cached data upgrade finished.");
+	}
+
+	private void setDataVersion(final DataVersion newVersion) {
 		doInDb4o(new Db4oCallback() {
 			@Override public void doInDb4o(ObjectContainer db) {
-				db.store(CURRENT_VERSION);
+				db.store(newVersion);
 			}
 		});
-		if (version != null)
-			System.out.println("Cached data upgrade finished.");
 	}
 
 	@Override public synchronized void close() {

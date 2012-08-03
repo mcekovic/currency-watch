@@ -105,10 +105,12 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	public static class DateConverter implements IStringConverter<Date> {
 		@Override public Date convert(String s) {
 			try {
-				return new SimpleDateFormat("dd-MM-yyyy").parse(s);
+				SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+				format.setLenient(false);
+				return format.parse(s);
 			}
 			catch (ParseException ex) {
-				throw new IllegalArgumentException(s);
+				throw new ParameterException(ex.getMessage());
 			}
 		}
 	}
