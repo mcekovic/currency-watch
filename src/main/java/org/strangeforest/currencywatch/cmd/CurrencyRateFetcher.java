@@ -8,6 +8,7 @@ import org.strangeforest.currencywatch.db4o.*;
 import org.strangeforest.currencywatch.nbs.*;
 
 import com.beust.jcommander.*;
+import com.db4o.foundation.*;
 
 public class CurrencyRateFetcher implements AutoCloseable {
 
@@ -52,7 +53,8 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	private ChainedCurrencyRateProvider provider;
 	private DateRange dates;
 	private int totalDays;
-	private int fetchedDays;
+	private int fetchedDays, localFetchedDays;
+	private long startTime;
 
 	private void init() {
 		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider();
@@ -61,9 +63,8 @@ public class CurrencyRateFetcher implements AutoCloseable {
 				incFetchedAndPrintProgress();
 			}
 		});
-		Db4oCurrencyRateProvider localProvider = new Db4oCurrencyRateProvider(dbFileName);
 		provider = new ChainedCurrencyRateProvider(
-			localProvider,
+			new Db4oCurrencyRateProvider(dbFileName),
 			new ParallelCurrencyRateProviderProxy(remoteProvider, threadCount)
 		);
 		provider.init();
@@ -74,6 +75,7 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	public void fetch() {
 		System.out.printf("Fetching currency rates for symbol %1$s from %2$td-%2$tm-%2$tY to %3$td-%3$tm-%3$tY...\n", symbolTo, from, to);
 		initAndPrintProgress();
+		startTime = System.currentTimeMillis();
 		try (CurrencyRate currencyRate = new CurrencyRate(Util.SYMBOL_FROM, symbolTo, provider)) {
 			currencyRate.getRates(dates);
 			System.out.println("\nFetching finished.");
@@ -87,18 +89,18 @@ public class CurrencyRateFetcher implements AutoCloseable {
 
 	private synchronized void initAndPrintProgress() {
 		try (CurrencyRate currencyRate = new CurrencyRate(Util.SYMBOL_FROM, symbolTo, provider.getLocalProvider())) {
-			fetchedDays = currencyRate.getRates(dates).size();
+			localFetchedDays = currencyRate.getRates(dates).size();
 		}
-		printProgress();
+		fetchedDays = localFetchedDays;
+		System.out.printf("Completed: %1$5.1f%% (%2$d/%3$d)", (100.0*fetchedDays)/totalDays, fetchedDays, totalDays);
 	}
 
 	private synchronized void incFetchedAndPrintProgress() {
 		fetchedDays++;
-		printProgress();
-	}
-
-	private void printProgress() {
-		System.out.printf("\rCompleted: %1$5.1f%% (%2$d/%3$d)", (100.0 * fetchedDays) / totalDays, fetchedDays, totalDays);
+		double completed = (100.0*fetchedDays)/totalDays;
+		long time = System.currentTimeMillis() - startTime;
+		double datesPerSec = time > 0L ? (1000.0*(fetchedDays - localFetchedDays))/time : 0.0;
+		System.out.printf("\rCompleted: %1$5.1f%% (%2$d/%3$d) at %4$6.1f rates/sec", completed, fetchedDays, totalDays, datesPerSec);
 	}
 
 	public static class DateConverter implements IStringConverter<Date> {
