@@ -73,12 +73,12 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	}
 
 	public void fetch() {
-		System.out.printf("Fetching currency rates for symbol %1$s from %2$td-%2$tm-%2$tY to %3$td-%3$tm-%3$tY...\n", symbolTo, from, to);
+		System.out.printf("Fetching currency rates for symbol %1$s from %2$td-%2$tm-%2$tY to %3$td-%3$tm-%3$tY...%n", symbolTo, from, to);
 		initAndPrintProgress();
 		startTime = System.currentTimeMillis();
 		try (CurrencyRate currencyRate = new CurrencyRate(Util.SYMBOL_FROM, symbolTo, provider)) {
 			currencyRate.getRates(dates);
-			System.out.println("\nFetching finished.");
+			System.out.printf("%nFetching finished.%n");
 		}
 	}
 
