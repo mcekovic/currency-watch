@@ -1,0 +1,1 @@
+start javaw -jar lib\currency-watch-app-${project.version}.jar %*

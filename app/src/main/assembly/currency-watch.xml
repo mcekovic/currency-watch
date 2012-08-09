@@ -11,23 +11,15 @@
 			<directory>${project.basedir}/src/main/scripts</directory>
 			<outputDirectory>/</outputDirectory>
 			<filtered>true</filtered>
-			<includes>
-				<include>*.cmd</include>
-			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}/src/main/scripts</directory>
+			<directory>${project.basedir}/../core/src/main/scripts</directory>
 			<outputDirectory>/</outputDirectory>
-			<fileMode>755</fileMode>
 			<filtered>true</filtered>
-			<includes>
-				<include>*.sh</include>
-			</includes>
 		</fileSet>
 		<fileSet>
 			<directory>${project.build.directory}</directory>
 			<outputDirectory>/data</outputDirectory>
-			<directoryMode>755</directoryMode>
 			<excludes>
 				<exclude>**/*</exclude>
 			</excludes>

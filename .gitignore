@@ -1,6 +1,6 @@
-/bin
-/data
-/out
-/target
+app/bin
+*/data
+*/target
 /.idea
-*.iml
+*/*.iml
+*.cmd
