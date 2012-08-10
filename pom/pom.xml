@@ -13,6 +13,7 @@
 	</prerequisites>
 
 	<properties>
+		<jacoco-maven-plugin.version>0.5.9.201207300726</jacoco-maven-plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
@@ -48,19 +49,19 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.12.1</version>
+					<version>2.12.2</version>
 					<dependencies>
 						<dependency>
 							<groupId>org.apache.maven.surefire</groupId>
 							<artifactId>surefire-junit47</artifactId>
-							<version>2.12.1</version>
+							<version>2.12.2</version>
 						</dependency>
 					</dependencies>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.5.9.201207300726</version>
+					<version>${jacoco-maven-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-jar-plugin</artifactId>
@@ -72,10 +73,6 @@
 							</manifest>
 						</archive>
 					</configuration>
-				</plugin>
-				<plugin>
-					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>2.12.1</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-assembly-plugin</artifactId>
@@ -90,15 +87,8 @@
 					<version>2.7</version>
 				</plugin>
 				<plugin>
-					<artifactId>maven-antrun-plugin</artifactId>
-					<version>1.7</version>
-					<dependencies>
-						<dependency>
-							<groupId>org.jacoco</groupId>
-							<artifactId>org.jacoco.ant</artifactId>
-							<version>0.5.9.201207300726</version>
-						</dependency>
-					</dependencies>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.1</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -135,7 +125,7 @@
 			<dependency>
 				<groupId>com.finsoft</groupId>
 				<artifactId>fin-util</artifactId>
-				<version>1.0.22</version>
+				<version>1.0.23</version>
 			</dependency>
 			<dependency>
 				<groupId>com.db4o</groupId>
