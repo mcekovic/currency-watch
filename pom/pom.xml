@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.strangeforest</groupId>
@@ -7,16 +7,35 @@
 	<packaging>pom</packaging>
 	<version>1.3.0-SNAPSHOT</version>
 	<name>Currency Watch Parent POM</name>
+	<url>https://github.com/mcekovic/currency-watch</url>
+	<organization>
+		<name>Strange Forest</name>
+		<url>https://github.com/mcekovic</url>
+	</organization>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/mcekovic/currency-watch/issues</url>
+	</issueManagement>
 
 	<prerequisites>
 		<maven>3.0.4</maven>
 	</prerequisites>
 
 	<properties>
+		<github.global.server>github</github.global.server>
 		<jacoco-maven-plugin.version>0.5.9.201207300726</jacoco-maven-plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>prime-repo</id>
+			<name>PrimeFaces Maven Repository</name>
+			<url>http://repository.primefaces.org</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
 
 	<build>
 
@@ -85,10 +104,18 @@
 				<plugin>
 					<artifactId>maven-deploy-plugin</artifactId>
 					<version>2.7</version>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
 				</plugin>
 				<plugin>
 					<artifactId>maven-site-plugin</artifactId>
 					<version>3.1</version>
+				</plugin>
+				<plugin>
+					<groupId>com.github.github</groupId>
+					<artifactId>downloads-maven-plugin</artifactId>
+					<version>0.6</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -170,6 +197,11 @@
 						<groupId>com.jgoodies</groupId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.primefaces</groupId>
+				<artifactId>primefaces</artifactId>
+				<version>3.3.1</version>
 			</dependency>
 
 			<!-- Test -->

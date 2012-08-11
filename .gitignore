@@ -2,5 +2,4 @@ app/bin
 */data
 */target
 /.idea
-*/*.iml
-*.cmd
+*.iml
