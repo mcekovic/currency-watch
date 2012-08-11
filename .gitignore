@@ -1,5 +1,5 @@
-app/bin
-*/data
-*/target
+target
 /.idea
 *.iml
+data
+/app/bin
