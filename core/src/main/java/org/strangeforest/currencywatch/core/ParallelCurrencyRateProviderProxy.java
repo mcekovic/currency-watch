@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
+import com.finsoft.concurrent.*;
 import com.finsoft.util.*;
 
 public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRateProviderProxy {
@@ -17,7 +18,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 
 	public ParallelCurrencyRateProviderProxy(CurrencyRateProvider provider, int threadCount) {
 		super(provider);
-		executor = Executors.newFixedThreadPool(threadCount);
+		executor = Executors.newFixedThreadPool(threadCount, new NamedThreadFactory("Currency Provider Worker"));
 		maxExceptions = threadCount;
 	}
 

@@ -198,7 +198,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 					notifyStatusChanged(StringUtil.EMPTY, false);
 				}
 			}
-		});
+		}, "Currency Data Fetcher");
 		dataThread.start();
 	}
 
