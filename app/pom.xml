@@ -43,7 +43,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.strangeforest.currencywatch.app.CurrencyChartForm</mainClass>
+							<mainClass>org.strangeforest.currencywatch.app.CurrencyWatch</mainClass>
 							<addClasspath>true</addClasspath>
 						</manifest>
 					</archive>

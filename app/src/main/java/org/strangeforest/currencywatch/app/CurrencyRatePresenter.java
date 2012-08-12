@@ -2,10 +2,11 @@ package org.strangeforest.currencywatch.app;
 
 import java.awt.event.*;
 import java.util.*;
+import java.util.concurrent.*;
 import javax.swing.*;
 import javax.swing.Timer;
 
-import org.jfree.chart.plot.*;
+import org.jfree.chart.*;
 import org.jfree.data.time.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.core.DateRange;
@@ -18,8 +19,8 @@ import com.finsoft.util.*;
 public class CurrencyRatePresenter implements AutoCloseable {
 
 	private final CurrencyRateProvider provider;
-	private final XYPlot chartPlot;
-	private final CurrencyRatePresenterListener presenterListener;
+	private final CurrencyChart chart;
+	private final Collection<CurrencyRatePresenterListener> listeners;
 	private volatile CurrencyRate currencyRate;
 	private volatile Thread dataThread;
 	private volatile Timer speedTimer;
@@ -31,22 +32,11 @@ public class CurrencyRatePresenter implements AutoCloseable {
 
 	private static final int REMOTE_PROVIDER_THREAD_COUNT = 10;
 
-	public CurrencyRatePresenter(XYPlot chartPlot, CurrencyRatePresenterListener presenterListener) {
+	public CurrencyRatePresenter() {
 		super();
-		this.chartPlot = chartPlot;
-		this.presenterListener = presenterListener;
-		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider();
-		remoteProvider.addListener(new CurrencyRateAdapter() {
-			@Override public void newRate(CurrencyRateEvent rateEvent) {
-				currRemoteItems++;
-				System.out.println(rateEvent);
-			}
-		});
-		provider = new ChainedCurrencyRateProvider(
-			new Db4oCurrencyRateProvider("data/currency-rates.db4o"),
-			new ParallelCurrencyRateProviderProxy(remoteProvider, REMOTE_PROVIDER_THREAD_COUNT)
-		);
-		provider.init();
+		provider = createProvider();
+		chart = new CurrencyChart();
+		listeners = new CopyOnWriteArrayList<>();
 		speedTimer = new Timer(1000, new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
 				updateSpeed();
@@ -54,7 +44,37 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		});
 	}
 
+	private CurrencyRateProvider createProvider() {
+		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider();
+		remoteProvider.addListener(new CurrencyRateAdapter() {
+			@Override public void newRate(CurrencyRateEvent rateEvent) {
+				currRemoteItems++;
+				System.out.println(rateEvent);
+			}
+		});
+		CurrencyRateProvider provider = new ChainedCurrencyRateProvider(
+			new Db4oCurrencyRateProvider("data/currency-rates.db4o"),
+			new ParallelCurrencyRateProviderProxy(remoteProvider, REMOTE_PROVIDER_THREAD_COUNT)
+		);
+		provider.init();
+		return provider;
+	}
+
+	public JFreeChart getChart() {
+		return chart.getChart();
+	}
+
+	public void addListener(CurrencyRatePresenterListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListener(CurrencyRatePresenterListener listener) {
+		listeners.remove(listener);
+	}
+
 	public void inputDataChanged(CurrencySymbol currency, Period period, SeriesQuality quality, boolean showBidAsk, boolean showMovAvg, boolean showBollBands, int movAvgPeriod) {
+		chart.updateSeriesStyle(showBidAsk, showMovAvg);
+
 		TimeSeries currencySeries = new TimeSeries(currency);
 		TimeSeries bidSeries = null, askSeries = null;
 		TimeSeries movAvgSeries = null;
@@ -70,7 +90,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			movAvgSeries = new TimeSeries(String.format("MovAvg(%s)", currency));
 			dataSet.addSeries(movAvgSeries);
 		}
-		chartPlot.setDataset(0, dataSet);
+		chart.setDataset(0, dataSet);
 		if (showBollBands) {
 			TimeSeriesCollection bbDataSet = new TimeSeriesCollection(currencySeries);
 			bollBandsSeries = new TimeSeries[] {
@@ -79,10 +99,10 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			};
 			bbDataSet.addSeries(bollBandsSeries[0]);
 			bbDataSet.addSeries(bollBandsSeries[1]);
-			chartPlot.setDataset(1, bbDataSet);
+			chart.setDataset(1, bbDataSet);
 		}
 		else
-			chartPlot.setDataset(1, null);
+			chart.setDataset(1, null);
 		CurrencyRate currencyRate = getCurrencyRate(currency.toString(), currencySeries, bidSeries, askSeries, movAvgSeries, bollBandsSeries, movAvgPeriod);
 		applyPeriod(currencyRate, currencySeries, period.days(), quality.points());
 	}
@@ -119,7 +139,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			@Override public void error(final String message) {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override public void run() {
-						presenterListener.statusChanged(message, true);
+						notifyStatusChanged(message, true);
 					}
 				});
 			}
@@ -175,7 +195,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 					loading = false;
 					speedTimer.stop();
 					updateSpeed();
-					presenterListener.statusChanged(StringUtil.EMPTY, false);
+					notifyStatusChanged(StringUtil.EMPTY, false);
 				}
 			}
 		});
@@ -183,21 +203,37 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	}
 
 	private void updateProgress() {
-		presenterListener.progressChanged((100 * currItems) / itemCount);
+		notifyProgressChanged((100 * currItems) / itemCount);
 	}
 
 	private void updateSpeed() {
 		long time = System.currentTimeMillis() - startTime;
 		double itemsPerSec = time > 0L ? (1000.0*currRemoteItems)/time : 0.0;
-		presenterListener.ratesPerSecChanged(itemsPerSec);
+		notifyRatesPerSecChanged(itemsPerSec);
 	}
 
 	private void setLoadingStatus() {
 		if (loading)
-			presenterListener.statusChanged("Loading...", false);
+			notifyStatusChanged("Loading...", false);
+	}
+
+	private void notifyStatusChanged(String status, boolean isError) {
+		for (CurrencyRatePresenterListener listener : listeners)
+			listener.statusChanged(status, isError);
+	}
+
+	private void notifyProgressChanged(int progress) {
+		for (CurrencyRatePresenterListener listener : listeners)
+			listener.progressChanged(progress);
+	}
+
+	private void notifyRatesPerSecChanged(double ratesPerSec) {
+		for (CurrencyRatePresenterListener listener : listeners)
+			listener.ratesPerSecChanged(ratesPerSec);
 	}
 
 	@Override public void close() {
+		listeners.clear();
 		if (provider != null)
 			provider.close();
 		if (dataThread != null)
