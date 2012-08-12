@@ -25,13 +25,13 @@ public class NBSCurrencyRateProviderIT {
 
 	@Test
 	public void getRate() {
-		RateValue rate = currencyRateProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
+		RateValue rate = currencyRateProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
 		System.out.println(rate);
 	}
 
 	@Test
 	public void getRates() {
-		Map<Date, RateValue> rates = currencyRateProvider.getRates(SYMBOL_FROM, SYMBOL_TO, Arrays.asList(DATE2, DATE3));
+		Map<Date, RateValue> rates = currencyRateProvider.getRates(BASE_CURRENCY, CURRENCY, Arrays.asList(DATE2, DATE3));
 		System.out.println(rates);
 	}
 }

@@ -1,4 +1,4 @@
-package org.strangeforest.currencywatch.ui;
+package org.strangeforest.currencywatch.app;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -11,15 +11,18 @@ import org.jfree.chart.axis.*;
 import org.jfree.chart.labels.*;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.*;
+import org.strangeforest.currencywatch.ui.*;
 
 import com.finsoft.util.*;
+
+import static org.strangeforest.currencywatch.ui.UIUtil.*;
 
 public class CurrencyChartForm {
 
 	private JButton exitButton;
 	private JPanel formPanel;
 	private JPanel toolPanel;
-	private JComboBox<String> currencyComboBox;
+	private JComboBox<CurrencySymbol> currencyComboBox;
 	private JComboBox<Period> periodComboBox;
 	private JComboBox<SeriesQuality> qualityComboBox;
 	private JCheckBox bidAskCheckBox;
@@ -68,20 +71,20 @@ public class CurrencyChartForm {
 
 	public CurrencyChartForm() {
 		presenter = new CurrencyRatePresenter(chartPanel.getChart().getXYPlot(), new FormCurrencyRatePresenterListener());
-		currencyComboBox.setModel(new DefaultComboBoxModel<>(CurrencyRatePresenter.CURRENCIES));
-		currencyComboBox.setSelectedItem(CurrencyRatePresenter.DEFAULT_CURRENCY);
+		currencyComboBox.setModel(new DefaultComboBoxModel<>(CurrencySymbol.values()));
+		currencyComboBox.setSelectedItem(DEFAULT_CURRENCY);
 		currencyComboBox.addActionListener(new InputDataListener());
 		periodComboBox.setModel(new DefaultComboBoxModel<>(Period.values()));
-		periodComboBox.setSelectedItem(CurrencyRatePresenter.DEFAULT_PERIOD);
+		periodComboBox.setSelectedItem(DEFAULT_PERIOD);
 		periodComboBox.addActionListener(new InputDataListener());
 		qualityComboBox.setModel(new DefaultComboBoxModel<>(SeriesQuality.values()));
-		qualityComboBox.setSelectedItem(CurrencyRatePresenter.DEFAULT_QUALITY);
+		qualityComboBox.setSelectedItem(DEFAULT_SERIES_QUALITY);
 		qualityComboBox.addActionListener(new InputDataListener());
 		bidAskCheckBox.addActionListener(new InputDataListener());
 		movAvgCheckBox.addActionListener(new PeriodComboBoxEnabledInputDataListener());
 		bollingerBandsCheckBox.addActionListener(new PeriodComboBoxEnabledInputDataListener());
-		movAvgPeriodComboBox.setModel(new DefaultComboBoxModel<>(CurrencyRatePresenter.MOV_AVG_PERIODS));
-		movAvgPeriodComboBox.setSelectedItem(CurrencyRatePresenter.DEFAULT_MOV_AVG_PERIOD);
+		movAvgPeriodComboBox.setModel(new DefaultComboBoxModel<>(MOV_AVG_PERIODS));
+		movAvgPeriodComboBox.setSelectedItem(DEFAULT_MOV_AVG_PERIOD);
 		movAvgPeriodComboBox.addActionListener(new InputDataListener());
 		formPanel.addComponentListener(new ComponentAdapter() {
 			@Override public void componentResized(ComponentEvent e) {
@@ -122,7 +125,7 @@ public class CurrencyChartForm {
 		boolean showBidAsk = bidAskCheckBox.isSelected();
 		boolean showMovAvg = movAvgCheckBox.isSelected();
 		presenter.inputDataChanged(
-			(String)currencyComboBox.getSelectedItem(),
+			(CurrencySymbol)currencyComboBox.getSelectedItem(),
 			(Period)periodComboBox.getSelectedItem(),
 			(SeriesQuality)qualityComboBox.getSelectedItem(),
 			showBidAsk,

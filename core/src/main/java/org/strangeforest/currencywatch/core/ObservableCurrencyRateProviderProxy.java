@@ -42,17 +42,17 @@ public class ObservableCurrencyRateProviderProxy extends BaseObservableCurrencyR
 		provider.close();
 	}
 
-	@Override public RateValue getRate(String symbolFrom, String symbolTo, Date date) {
-		RateValue rateValue = provider.getRate(symbolFrom, symbolTo, date);
+	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
+		RateValue rateValue = provider.getRate(baseCurrency, currency, date);
 		if (!isProviderObservable && hasAnyListener())
-			notifyListeners(symbolFrom, symbolTo, date, rateValue);
+			notifyListeners(baseCurrency, currency, date, rateValue);
 		return rateValue;
 	}
 
-	@Override public Map<Date, RateValue> getRates(String symbolFrom, String symbolTo, Collection<Date> dates) {
-		Map<Date, RateValue> dateRates = provider.getRates(symbolFrom, symbolTo, dates);
+	@Override public Map<Date, RateValue> getRates(String baseCurrency, String currency, Collection<Date> dates) {
+		Map<Date, RateValue> dateRates = provider.getRates(baseCurrency, currency, dates);
 		if (!isProviderObservable && hasAnyListener())
-			notifyListeners(symbolFrom, symbolTo, dateRates);
+			notifyListeners(baseCurrency, currency, dateRates);
 		return dateRates;
 	}
 

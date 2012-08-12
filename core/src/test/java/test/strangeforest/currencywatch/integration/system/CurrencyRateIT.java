@@ -38,14 +38,14 @@ public class CurrencyRateIT {
 
 	@Test
 	public void getRate() {
-		CurrencyRate rate = new CurrencyRate(SYMBOL_FROM, SYMBOL_TO, currencyRateProvider);
+		CurrencyRate rate = new CurrencyRate(BASE_CURRENCY, CURRENCY, currencyRateProvider);
 		rate.getRate(DATE);
 		System.out.println(rate);
 	}
 
 	@Test
 	public void getRates() {
-		CurrencyRate rate = new CurrencyRate(SYMBOL_FROM, SYMBOL_TO, currencyRateProvider);
+		CurrencyRate rate = new CurrencyRate(BASE_CURRENCY, CURRENCY, currencyRateProvider);
 		rate.getRates(DATES);
 		System.out.println(rate);
 	}

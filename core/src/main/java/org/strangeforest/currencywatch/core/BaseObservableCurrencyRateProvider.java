@@ -28,15 +28,15 @@ public abstract class BaseObservableCurrencyRateProvider extends BaseCurrencyRat
 			listener.newRates(rateEvents);
 	}
 
-	protected final void notifyListeners(String symbolFrom, String symbolTo, Date date, RateValue rateValue) {
-		notifyListeners(new CurrencyRateEvent(this, symbolFrom, symbolTo, date, rateValue));
+	protected final void notifyListeners(String baseCurrency, String currency, Date date, RateValue rateValue) {
+		notifyListeners(new CurrencyRateEvent(this, baseCurrency, currency, date, rateValue));
 	}
 
-	protected final void notifyListeners(String symbolFrom, String symbolTo, Map<Date, RateValue> dateRates) {
+	protected final void notifyListeners(String baseCurrency, String currency, Map<Date, RateValue> dateRates) {
 		CurrencyRateEvent[] rateEvents = new CurrencyRateEvent[dateRates.size()];
 		int i = 0;
 		for (Map.Entry<Date, RateValue> dateRate : dateRates.entrySet())
-			rateEvents[i++] = new CurrencyRateEvent(this, symbolFrom, symbolTo, dateRate.getKey(), dateRate.getValue());
+			rateEvents[i++] = new CurrencyRateEvent(this, baseCurrency, currency, dateRate.getKey(), dateRate.getValue());
 		notifyListeners(rateEvents);
 	}
 

@@ -17,12 +17,12 @@ public class ChainedCurrencyRateProviderTest {
 	@Test
 	public void getRateFromLocalProvider() {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
-		when(localProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenReturn(RATE);
+		when(localProvider.getRate(BASE_CURRENCY, CURRENCY, DATE)).thenReturn(RATE);
 		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
 		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
-			RateValue rate = chainedProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
+			RateValue rate = chainedProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
 
 			assertEquals(RATE, rate);
 			verify(remoteProvider, never()).getRate(anyString(), anyString(), any(Date.class));
@@ -33,16 +33,16 @@ public class ChainedCurrencyRateProviderTest {
 	@Test
 	public void getRateFromRemoteProvider() {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
-		when(localProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenReturn(null);
+		when(localProvider.getRate(BASE_CURRENCY, CURRENCY, DATE)).thenReturn(null);
 		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
-		when(remoteProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenReturn(RATE);
+		when(remoteProvider.getRate(BASE_CURRENCY, CURRENCY, DATE)).thenReturn(RATE);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
 		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
-			RateValue rate = chainedProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
+			RateValue rate = chainedProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
 
 			assertEquals(RATE, rate);
-			verify(localProvider).setRate(eq(SYMBOL_FROM), eq(SYMBOL_TO), eq(DATE), eq(RATE));
+			verify(localProvider).setRate(eq(BASE_CURRENCY), eq(CURRENCY), eq(DATE), eq(RATE));
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 		}
 	}
@@ -50,12 +50,12 @@ public class ChainedCurrencyRateProviderTest {
 	@Test
 	public void getAllRatesFromLocalProvider() {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
-		when(localProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet())).thenReturn(RATES);
+		when(localProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet())).thenReturn(RATES);
 		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
 		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
-			Map<Date, RateValue> rates = chainedProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
+			Map<Date, RateValue> rates = chainedProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet());
 
 			assertEquals(RATES, rates);
 			verify(remoteProvider, never()).getRate(anyString(), anyString(), any(Date.class));
@@ -68,13 +68,13 @@ public class ChainedCurrencyRateProviderTest {
 	@Test
 	public void getAllRatesFromRemoteProvider() {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
-		when(localProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet())).thenReturn(new HashMap<Date, RateValue>());
+		when(localProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet())).thenReturn(new HashMap<Date, RateValue>());
 		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
-		when(remoteProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet())).thenReturn(RATES);
+		when(remoteProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet())).thenReturn(RATES);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
 		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
-			Map<Date, RateValue> rates = chainedProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
+			Map<Date, RateValue> rates = chainedProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet());
 
 			assertEquals(RATES, rates);
 			verify(listener).newRates(argThat(matchesEventCount(RATES.size())));
@@ -88,13 +88,13 @@ public class ChainedCurrencyRateProviderTest {
 		NavigableMap<Date, RateValue> remoteRates = RATES.subMap(DATE4, true, DATE5, true);
 
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
-		when(localProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet())).thenReturn(localRates);
+		when(localProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet())).thenReturn(localRates);
 		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
-		when(remoteProvider.getRates(SYMBOL_FROM, SYMBOL_TO, remoteRates.keySet())).thenReturn(remoteRates);
+		when(remoteProvider.getRates(BASE_CURRENCY, CURRENCY, remoteRates.keySet())).thenReturn(remoteRates);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
 		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, remoteProvider, listener)) {
-			Map<Date, RateValue> rates = chainedProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
+			Map<Date, RateValue> rates = chainedProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet());
 
 			assertEquals(RATES, rates);
 			verify(remoteProvider, never()).getRate(anyString(), anyString(), any(Date.class));
@@ -110,14 +110,14 @@ public class ChainedCurrencyRateProviderTest {
 	public void ratesFromObservableRemoteProviderArePropagated() {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
 		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
-		when(remoteProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE)).thenReturn(RATE);
-		when(remoteProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet())).thenReturn(RATES);
+		when(remoteProvider.getRate(BASE_CURRENCY, CURRENCY, DATE)).thenReturn(RATE);
+		when(remoteProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet())).thenReturn(RATES);
 		ObservableCurrencyRateProviderProxy observableRemoteProvider = new ObservableCurrencyRateProviderProxy(remoteProvider);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
 		try (ChainedCurrencyRateProvider chainedProvider = createChainedProvider(localProvider, observableRemoteProvider, listener)) {
-			RateValue rate = observableRemoteProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
-			Map<Date, RateValue> rates = observableRemoteProvider.getRates(SYMBOL_FROM, SYMBOL_TO, RATES.keySet());
+			RateValue rate = observableRemoteProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
+			Map<Date, RateValue> rates = observableRemoteProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet());
 
 			assertEquals(RATE, rate);
 			assertEquals(RATES, rates);

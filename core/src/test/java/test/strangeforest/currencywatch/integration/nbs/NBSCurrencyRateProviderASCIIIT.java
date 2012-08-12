@@ -26,7 +26,7 @@ public class NBSCurrencyRateProviderASCIIIT {
 
 	@Test
 	public void getRates() {
-		Map<Date, RateValue> rates = currencyRateProvider.getRates(SYMBOL_FROM, SYMBOL_TO, Arrays.asList(DATE5));
+		Map<Date, RateValue> rates = currencyRateProvider.getRates(BASE_CURRENCY, CURRENCY, Arrays.asList(DATE5));
 		System.out.println(rates);
 	}
 }

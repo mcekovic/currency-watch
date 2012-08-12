@@ -4,13 +4,13 @@ import java.util.*;
 
 public abstract class BaseCurrencyRate {
 
-	protected final String symbolFrom;
-	protected final String symbolTo;
+	protected final String baseCurrency;
+	protected final String currency;
 
-	protected BaseCurrencyRate(String symbolFrom, String symbolTo) {
+	protected BaseCurrencyRate(String baseCurrency, String currency) {
 		super();
-		this.symbolFrom = symbolFrom;
-		this.symbolTo = symbolTo;
+		this.baseCurrency = baseCurrency;
+		this.currency = currency;
 	}
 
 	public abstract RateValue getRate(Date date);
@@ -33,14 +33,14 @@ public abstract class BaseCurrencyRate {
 		if (this == o) return true;
 		if (o == null || !(o instanceof BaseCurrencyRate)) return false;
 		BaseCurrencyRate rate = (BaseCurrencyRate)o;
-		return symbolFrom.equals(rate.symbolFrom) && symbolTo.equals(rate.symbolTo);
+		return baseCurrency.equals(rate.baseCurrency) && currency.equals(rate.currency);
 	}
 
 	@Override public int hashCode() {
-		return 31 * symbolFrom.hashCode() + symbolTo.hashCode();
+		return 31 * baseCurrency.hashCode() + currency.hashCode();
 	}
 
 	@Override public String toString() {
-		return String.format("CurrencyRate{symbolFrom=%1$s, symbolTo=%2$s, rates=%3$s}", symbolFrom, symbolTo, getRates());
+		return String.format("CurrencyRate{baseCurrency=%1$s, currency=%2$s, rates=%3$s}", baseCurrency, currency, getRates());
 	}
 }

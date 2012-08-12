@@ -1,0 +1,29 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Currency Chart</title>
+</h:head>
+
+<h:body>
+	<h1>Currency Chart</h1>
+
+	<h:outputLabel for="baseCurrency" value="Currency: "/>
+	<h:selectOneMenu id="baseCurrency" value="#{chartBean.defaultCurrency}">
+		<f:selectItems value="#{chartBean.currencies}"/>
+	</h:selectOneMenu>
+
+	<h:outputLabel for="period" value="Period: "/>
+	<h:selectOneMenu id="period" value="#{chartBean.defaultPeriod}">
+		<f:selectItems value="#{chartBean.periods}"/>
+	</h:selectOneMenu>
+
+	<h:outputLabel for="seriesQuality" value="Quality: "/>
+	<h:selectOneMenu id="seriesQuality" value="#{chartBean.defaultSeriesQuality}">
+		<f:selectItems value="#{chartBean.seriesQualities}"/>
+	</h:selectOneMenu>
+
+</h:body>
+</html> 

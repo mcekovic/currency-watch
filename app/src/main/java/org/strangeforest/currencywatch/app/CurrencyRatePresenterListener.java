@@ -1,4 +1,4 @@
-package org.strangeforest.currencywatch.ui;
+package org.strangeforest.currencywatch.app;
 
 public interface CurrencyRatePresenterListener {
 

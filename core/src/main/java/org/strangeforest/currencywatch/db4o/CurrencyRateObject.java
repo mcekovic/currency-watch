@@ -8,8 +8,8 @@ public class CurrencyRateObject extends BaseCurrencyRate {
 
 	private final Map<Date, RateValue> dateRates;
 
-	public CurrencyRateObject(String symbolFrom, String symbolTo) {
-		super(symbolFrom, symbolTo);
+	public CurrencyRateObject(String baseCurrency, String currency) {
+		super(baseCurrency, currency);
 		dateRates = new HashMap<>();
 	}
 

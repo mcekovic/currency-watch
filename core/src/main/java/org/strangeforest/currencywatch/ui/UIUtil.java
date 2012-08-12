@@ -1,14 +1,21 @@
-package org.strangeforest.currencywatch.core;
+package org.strangeforest.currencywatch.ui;
 
 import java.util.*;
 
 import com.finsoft.util.*;
 
-public abstract class Util {
+public abstract class UIUtil {
 
-	public static final String SYMBOL_FROM = "DIN";
+	public static final String BASE_CURRENCY = "RSD";
 
 	public static final Calendar START_DATE = new GregorianCalendar(2002, 5, 15);
+
+	public static final Integer[] MOV_AVG_PERIODS = {10, 20, 50, 100, 200, 500};
+	public static final CurrencySymbol DEFAULT_CURRENCY = CurrencySymbol.EUR;
+	public static final Period DEFAULT_PERIOD = Period.MONTH;
+	public static final SeriesQuality DEFAULT_SERIES_QUALITY = SeriesQuality.NORMAL;
+
+	public static final int DEFAULT_MOV_AVG_PERIOD = 20;
 
 	public static Calendar getLastDate() {
 		Calendar now = new GregorianCalendar();

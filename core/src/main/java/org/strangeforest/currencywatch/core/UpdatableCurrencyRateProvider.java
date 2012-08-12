@@ -4,6 +4,6 @@ import java.util.*;
 
 public interface UpdatableCurrencyRateProvider extends CurrencyRateProvider {
 
-	void setRate(String symbolFrom, String symbolTo, Date date, RateValue rateValue);
-	void setRates(String symbolFrom, String symbolTo, Map<Date, RateValue> dateRates);
+	void setRate(String baseCurrency, String currency, Date date, RateValue rateValue);
+	void setRates(String baseCurrency, String currency, Map<Date, RateValue> dateRates);
 }

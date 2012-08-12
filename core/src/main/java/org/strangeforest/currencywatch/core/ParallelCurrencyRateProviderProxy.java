@@ -50,7 +50,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 		this.maxExceptions = maxExceptions;
 	}
 
-	@Override public Map<Date, RateValue> getRates(final String symbolFrom, final String symbolTo, Collection<Date> dates) {
+	@Override public Map<Date, RateValue> getRates(final String baseCurrency, final String currency, Collection<Date> dates) {
 		Map<Date, RateValue> dateValues = new TreeMap<>();
 		final AtomicInteger retriesLeft = new AtomicInteger(retryCount);
 		final Queue<Future<DateRateValue>> results = new ArrayDeque<>();
@@ -58,15 +58,15 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 			Callable<DateRateValue> task = new Callable<DateRateValue>() {
 				@Override public DateRateValue call() throws Exception {
 					try {
-						RateValue rateValue = provider.getRate(symbolFrom, symbolTo, date);
+						RateValue rateValue = provider.getRate(baseCurrency, currency, date);
 						if (!isProviderObservable && hasAnyListener())
-							notifyListeners(symbolFrom, symbolTo, date, rateValue);
+							notifyListeners(baseCurrency, currency, date, rateValue);
 						return new DateRateValue(date, rateValue);
 					}
 					catch (Exception ex) {
 						int left = retriesLeft.decrementAndGet();
 						if (left >= 0) {
-							System.err.printf("Retrying request: getRate(%1$s, %2$s, %3$td-%3$tm-%3$tY): %4$s\n", symbolFrom, symbolTo, date, ex);
+							System.err.printf("Retrying request: getRate(%1$s, %2$s, %3$td-%3$tm-%3$tY): %4$s\n", baseCurrency, currency, date, ex);
 							notifyListeners("Retrying...");
 							results.add(executor.submit(this));
 							return null;

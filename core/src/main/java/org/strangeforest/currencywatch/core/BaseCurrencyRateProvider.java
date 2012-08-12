@@ -8,10 +8,10 @@ public abstract class BaseCurrencyRateProvider implements CurrencyRateProvider {
 
 	@Override public void close() {}
 
-	@Override public Map<Date, RateValue> getRates(String symbolFrom, String symbolTo, Collection<Date> dates) {
+	@Override public Map<Date, RateValue> getRates(String baseCurrency, String currency, Collection<Date> dates) {
 		Map<Date, RateValue> dateRates = new TreeMap<>();
 		for (Date date : dates) {
-			RateValue rateValue = getRate(symbolFrom, symbolTo, date);
+			RateValue rateValue = getRate(baseCurrency, currency, date);
 			if (rateValue != null)
 				dateRates.put(date, rateValue);
 		}

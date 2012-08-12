@@ -12,12 +12,12 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 	private final CurrencyRateListener providerListener;
 	private final Collection<CurrencyRateListener> listeners = Collections.synchronizedSet(new HashSet<CurrencyRateListener>());
 
-	public CurrencyRate(String symbolFrom, String symbolTo) {
-		this(symbolFrom, symbolTo, null);
+	public CurrencyRate(String baseCurrency, String currency) {
+		this(baseCurrency, currency, null);
 	}
 
-	public CurrencyRate(String symbolFrom, String symbolTo, CurrencyRateProvider provider) {
-		super(symbolFrom, symbolTo);
+	public CurrencyRate(String baseCurrency, String currency, CurrencyRateProvider provider) {
+		super(baseCurrency, currency);
 		dateRates = new LockableHashMap<>();
 		this.provider = provider;
 		isProviderObservable = provider instanceof ObservableCurrencyRateProvider;
@@ -52,7 +52,7 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 		try {
 			RateValue rateValue = dateRates.get(date);
 			if (rateValue == null && provider != null) {
-				rateValue = provider.getRate(symbolFrom, symbolTo, date);
+				rateValue = provider.getRate(baseCurrency, currency, date);
 				if (!isProviderObservable && rateValue != null) {
 					RateValue oldRateValue = dateRates.put(date, rateValue);
 					if (oldRateValue == null || !oldRateValue.equals(rateValue))
@@ -90,14 +90,14 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 			}
 		}
 		if (provider != null && !datesForFetch.isEmpty()) {
-			Map<Date, RateValue> fetchedRates = provider.getRates(symbolFrom, symbolTo, datesForFetch);
+			Map<Date, RateValue> fetchedRates = provider.getRates(baseCurrency, currency, datesForFetch);
 			if (!isProviderObservable) {
 				List<CurrencyRateEvent> newRateEvents = new ArrayList<>(fetchedRates.size());
 				for (Map.Entry<Date, RateValue> dateRate : fetchedRates.entrySet()) {
 					Date date = dateRate.getKey();
 					RateValue rate = dateRate.getValue();
 					if (putRate(date, rate))
-						newRateEvents.add(new CurrencyRateEvent(this, symbolFrom, symbolTo, date, rate));
+						newRateEvents.add(new CurrencyRateEvent(this, baseCurrency, currency, date, rate));
 				}
 				if (!newRateEvents.isEmpty())
 					notifyListeners(newRateEvents.toArray(new CurrencyRateEvent[newRateEvents.size()]));
@@ -136,7 +136,7 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 
 	private void notifyListeners(Date date, RateValue rate) {
 		if (!listeners.isEmpty()) {
-			CurrencyRateEvent event = new CurrencyRateEvent(this, symbolFrom, symbolTo, date, rate);
+			CurrencyRateEvent event = new CurrencyRateEvent(this, baseCurrency, currency, date, rate);
 			for (CurrencyRateListener listener : listeners)
 				listener.newRate(event);
 		}

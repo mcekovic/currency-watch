@@ -4,25 +4,25 @@ import java.util.*;
 
 public class CurrencyRateEvent extends EventObject {
 
-	private final String symbolFrom;
-	private final String symbolTo;
+	private final String baseCurrency;
+	private final String currency;
 	private final Date date;
 	private final RateValue rate;
 
-	public CurrencyRateEvent(Object source, String symbolFrom, String symbolTo, Date date, RateValue rate) {
+	public CurrencyRateEvent(Object source, String baseCurrency, String currency, Date date, RateValue rate) {
 		super(source);
-		this.symbolFrom = symbolFrom;
-		this.symbolTo = symbolTo;
+		this.baseCurrency = baseCurrency;
+		this.currency = currency;
 		this.date = date;
 		this.rate = rate;
 	}
 
-	public String getSymbolFrom() {
-		return symbolFrom;
+	public String getBaseCurrency() {
+		return baseCurrency;
 	}
 
-	public String getSymbolTo() {
-		return symbolTo;
+	public String getCurrency() {
+		return currency;
 	}
 
 	public Date getDate() {
@@ -34,6 +34,6 @@ public class CurrencyRateEvent extends EventObject {
 	}
 
 	@Override public String toString() {
-		return String.format("CurrencyRateEvent{symbolFrom=%1$s, symbolTo=%2$s, date=%3$td-%3$tm-%3$tY, rate=%4$s}", symbolFrom, symbolTo, date, rate);
+		return String.format("CurrencyRateEvent{baseCurrency=%1$s, currency=%2$s, date=%3$td-%3$tm-%3$tY, rate=%4$s}", baseCurrency, currency, date, rate);
 	}
 }

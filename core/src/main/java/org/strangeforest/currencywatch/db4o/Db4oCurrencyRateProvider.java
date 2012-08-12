@@ -14,7 +14,7 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	private ObjectContainer db;
 	private boolean closed;
 
-	public static final int CURRENT_VERSION = 1;
+	public static final int CURRENT_VERSION = 2;
 
 	public Db4oCurrencyRateProvider(String dbFileName) {
 		this(dbFileName, CURRENT_VERSION);
@@ -40,8 +40,8 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	private void openDb() {
 		EmbeddedConfiguration dbConfig = Db4oEmbedded.newConfiguration();
 		ObjectClass currencyRateConfig = dbConfig.common().objectClass(CurrencyRateObject.class);
-		currencyRateConfig.objectField("symbolFrom").indexed(true);
-		currencyRateConfig.objectField("symbolTo").indexed(true);
+		currencyRateConfig.objectField("baseCurrency").indexed(true);
+		currencyRateConfig.objectField("currency").indexed(true);
 		currencyRateConfig.cascadeOnUpdate(true);
 		currencyRateConfig.cascadeOnDelete(true);
 		db = Db4oEmbedded.openFile(dbConfig, dbFileName);
@@ -72,20 +72,20 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		super.close();
 	}
 
-	@Override public RateValue getRate(final String symbolFrom, final String symbolTo, final Date date) {
+	@Override public RateValue getRate(final String baseCurrency, final String currency, final Date date) {
 		return queryDb4o(new Db4oQueryCallback<RateValue>() {
 			@Override public RateValue queryDb4o(ObjectContainer db) {
-				CurrencyRateObject rate = getCurrencyRate(db, symbolFrom, symbolTo);
+				CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
 				return rate != null ? rate.getRate(date) : null;
 			}
 		});
 	}
 
-	@Override public Map<Date, RateValue> getRates(final String symbolFrom, final String symbolTo, final Collection<Date> dates) {
+	@Override public Map<Date, RateValue> getRates(final String baseCurrency, final String currency, final Collection<Date> dates) {
 		Map<Date, RateValue> rates = queryDb4o(new Db4oQueryCallback<Map<Date, RateValue>>() {
 			@Override public Map<Date, RateValue> queryDb4o(ObjectContainer db) {
 				Map<Date, RateValue> dateRates = new HashMap<>();
-				CurrencyRateObject rate = getCurrencyRate(db, symbolFrom, symbolTo);
+				CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
 				if (rate != null) {
 					dateRates.putAll(rate.getRates());
 					dateRates.keySet().retainAll(dates);
@@ -96,32 +96,32 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		return rates != null ? rates : new HashMap<Date, RateValue>();
 	}
 
-	@Override public void setRate(final String symbolFrom, final String symbolTo, final Date date, final RateValue rateValue) {
+	@Override public void setRate(final String baseCurrency, final String currency, final Date date, final RateValue rateValue) {
 		doInDb4o(new Db4oCallback() {
 			@Override public void doInDb4o(ObjectContainer db) {
-				CurrencyRateObject rate = getCurrencyRate(db, symbolFrom, symbolTo);
+				CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
 				if (rate == null)
-					rate = new CurrencyRateObject(symbolFrom, symbolTo);
+					rate = new CurrencyRateObject(baseCurrency, currency);
 				rate.setRate(date, rateValue);
 				db.store(rate);
 			}
 		});
 	}
 
-	@Override public void setRates(final String symbolFrom, final String symbolTo, final Map<Date, RateValue> dateRates) {
+	@Override public void setRates(final String baseCurrency, final String currency, final Map<Date, RateValue> dateRates) {
 		doInDb4o(new Db4oCallback() {
 			@Override public void doInDb4o(ObjectContainer db) {
-				CurrencyRateObject rate = getCurrencyRate(db, symbolFrom, symbolTo);
+				CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
 				if (rate == null)
-					rate = new CurrencyRateObject(symbolFrom, symbolTo);
+					rate = new CurrencyRateObject(baseCurrency, currency);
 				rate.setRates(dateRates);
 				db.store(rate);
 			}
 		});
 	}
 
-	private CurrencyRateObject getCurrencyRate(ObjectContainer db, String symbolFrom, String symbolTo) {
-		CurrencyRateObject template = new CurrencyRateObject(symbolFrom, symbolTo);
+	private CurrencyRateObject getCurrencyRate(ObjectContainer db, String baseCurrency, String currency) {
+		CurrencyRateObject template = new CurrencyRateObject(baseCurrency, currency);
 		return exactlyOne(db.<CurrencyRateObject>queryByExample(template), template);
 	}
 

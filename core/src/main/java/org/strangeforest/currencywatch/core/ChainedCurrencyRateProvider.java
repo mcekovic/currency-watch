@@ -54,34 +54,34 @@ public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvi
 		remoteProvider.close();
 	}
 
-	@Override public RateValue getRate(String symbolFrom, String symbolTo, Date date) {
-		RateValue rateValue = localProvider.getRate(symbolFrom, symbolTo, date);
+	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
+		RateValue rateValue = localProvider.getRate(baseCurrency, currency, date);
 		if (rateValue == null) {
-			rateValue = remoteProvider.getRate(symbolFrom, symbolTo, date);
+			rateValue = remoteProvider.getRate(baseCurrency, currency, date);
 			if (rateValue != null)
-				localProvider.setRate(symbolFrom, symbolTo, date, rateValue);
+				localProvider.setRate(baseCurrency, currency, date, rateValue);
 				if (hasAnyListener() && !isRemoteProviderObservable)
-					notifyListeners(symbolFrom, symbolTo, date, rateValue);
+					notifyListeners(baseCurrency, currency, date, rateValue);
 		}
 		else if (hasAnyListener() && !isLocalProviderObservable)
-			notifyListeners(symbolFrom, symbolTo, date, rateValue);
+			notifyListeners(baseCurrency, currency, date, rateValue);
 		return rateValue;
 	}
 
-	@Override public Map<Date, RateValue> getRates(String symbolFrom, String symbolTo, Collection<Date> dates) {
-		Map<Date, RateValue> dateRates = localProvider.getRates(symbolFrom, symbolTo, dates);
+	@Override public Map<Date, RateValue> getRates(String baseCurrency, String currency, Collection<Date> dates) {
+		Map<Date, RateValue> dateRates = localProvider.getRates(baseCurrency, currency, dates);
 		Collection<Date> missingDates = new HashSet<>(dates);
 		if (!dateRates.isEmpty()) {
 			if (hasAnyListener() && !isLocalProviderObservable)
-				notifyListeners(symbolFrom, symbolTo, dateRates);
+				notifyListeners(baseCurrency, currency, dateRates);
 			missingDates.removeAll(dateRates.keySet());
 		}
 		if (!missingDates.isEmpty()) {
-			Map<Date, RateValue> newDateRates = remoteProvider.getRates(symbolFrom, symbolTo, missingDates);
+			Map<Date, RateValue> newDateRates = remoteProvider.getRates(baseCurrency, currency, missingDates);
 			if (!newDateRates.isEmpty()) {
 				if (hasAnyListener() && !isRemoteProviderObservable)
-					notifyListeners(symbolFrom, symbolTo, newDateRates);
-				localProvider.setRates(symbolFrom, symbolTo, newDateRates);
+					notifyListeners(baseCurrency, currency, newDateRates);
+				localProvider.setRates(baseCurrency, currency, newDateRates);
 				dateRates = new HashMap<>(dateRates);
 				dateRates.putAll(newDateRates);
 			}

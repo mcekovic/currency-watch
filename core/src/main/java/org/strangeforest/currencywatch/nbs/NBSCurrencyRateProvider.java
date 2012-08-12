@@ -40,13 +40,13 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		}
 	}
 
-	@Override public RateValue getRate(String symbolFrom, String symbolTo, Date date) {
+	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
 		try {
 			while (true) {
 				try {
-					RateValue rateValue = doGetRate(symbolTo, date);
+					RateValue rateValue = doGetRate(currency, date);
 					if (hasAnyListener())
-						notifyListeners(symbolFrom, symbolTo, date, rateValue);
+						notifyListeners(baseCurrency, currency, date, rateValue);
 					return rateValue;
 				}
 				catch (CurrencyRateException ex) {
@@ -58,11 +58,11 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 			}
 		}
 		catch (Exception ex) {
-			throw new CurrencyRateException("Error getting currency rate from %1$s tp %2$s for date: %3$td-%3$tm-%3$tY", ex, symbolFrom, symbolTo, date);
+			throw new CurrencyRateException("Error getting currency rate from %1$s tp %2$s for date: %3$td-%3$tm-%3$tY", ex, baseCurrency, currency, date);
 		}
 	}
 
-	private RateValue doGetRate(String symbolTo, Date date) throws IOException {
+	private RateValue doGetRate(String currency, Date date) throws IOException {
 		URLConnection conn = new URL(NBS_URL).openConnection();
 		conn.setDoInput(true);
 		conn.setDoOutput(true);
@@ -85,9 +85,9 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
 			switch(format) {
 				case CSV:
-					return findRateCSV(reader, symbolTo);
+					return findRateCSV(reader, currency);
 				case ASCII:
-					return findRateASCII(reader, symbolTo);
+					return findRateASCII(reader, currency);
 				default:
 					throw new IllegalStateException("Invalid NBS format: " + format);
 			}
@@ -126,13 +126,13 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		}
 	}
 
-	private RateValue findRateASCII(BufferedReader reader, String symbolTo) throws IOException {
+	private RateValue findRateASCII(BufferedReader reader, String currency) throws IOException {
 		String line;
 		StringBuilder sb = new StringBuilder(500);
 		while ((line = reader.readLine()) != null) {
 			sb.append(line);
 			String[] fields = line.split(";");
-			if (fields.length >= 9 && symbolTo.equals(fields[4])) {
+			if (fields.length >= 9 && currency.equals(fields[4])) {
 				double unit = Double.parseDouble(fields[5]);
 				double bid = Double.parseDouble(fields[8])/unit;
 				double middle = Double.parseDouble(fields[9])/unit;
@@ -143,10 +143,10 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		if (sb.toString().equals("null13"))
 			throw new CurrencyRateException(true);
 		else
-			throw new CurrencyRateException("Cannot find rate for " + symbolTo + ". Invalid response: " + sb.toString());
+			throw new CurrencyRateException("Cannot find rate for " + currency + ". Invalid response: " + sb.toString());
 	}
 
-	private RateValue findRateCSV(BufferedReader reader, String symbolTo) throws IOException {
+	private RateValue findRateCSV(BufferedReader reader, String currency) throws IOException {
 		String line;
 		boolean foundCSV = false;
 		StringBuilder sb = new StringBuilder(500);
@@ -162,7 +162,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 				if (line.charAt(0) == ' ')
 					break;
 				String[] fields = line.split(",");
-				if (fields.length >= 7 && symbolTo.equals(fields[4])) {
+				if (fields.length >= 7 && currency.equals(fields[4])) {
 					double unit = Double.parseDouble(fields[5]);
 					double bid = Double.parseDouble(fields[6])/unit;
 					double ask = Double.parseDouble(fields[7])/unit;
@@ -177,7 +177,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 				throw new CurrencyRateException("Invalid response: " + sb.toString());
 		}
 		else
-			throw new CurrencyRateException("Cannot find rate for " + symbolTo);
+			throw new CurrencyRateException("Cannot find rate for " + currency);
 	}
 
 	public enum Format {

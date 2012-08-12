@@ -33,23 +33,23 @@ public class Db4oCurrencyRateProviderIT {
 
 	@Test
 	public void setRate() {
-		currencyRateProvider.setRate(SYMBOL_FROM, SYMBOL_TO, DATE, RATE);
+		currencyRateProvider.setRate(BASE_CURRENCY, CURRENCY, DATE, RATE);
 	}
 
 	@Test(dependsOnMethods = "setRate")
 	public void getRate() {
-		RateValue fetchedRate = currencyRateProvider.getRate(SYMBOL_FROM, SYMBOL_TO, DATE);
+		RateValue fetchedRate = currencyRateProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
 		assertEquals(fetchedRate, RATE);
 	}
 
 	@Test(dependsOnMethods = "getRate")
 	public void setRates() {
-		currencyRateProvider.setRates(SYMBOL_FROM, SYMBOL_TO, RATES);
+		currencyRateProvider.setRates(BASE_CURRENCY, CURRENCY, RATES);
 	}
 
 	@Test(dependsOnMethods = "setRates")
 	public void getRates() {
-		Map<Date, RateValue> fetchedRates = currencyRateProvider.getRates(SYMBOL_FROM, SYMBOL_TO, DATES);
+		Map<Date, RateValue> fetchedRates = currencyRateProvider.getRates(BASE_CURRENCY, CURRENCY, DATES);
 		assertEquals(fetchedRates, RATES);
 	}
 

@@ -6,8 +6,8 @@ import org.strangeforest.currencywatch.core.*;
 
 public class TestData {
 
-	public static final String SYMBOL_FROM = "DIN";
-	public static final String SYMBOL_TO = "EUR";
+	public static final String BASE_CURRENCY = "RSD";
+	public static final String CURRENCY = "EUR";
 
 	public static final Date DATE = new GregorianCalendar(2012, 4, 1).getTime();
 	public static final RateValue RATE = new RateValue(116.0, 120.0, 118.0);
