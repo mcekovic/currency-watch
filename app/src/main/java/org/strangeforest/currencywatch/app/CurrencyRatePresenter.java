@@ -7,9 +7,7 @@ import javax.swing.*;
 import javax.swing.Timer;
 
 import org.jfree.chart.*;
-import org.jfree.data.time.*;
 import org.strangeforest.currencywatch.core.*;
-import org.strangeforest.currencywatch.core.DateRange;
 import org.strangeforest.currencywatch.db4o.*;
 import org.strangeforest.currencywatch.nbs.*;
 import org.strangeforest.currencywatch.ui.*;
@@ -20,7 +18,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 
 	private final CurrencyRateProvider provider;
 	private final CurrencyChart chart;
-	private final Collection<CurrencyRatePresenterListener> listeners;
+	private final Collection<CurrencyRatePresenterListener> listeners = new CopyOnWriteArrayList<>();
 	private volatile CurrencyRate currencyRate;
 	private volatile Thread dataThread;
 	private volatile Timer speedTimer;
@@ -36,7 +34,6 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		super();
 		provider = createProvider();
 		chart = new CurrencyChart();
-		listeners = new CopyOnWriteArrayList<>();
 		speedTimer = new Timer(1000, new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
 				updateSpeed();
@@ -73,42 +70,12 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	}
 
 	public void inputDataChanged(CurrencySymbol currency, Period period, SeriesQuality quality, boolean showBidAsk, boolean showMovAvg, boolean showBollBands, int movAvgPeriod) {
-		chart.updateSeriesStyle(showBidAsk, showMovAvg);
-
-		TimeSeries currencySeries = new TimeSeries(currency);
-		TimeSeries bidSeries = null, askSeries = null;
-		TimeSeries movAvgSeries = null;
-		TimeSeries[] bollBandsSeries = null;
-		TimeSeriesCollection dataSet = new TimeSeriesCollection(currencySeries);
-		if (showBidAsk) {
-			bidSeries = new TimeSeries(String.format("Bid(%s)", currency));
-			askSeries = new TimeSeries(String.format("Ask(%s)", currency));
-			dataSet.addSeries(bidSeries);
-			dataSet.addSeries(askSeries);
-		}
-		if (showMovAvg) {
-			movAvgSeries = new TimeSeries(String.format("MovAvg(%s)", currency));
-			dataSet.addSeries(movAvgSeries);
-		}
-		chart.setDataset(0, dataSet);
-		if (showBollBands) {
-			TimeSeriesCollection bbDataSet = new TimeSeriesCollection(currencySeries);
-			bollBandsSeries = new TimeSeries[] {
-				new TimeSeries(String.format("BBLow(%s)", currency)),
-				new TimeSeries(String.format("BBHigh(%s)", currency))
-			};
-			bbDataSet.addSeries(bollBandsSeries[0]);
-			bbDataSet.addSeries(bollBandsSeries[1]);
-			chart.setDataset(1, bbDataSet);
-		}
-		else
-			chart.setDataset(1, null);
-		CurrencyRate currencyRate = getCurrencyRate(currency.toString(), currencySeries, bidSeries, askSeries, movAvgSeries, bollBandsSeries, movAvgPeriod);
-		applyPeriod(currencyRate, currencySeries, period.days(), quality.points());
+		chart.createSeries(currency, showBidAsk, showMovAvg, showBollBands);
+		CurrencyRate currencyRate = getCurrencyRate(currency.toString(), movAvgPeriod);
+		applyPeriod(currencyRate, period.days(), quality.points());
 	}
 
-	private CurrencyRate getCurrencyRate(String currency, final TimeSeries series, final TimeSeries bidSeries, final TimeSeries askSeries,
-	                                     final TimeSeries movAvgSeries, final TimeSeries[] bollBandsSeries, final int movAvgPeriod) {
+	private CurrencyRate getCurrencyRate(String currency, final int movAvgPeriod) {
 		if (currencyRate != null)
 			currencyRate.close();
 		currencyRate = new CurrencyRate(UIUtil.BASE_CURRENCY, currency, provider);
@@ -116,11 +83,11 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			@Override public void newRate(final CurrencyRateEvent rateEvent) {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override public void run() {
-						updateBaseSeries(rateEvent);
+						chart.updateBaseSeries(rateEvent);
 						currItems++;
 						updateProgress();
 						setLoadingStatus();
-						updateDerivedSeries();
+						chart.updateDerivedSeries(movAvgPeriod);
 					}
 				});
 			}
@@ -128,11 +95,11 @@ public class CurrencyRatePresenter implements AutoCloseable {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override public void run() {
 						for (CurrencyRateEvent rateEvent : rateEvents)
-							updateBaseSeries(rateEvent);
+							chart.updateBaseSeries(rateEvent);
 						currItems += rateEvents.length;
 						updateProgress();
 						setLoadingStatus();
-						updateDerivedSeries();
+						chart.updateDerivedSeries(movAvgPeriod);
 					}
 				});
 			}
@@ -143,41 +110,18 @@ public class CurrencyRatePresenter implements AutoCloseable {
 					}
 				});
 			}
-
-			private void updateBaseSeries(CurrencyRateEvent rateEvent) {
-				Day day = new Day(rateEvent.getDate());
-				RateValue rate = rateEvent.getRate();
-				series.addOrUpdate(day, rate.getMiddle());
-				if (bidSeries != null)
-					bidSeries.addOrUpdate(day, rate.getBid());
-				if (askSeries != null)
-					askSeries.addOrUpdate(day, rate.getAsk());
-			}
-
-			private void updateDerivedSeries() {
-				if (movAvgSeries != null)
-					new MovingAveragePoints(movAvgPeriod).applyToSeries(series, movAvgSeries);
-				if (bollBandsSeries != null)
-					new BollingerBandsPoints(movAvgPeriod, 2.0).applyToSeries(series, bollBandsSeries);
-			}
 		});
 		return currencyRate;
 	}
 
-	private void applyPeriod(final CurrencyRate rate, TimeSeries series, int days, int maxPoints) {
+	private void applyPeriod(final CurrencyRate rate, int days, int maxPoints) {
 		if (dataThread != null)
 			dataThread.interrupt();
-		series.clear();
-		Calendar cal = UIUtil.getLastDate();
-		Date toDate = cal.getTime();
-		cal.add(Calendar.DATE, -days);
-		Date fromDate = cal.getTime();
-		final DateRange dateRange = new DateRange(fromDate, toDate);
+		final DateRange dateRange = toDateRange(days);
+		chart.setDateRange(dateRange);
 		final int step = 1 + days/maxPoints;
 		final Collection<Date> dates = dateRange.dates(step);
 		itemCount = dates.size();
-		series.addOrUpdate(new Day(fromDate), 0);
-		series.addOrUpdate(new Day(toDate), 0);
 		currItems = 0;
 		currRemoteItems = 0;
 		startTime = System.currentTimeMillis();
@@ -202,8 +146,16 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		dataThread.start();
 	}
 
+	private static DateRange toDateRange(int days) {
+		Calendar cal = UIUtil.getLastDate();
+		Date toDate = cal.getTime();
+		cal.add(Calendar.DATE, -days);
+		Date fromDate = cal.getTime();
+		return new DateRange(fromDate, toDate);
+	}
+
 	private void updateProgress() {
-		notifyProgressChanged((100 * currItems) / itemCount);
+		notifyProgressChanged((100*currItems)/itemCount);
 	}
 
 	private void updateSpeed() {

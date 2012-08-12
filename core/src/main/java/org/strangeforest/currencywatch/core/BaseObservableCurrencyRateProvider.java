@@ -1,10 +1,11 @@
 package org.strangeforest.currencywatch.core;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 public abstract class BaseObservableCurrencyRateProvider extends BaseCurrencyRateProvider implements ObservableCurrencyRateProvider {
 
-	private final Collection<CurrencyRateListener> listeners = Collections.synchronizedSet(new HashSet<CurrencyRateListener>());
+	private final Collection<CurrencyRateListener> listeners = new CopyOnWriteArrayList<>();
 
 	@Override public void addListener(CurrencyRateListener listener) {
 		listeners.add(listener);

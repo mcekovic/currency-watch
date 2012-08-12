@@ -1,4 +1,4 @@
-package org.strangeforest.currencywatch.app;
+package org.strangeforest.currencywatch.ui;
 
 import java.awt.*;
 import java.text.*;
@@ -8,11 +8,18 @@ import org.jfree.chart.axis.*;
 import org.jfree.chart.labels.*;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.*;
-import org.jfree.data.xy.*;
+import org.jfree.data.time.*;
+import org.strangeforest.currencywatch.core.*;
+import org.strangeforest.currencywatch.core.DateRange;
 
 public class CurrencyChart {
 
 	private final JFreeChart chart;
+	private TimeSeries middleSeries;
+	private TimeSeries bidSeries;
+	private TimeSeries askSeries;
+	private TimeSeries movAvgSeries;
+	private TimeSeries[] bollBandsSeries;
 
 	private static final Color MIDDLE_COLOR = new Color(255, 0, 0);
 	private static final Color BID_COLOR = new Color(255, 128, 128);
@@ -25,9 +32,15 @@ public class CurrencyChart {
 	private static final BasicStroke BID_ASK_STROKE = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{4.0f, 4.0f}, 0.0f);
 	private static final BasicStroke MOV_AVG_STOKE = new BasicStroke(2);
 
+	private static final double BOLLINGER_BANDS_FACTOR = 2.0;
+
 	public CurrencyChart() {
 		super();
 		chart = createChart();
+	}
+
+	public JFreeChart getChart() {
+		return chart;
 	}
 
 	private static JFreeChart createChart() {
@@ -58,11 +71,50 @@ public class CurrencyChart {
 		return chart;
 	}
 
-	public JFreeChart getChart() {
-		return chart;
+	public void createSeries(CurrencySymbol currency, boolean showBidAsk, boolean showMovAvg, boolean showBollBands) {
+		middleSeries = new TimeSeries(currency);
+		TimeSeriesCollection dataSet = new TimeSeriesCollection(middleSeries);
+
+		if (showBidAsk) {
+			bidSeries = new TimeSeries(String.format("Bid(%s)", currency));
+			askSeries = new TimeSeries(String.format("Ask(%s)", currency));
+			dataSet.addSeries(bidSeries);
+			dataSet.addSeries(askSeries);
+		}
+		else {
+			bidSeries = null;
+			askSeries = null;
+		}
+
+		if (showMovAvg) {
+			movAvgSeries = new TimeSeries(String.format("MovAvg(%s)", currency));
+			dataSet.addSeries(movAvgSeries);
+		}
+		else
+			movAvgSeries = null;
+
+		XYPlot plot = chart.getXYPlot();
+		plot.setDataset(0, dataSet);
+
+		if (showBollBands) {
+			TimeSeriesCollection bbDataSet = new TimeSeriesCollection(middleSeries);
+			bollBandsSeries = new TimeSeries[] {
+				new TimeSeries(String.format("BBLow(%s)", currency)),
+				new TimeSeries(String.format("BBHigh(%s)", currency))
+			};
+			bbDataSet.addSeries(bollBandsSeries[0]);
+			bbDataSet.addSeries(bollBandsSeries[1]);
+			plot.setDataset(1, bbDataSet);
+		}
+		else {
+			bollBandsSeries = null;
+			plot.setDataset(1, null);
+		}
+
+		updateSeriesStyle(showBidAsk, showMovAvg);
 	}
 
-	public void updateSeriesStyle(boolean showBidAsk, boolean showMovAvg) {
+	private void updateSeriesStyle(boolean showBidAsk, boolean showMovAvg) {
 		if (showBidAsk || showMovAvg) {
 			XYItemRenderer renderer = chart.getXYPlot().getRenderer();
 			if (showBidAsk) {
@@ -79,7 +131,25 @@ public class CurrencyChart {
 		}
 	}
 
-	public void setDataset(int index, XYDataset dataset) {
-		chart.getXYPlot().setDataset(index, dataset);
+	public void setDateRange(DateRange dateRange) {
+		middleSeries.addOrUpdate(new Day(dateRange.getFrom()), 0);
+		middleSeries.addOrUpdate(new Day(dateRange.getTo()), 0);
+	}
+
+	public void updateBaseSeries(CurrencyRateEvent rateEvent) {
+		Day day = new Day(rateEvent.getDate());
+		RateValue rate = rateEvent.getRate();
+		middleSeries.addOrUpdate(day, rate.getMiddle());
+		if (bidSeries != null)
+			bidSeries.addOrUpdate(day, rate.getBid());
+		if (askSeries != null)
+			askSeries.addOrUpdate(day, rate.getAsk());
+	}
+
+	public void updateDerivedSeries(int movAvgPeriod) {
+		if (movAvgSeries != null)
+			new MovingAveragePoints(movAvgPeriod).applyToSeries(middleSeries, movAvgSeries);
+		if (bollBandsSeries != null)
+			new BollingerBandsPoints(movAvgPeriod, BOLLINGER_BANDS_FACTOR).applyToSeries(middleSeries, bollBandsSeries);
 	}
 }

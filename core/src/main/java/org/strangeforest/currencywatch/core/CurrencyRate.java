@@ -1,6 +1,7 @@
 package org.strangeforest.currencywatch.core;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import com.finsoft.concurrent.*;
 
@@ -10,7 +11,7 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 	private final CurrencyRateProvider provider;
 	private final boolean isProviderObservable;
 	private final CurrencyRateListener providerListener;
-	private final Collection<CurrencyRateListener> listeners = Collections.synchronizedSet(new HashSet<CurrencyRateListener>());
+	private final Collection<CurrencyRateListener> listeners = new CopyOnWriteArrayList<>();
 
 	public CurrencyRate(String baseCurrency, String currency) {
 		this(baseCurrency, currency, null);
