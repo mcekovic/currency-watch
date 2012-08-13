@@ -20,7 +20,9 @@
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <toolTipText value="Currency"/>
+            </properties>
           </component>
           <component id="f6ea7" class="javax.swing.JLabel">
             <constraints>
@@ -44,13 +46,17 @@
             <constraints>
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <toolTipText value="Chart period"/>
+            </properties>
           </component>
           <component id="b66bc" class="javax.swing.JComboBox" binding="qualityComboBox">
             <constraints>
               <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <toolTipText value="Series quality"/>
+            </properties>
           </component>
           <component id="352a" class="javax.swing.JLabel">
             <constraints>
@@ -66,6 +72,7 @@
             </constraints>
             <properties>
               <enabled value="false"/>
+              <toolTipText value="Moving average period"/>
             </properties>
           </component>
           <component id="b4e47" class="javax.swing.JCheckBox" binding="movAvgCheckBox">
@@ -76,7 +83,7 @@
               <enabled value="true"/>
               <selected value="false"/>
               <text value="Mov. Avg.:"/>
-              <toolTipText value="Moving Average"/>
+              <toolTipText value="Show Moving Average"/>
             </properties>
           </component>
           <component id="4ce40" class="javax.swing.JButton" binding="exitButton" default-binding="true">
@@ -93,7 +100,7 @@
             </constraints>
             <properties>
               <text value="Boll. Bands:"/>
-              <toolTipText value="Bollinger Bands"/>
+              <toolTipText value="Show Bollinger Bands"/>
             </properties>
           </component>
           <component id="d581b" class="javax.swing.JCheckBox" binding="bidAskCheckBox" default-binding="true">
@@ -102,7 +109,7 @@
             </constraints>
             <properties>
               <text value="Bid/Ask"/>
-              <toolTipText value="Bid and Ask"/>
+              <toolTipText value="Show Bid and Ask"/>
             </properties>
           </component>
         </children>

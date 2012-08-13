@@ -42,7 +42,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 				remoteProvider = (ObservableCurrencyRateProvider)aRemoteProvider;
 		}
 		if (remoteProvider != null) {
-			CurrencyRateListener remoteProviderListener = new CurrencyRateAdapter() {
+			remoteProviderListener = new CurrencyRateAdapter() {
 				@Override public void newRate(CurrencyRateEvent rateEvent) {
 					currRemoteItems++;
 				}

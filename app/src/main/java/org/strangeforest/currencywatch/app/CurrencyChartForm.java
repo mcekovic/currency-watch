@@ -77,7 +77,7 @@ public class CurrencyChartForm {
 		);
 	}
 
-	private void setPeriodComboBoxEnabled() {
+	private void setMovAvgPeriodComboBoxEnabled() {
 		movAvgPeriodComboBox.setEnabled(movAvgCheckBox.isSelected() || bollingerBandsCheckBox.isSelected());
 	}
 
@@ -113,7 +113,7 @@ public class CurrencyChartForm {
 
 	private class PeriodComboBoxEnabledInputDataListener implements ActionListener {
 		@Override public void actionPerformed(ActionEvent e) {
-			setPeriodComboBoxEnabled();
+			setMovAvgPeriodComboBoxEnabled();
 			inputDataChanged();
 		}
 	}

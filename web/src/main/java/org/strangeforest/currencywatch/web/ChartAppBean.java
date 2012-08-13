@@ -1,5 +1,6 @@
 package org.strangeforest.currencywatch.web;
 
+import javax.annotation.*;
 import javax.faces.bean.*;
 
 import org.strangeforest.currencywatch.core.*;
@@ -10,14 +11,20 @@ import org.strangeforest.currencywatch.nbs.*;
 @ApplicationScoped
 public class ChartAppBean {
 
-	private final CurrencyRateProvider provider;
+	private CurrencyRateProvider provider;
 
 	private static final String DB4O_DATA_FILE = "WEB-INF/data/currency-rates.db4o"; //TODO: use file in user profile
 	private static final int REMOTE_PROVIDER_THREAD_COUNT = 10;
 
-	public ChartAppBean() {
-		super();
+	@PostConstruct
+	public void setUp() {
 		provider = createProvider();
+	}
+
+	@PreDestroy
+	public void cleanUp() {
+		if (provider != null)
+			provider.close();
 	}
 
 	public CurrencyRateProvider getProvider() {
