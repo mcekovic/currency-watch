@@ -10,22 +10,28 @@
 <h:body>
 	<h1>Currency Chart</h1>
 
-	<h:outputLabel for="currency" value="Currency: "/>
-	<h:selectOneMenu id="currency" value="#{chartBean.defaultCurrency}">
-		<f:selectItems value="#{chartBean.currencies}"/>
-	</h:selectOneMenu>
+	<h:form id="chartForm">
+		<h:outputLabel for="currency" value="Currency: "/>
+		<h:selectOneMenu id="currency" value="#{chartPage.currency}" >
+			<f:selectItems value="#{chartPage.currencies}" />
+		</h:selectOneMenu>
 
-	<h:outputLabel for="period" value="Period: "/>
-	<h:selectOneMenu id="period" value="#{chartBean.defaultPeriod}">
-		<f:selectItems value="#{chartBean.periods}"/>
-	</h:selectOneMenu>
+		<h:outputLabel for="period" value="Period: "/>
+		<h:selectOneMenu id="period" value="#{chartPage.period}">
+			<f:selectItems value="#{chartPage.periods}"/>
+		</h:selectOneMenu>
 
-	<h:outputLabel for="quality" value="Quality: "/>
-	<h:selectOneMenu id="quality" value="#{chartBean.defaultQuality}">
-		<f:selectItems value="#{chartBean.qualities}"/>
-	</h:selectOneMenu>
+		<h:outputLabel for="quality" value="Quality: "/>
+		<h:selectOneMenu id="quality" value="#{chartPage.quality}">
+			<f:selectItems value="#{chartPage.qualities}"/>
+		</h:selectOneMenu>
 
-	<h:graphicImage id="chartImage" alt="Currency Chart" url="servlet/DisplayChart"/>
+		<h:commandButton id="showChart" value="Show Chart" action="#{chartPage.showChart}" onclick="submit()"/>
+	</h:form>
+
+	<br/>
+
+	<h:graphicImage id="chartImage" alt="Currency Chart" url="servlet/DisplayChart?filename=#{chartPage.chartFileName}"/>
 
 </h:body>
 </html> 

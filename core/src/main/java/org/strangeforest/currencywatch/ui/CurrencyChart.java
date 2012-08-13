@@ -2,6 +2,7 @@ package org.strangeforest.currencywatch.ui;
 
 import java.awt.*;
 import java.text.*;
+import java.util.*;
 
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
@@ -136,9 +137,17 @@ public class CurrencyChart {
 		middleSeries.addOrUpdate(new Day(dateRange.getTo()), 0);
 	}
 
+	public void updateBaseSeries(Map<Date, RateValue> rates) {
+		for (Map.Entry<Date, RateValue> rateEntry : rates.entrySet())
+			updateBaseSeries(rateEntry.getKey(), rateEntry.getValue());
+	}
+
 	public void updateBaseSeries(CurrencyRateEvent rateEvent) {
-		Day day = new Day(rateEvent.getDate());
-		RateValue rate = rateEvent.getRate();
+		updateBaseSeries(rateEvent.getDate(), rateEvent.getRate());
+	}
+
+	private void updateBaseSeries(Date date, RateValue rate) {
+		Day day = new Day(date);
 		middleSeries.addOrUpdate(day, rate.getMiddle());
 		if (bidSeries != null)
 			bidSeries.addOrUpdate(day, rate.getBid());

@@ -2,6 +2,8 @@ package org.strangeforest.currencywatch.ui;
 
 import java.util.*;
 
+import org.strangeforest.currencywatch.core.*;
+
 import com.finsoft.util.*;
 
 public abstract class UIUtil {
@@ -27,5 +29,13 @@ public abstract class UIUtil {
 
 	public static int daysFromStart() {
 		return DateUtil.dayDifference(START_DATE.getTime(), getLastDate().getTime());
+	}
+
+	public static DateRange toDateRange(int days) {
+		Calendar cal = getLastDate();
+		Date toDate = cal.getTime();
+		cal.add(Calendar.DATE, -days);
+		Date fromDate = cal.getTime();
+		return new DateRange(fromDate, toDate);
 	}
 }

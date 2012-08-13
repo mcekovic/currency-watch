@@ -8,7 +8,7 @@ import javax.faces.model.*;
 import javax.servlet.http.*;
 
 import org.jfree.chart.servlet.*;
-import org.strangeforest.currencywatch.ui.CurrencySymbol;
+import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
 
 import com.finsoft.util.*;
@@ -16,14 +16,25 @@ import com.finsoft.util.*;
 import static com.finsoft.util.Algorithms.*;
 import static java.util.Arrays.*;
 
-@ManagedBean(name = "chartBean")
+@ManagedBean(name = "chartPage")
 @RequestScoped
-public class ChartBean {
+public class ChartPageBean {
 
-	private CurrencySymbol currency;
-	private Period period;
-	private SeriesQuality quality;
+	@ManagedProperty("#{chartApp}")
+	private ChartAppBean chartApp;
+
+	private CurrencySymbol currency = UIUtil.DEFAULT_CURRENCY;
+	private Period period = UIUtil.DEFAULT_PERIOD;
+	private SeriesQuality quality = UIUtil.DEFAULT_QUALITY;
 	private String chartFileName;
+
+	public ChartAppBean getChartApp() {
+		return chartApp;
+	}
+
+	public void setChartApp(ChartAppBean chartApp) {
+		this.chartApp = chartApp;
+	}
 
 	public CurrencySymbol getCurrency() {
 		return currency;
@@ -78,21 +89,22 @@ public class ChartBean {
 		});
 	}
 
-	public CurrencySymbol getDefaultCurrency() {
-		return UIUtil.DEFAULT_CURRENCY;
-	}
-
-	public Period getDefaultPeriod() {
-		return UIUtil.DEFAULT_PERIOD;
-	}
-
-	public SeriesQuality getDefaultQuality() {
-		return UIUtil.DEFAULT_QUALITY;
-	}
-
 	public String showChart() throws IOException {
 		HttpSession session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-		chartFileName = ServletUtilities.saveChartAsPNG(null, 1000, 600, session);
+		CurrencyChart chart = new CurrencyChart();
+		chart.createSeries(currency, false, false, false);
+
+		int days = period.days();
+		DateRange dateRange = UIUtil.toDateRange(days);
+		chart.setDateRange(dateRange);
+
+		CurrencyRate currencyRate = new CurrencyRate(UIUtil.BASE_CURRENCY, currency.name(), chartApp.getProvider());
+		Map<Date, RateValue> rates = currencyRate.getRates(dateRange.dates(1 + days/quality.points()));
+
+		chart.updateBaseSeries(rates);
+		chart.updateDerivedSeries(20);
+		chartFileName = ServletUtilities.saveChartAsPNG(chart.getChart(), 1000, 600, session);
+
 		return "currency-chart.xhtml";
 	}
 }

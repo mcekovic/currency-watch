@@ -8,8 +8,6 @@ import javax.swing.Timer;
 
 import org.jfree.chart.*;
 import org.strangeforest.currencywatch.core.*;
-import org.strangeforest.currencywatch.db4o.*;
-import org.strangeforest.currencywatch.nbs.*;
 import org.strangeforest.currencywatch.ui.*;
 
 import com.finsoft.util.*;
@@ -19,6 +17,8 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	private final CurrencyRateProvider provider;
 	private final CurrencyChart chart;
 	private final Collection<CurrencyRatePresenterListener> listeners = new CopyOnWriteArrayList<>();
+	private ObservableCurrencyRateProvider remoteProvider;
+	private CurrencyRateListener remoteProviderListener;
 	private volatile CurrencyRate currencyRate;
 	private volatile Thread dataThread;
 	private volatile Timer speedTimer;
@@ -28,37 +28,40 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	private volatile int currRemoteItems;
 	private volatile long startTime;
 
-	private static final int REMOTE_PROVIDER_THREAD_COUNT = 10;
-
-	public CurrencyRatePresenter() {
+	public CurrencyRatePresenter(CurrencyRateProvider provider) {
 		super();
-		provider = createProvider();
+		this.provider = provider;
 		chart = new CurrencyChart();
-		speedTimer = new Timer(1000, new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
-				updateSpeed();
-			}
-		});
+		setUpSpeedMeasuring();
 	}
 
-	private CurrencyRateProvider createProvider() {
-		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider();
-		remoteProvider.addListener(new CurrencyRateAdapter() {
-			@Override public void newRate(CurrencyRateEvent rateEvent) {
-				currRemoteItems++;
-				System.out.println(rateEvent);
-			}
-		});
-		CurrencyRateProvider provider = new ChainedCurrencyRateProvider(
-			new Db4oCurrencyRateProvider("data/currency-rates.db4o"),
-			new ParallelCurrencyRateProviderProxy(remoteProvider, REMOTE_PROVIDER_THREAD_COUNT)
-		);
-		provider.init();
-		return provider;
+	private void setUpSpeedMeasuring() {
+		if (provider instanceof ChainedCurrencyRateProvider) {
+			CurrencyRateProvider aRemoteProvider = ((ChainedCurrencyRateProvider)provider).getRemoteProvider();
+			if (aRemoteProvider instanceof ObservableCurrencyRateProvider)
+				remoteProvider = (ObservableCurrencyRateProvider)aRemoteProvider;
+		}
+		if (remoteProvider != null) {
+			CurrencyRateListener remoteProviderListener = new CurrencyRateAdapter() {
+				@Override public void newRate(CurrencyRateEvent rateEvent) {
+					currRemoteItems++;
+				}
+			};
+			remoteProvider.addListener(remoteProviderListener);
+			speedTimer = new Timer(1000, new ActionListener() {
+				@Override public void actionPerformed(ActionEvent e) {
+					updateSpeed();
+				}
+			});
+		}
+		else
+			System.err.println("Data provider is not chained or remote provider is not observable: data fetching speed will not be available.");
 	}
 
-	public JFreeChart getChart() {
-		return chart.getChart();
+	private void cleanUpSpeedMeasuring() {
+		stopSpeedUpdate();
+		if (remoteProvider != null)
+			remoteProvider.removeListener(remoteProviderListener);
 	}
 
 	public void addListener(CurrencyRatePresenterListener listener) {
@@ -67,6 +70,10 @@ public class CurrencyRatePresenter implements AutoCloseable {
 
 	public void removeListener(CurrencyRatePresenterListener listener) {
 		listeners.remove(listener);
+	}
+
+	public JFreeChart getChart() {
+		return chart.getChart();
 	}
 
 	public void inputDataChanged(CurrencySymbol currency, Period period, SeriesQuality quality, boolean showBidAsk, boolean showMovAvg, boolean showBollBands, int movAvgPeriod) {
@@ -117,7 +124,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	private void applyPeriod(final CurrencyRate rate, int days, int maxPoints) {
 		if (dataThread != null)
 			dataThread.interrupt();
-		final DateRange dateRange = toDateRange(days);
+		final DateRange dateRange = UIUtil.toDateRange(days);
 		chart.setDateRange(dateRange);
 		final int step = 1 + days/maxPoints;
 		final Collection<Date> dates = dateRange.dates(step);
@@ -127,7 +134,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		startTime = System.currentTimeMillis();
 		updateProgress();
 		updateSpeed();
-		speedTimer.start();
+		startSpeedUpdate();
 		dataThread = new Thread(new Runnable() {
 			@Override public void run() {
 				loading = true;
@@ -137,7 +144,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 				}
 				finally {
 					loading = false;
-					speedTimer.stop();
+					stopSpeedUpdate();
 					updateSpeed();
 					notifyStatusChanged(StringUtil.EMPTY, false);
 				}
@@ -146,22 +153,26 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		dataThread.start();
 	}
 
-	private static DateRange toDateRange(int days) {
-		Calendar cal = UIUtil.getLastDate();
-		Date toDate = cal.getTime();
-		cal.add(Calendar.DATE, -days);
-		Date fromDate = cal.getTime();
-		return new DateRange(fromDate, toDate);
-	}
-
 	private void updateProgress() {
 		notifyProgressChanged((100*currItems)/itemCount);
 	}
 
+	private void startSpeedUpdate() {
+		if (speedTimer != null)
+			speedTimer.start();
+	}
+
+	private void stopSpeedUpdate() {
+		if (speedTimer != null)
+			speedTimer.stop();
+	}
+
 	private void updateSpeed() {
-		long time = System.currentTimeMillis() - startTime;
-		double itemsPerSec = time > 0L ? (1000.0*currRemoteItems)/time : 0.0;
-		notifyRatesPerSecChanged(itemsPerSec);
+		if (speedTimer != null) {
+			long time = System.currentTimeMillis() - startTime;
+			double itemsPerSec = time > 0L ? (1000.0*currRemoteItems)/time : 0.0;
+			notifyRatesPerSecChanged(itemsPerSec);
+		}
 	}
 
 	private void setLoadingStatus() {
@@ -186,11 +197,8 @@ public class CurrencyRatePresenter implements AutoCloseable {
 
 	@Override public void close() {
 		listeners.clear();
-		if (provider != null)
-			provider.close();
+		cleanUpSpeedMeasuring();
 		if (dataThread != null)
 			dataThread.interrupt();
-		if (speedTimer != null)
-			speedTimer.stop();
 	}
 }
