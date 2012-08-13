@@ -18,17 +18,10 @@ public class CurrencyRateFetcher implements AutoCloseable {
 
 	public static void main(String[] args) {
 		try (CurrencyRateFetcher fetcher = new CurrencyRateFetcher()) {
-			JCommander cmd = new JCommander(fetcher, args);
-			if (!fetcher.help) {
+			if (fetcher.parseArguments(args)) {
 				fetcher.init();
 				fetcher.fetch();
 			}
-			else
-				cmd.usage();
-		}
-		catch (ParameterException ex) {
-			System.out.println(ex.getMessage());
-			System.out.println("Use -? to get help on usage.");
 		}
 	}
 
@@ -55,6 +48,21 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	private int totalDays;
 	private int fetchedDays, localFetchedDays;
 	private long startTime;
+
+	private boolean parseArguments(String[] args) {
+		try {
+			JCommander cmd = new JCommander(this, args);
+			if (help)
+				cmd.usage();
+			else
+				return true;
+		}
+		catch (ParameterException ex) {
+			System.out.println(ex.getMessage());
+			System.out.println("Use -? to get help on usage.");
+		}
+		return false;
+	}
 
 	private void init() {
 		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider();
