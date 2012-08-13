@@ -11,6 +11,7 @@ import javax.servlet.http.*;
 
 import org.jfree.chart.*;
 import org.jfree.chart.servlet.*;
+import org.slf4j.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
 
@@ -39,6 +40,8 @@ public class ChartPageBean {
 	private static final String PAGE_TITLE = "Currency Chart";
 	private static final int CHART_WIDTH  = 1000;
 	private static final int CHART_HEIGHT =  600;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ChartPageBean.class);
 
 	public ChartAppBean getChartApp() {
 		return chartApp;
@@ -174,7 +177,7 @@ public class ChartPageBean {
 			rates = currencyRate.getRates(dateRange.dates(step));
 		}
 		catch (CurrencyRateException ex) {
-			ex.printStackTrace();
+			LOGGER.error("Error getting currency data.", ex);
 			rates = currencyRate.getRates();
 		}
 

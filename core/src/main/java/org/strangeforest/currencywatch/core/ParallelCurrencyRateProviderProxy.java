@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
+import org.slf4j.*;
+
 import com.finsoft.concurrent.*;
 import com.finsoft.util.*;
 
@@ -15,6 +17,8 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 	private int maxExceptions;
 
 	private static final int RETRY_COUNT = 20;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ParallelCurrencyRateProviderProxy.class);
 
 	public ParallelCurrencyRateProviderProxy(CurrencyRateProvider provider, int threadCount) {
 		super(provider);
@@ -67,7 +71,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 					catch (Exception ex) {
 						int left = retriesLeft.decrementAndGet();
 						if (left >= 0) {
-							System.err.printf("Retrying request: getRate(%1$s, %2$s, %3$td-%3$tm-%3$tY): %4$s\n", baseCurrency, currency, date, ex);
+							LOGGER.info(String.format("Retrying request: getRate(%1$s, %2$s, %3$td-%3$tm-%3$tY): %4$s", baseCurrency, currency, date, ex));
 							notifyListeners("Retrying...");
 							results.add(executor.submit(this));
 							return null;
@@ -75,7 +79,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 						else {
 							notifyListeners(ExceptionUtil.getRootMessage(ex));
 							if (resetProviderOnRetryFail) {
-								System.err.println("Too many retry failures, resetting provider.");
+								LOGGER.warn("Too many retry failures, resetting provider.");
 								provider.close();
 								provider.init();
 							}
@@ -102,7 +106,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 				if (++exCount > maxExceptions)
 					throw CurrencyRateException.wrap(cause);
 				else
-					cause.printStackTrace();
+					LOGGER.error("Maximum errors exceeded.", cause);
 			}
 		}
 		return dateValues;

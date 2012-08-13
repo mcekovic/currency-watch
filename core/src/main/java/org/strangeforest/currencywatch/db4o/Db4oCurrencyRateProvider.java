@@ -3,6 +3,7 @@ package org.strangeforest.currencywatch.db4o;
 import java.io.*;
 import java.util.*;
 
+import org.slf4j.*;
 import org.strangeforest.currencywatch.core.*;
 
 import com.db4o.*;
@@ -15,6 +16,8 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	private boolean closed;
 
 	public static final int CURRENT_VERSION = 2;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(Db4oCurrencyRateProvider.class);
 
 	public Db4oCurrencyRateProvider(String dbFileName) {
 		this(dbFileName, CURRENT_VERSION);
@@ -49,13 +52,13 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 
 	private void upgradeData(DataVersion oldVersion, DataVersion newVersion) {
 		if (oldVersion != null)
-			System.out.println("Upgrading cached data...");
+			LOGGER.info("Upgrading cached data...");
 		db.close();
 		new File(dbFileName).delete();
 		openDb();
 		setDataVersion(newVersion);
 		if (oldVersion != null)
-			System.out.println("Cached data upgrade finished.");
+			LOGGER.info("Cached data upgrade finished.");
 	}
 
 	private void setDataVersion(final DataVersion newVersion) {

@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
+import org.slf4j.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.db4o.*;
 import org.strangeforest.currencywatch.nbs.*;
@@ -15,6 +16,8 @@ public class CurrencyWatch {
 	//TODO Use command line parameters
 	private static final String DB4O_DATA_FILE = "data/currency-rates.db4o";
 	private static final int REMOTE_PROVIDER_THREAD_COUNT = 10;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyWatch.class);
 
 	public static void main(String[] args) throws IOException {
 		final CurrencyRateProvider provider = createProvider();
@@ -39,7 +42,8 @@ public class CurrencyWatch {
 		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider();
 		remoteProvider.addListener(new CurrencyRateAdapter() {
 			@Override public void newRate(CurrencyRateEvent rateEvent) {
-				System.out.println(rateEvent);
+				if (LOGGER.isDebugEnabled())
+					LOGGER.debug(rateEvent.toString());
 			}
 		});
 		CurrencyRateProvider provider = new ChainedCurrencyRateProvider(

@@ -3,6 +3,7 @@ package org.strangeforest.currencywatch.web;
 import javax.annotation.*;
 import javax.faces.bean.*;
 
+import org.slf4j.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.db4o.*;
 import org.strangeforest.currencywatch.nbs.*;
@@ -15,6 +16,8 @@ public class ChartAppBean {
 
 	private static final String DB4O_DATA_FILE = "/.currency-watch/data/currency-rates.db4o";
 	private static final int REMOTE_PROVIDER_THREAD_COUNT = 10;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ChartAppBean.class);
 
 	@PostConstruct
 	public void setUp() {
@@ -35,7 +38,8 @@ public class ChartAppBean {
 		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider();
 		remoteProvider.addListener(new CurrencyRateAdapter() {
 			@Override public void newRate(CurrencyRateEvent rateEvent) {
-				System.out.println(rateEvent);
+				if (LOGGER.isDebugEnabled())
+					LOGGER.debug(rateEvent.toString());
 			}
 		});
 		CurrencyRateProvider provider = new ChainedCurrencyRateProvider(

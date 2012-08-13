@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.Timer;
 
 import org.jfree.chart.*;
+import org.slf4j.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
 
@@ -27,6 +28,8 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	private volatile int currItems;
 	private volatile int currRemoteItems;
 	private volatile long startTime;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyRatePresenter.class);
 
 	public CurrencyRatePresenter(CurrencyRateProvider provider) {
 		super();
@@ -55,7 +58,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			});
 		}
 		else
-			System.err.println("Data provider is not chained or remote provider is not observable: data fetching speed will not be available.");
+			LOGGER.warn("Data provider is not chained or remote provider is not observable: data fetching speed will not be available.");
 	}
 
 	private void cleanUpSpeedMeasuring() {

@@ -86,6 +86,14 @@
 			<artifactId>fin-util</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.db4o</groupId>
 			<artifactId>db4o-core</artifactId>
 		</dependency>
