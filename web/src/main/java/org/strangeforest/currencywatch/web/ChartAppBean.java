@@ -13,7 +13,7 @@ public class ChartAppBean {
 
 	private CurrencyRateProvider provider;
 
-	private static final String DB4O_DATA_FILE = "WEB-INF/data/currency-rates.db4o"; //TODO: use file in user profile
+	private static final String DB4O_DATA_FILE = "/.currency-watch/data/currency-rates.db4o";
 	private static final int REMOTE_PROVIDER_THREAD_COUNT = 10;
 
 	@PostConstruct
@@ -39,10 +39,14 @@ public class ChartAppBean {
 			}
 		});
 		CurrencyRateProvider provider = new ChainedCurrencyRateProvider(
-			new Db4oCurrencyRateProvider(DB4O_DATA_FILE),
+			new Db4oCurrencyRateProvider(getDb4oDataFile()),
 			new ParallelCurrencyRateProviderProxy(remoteProvider, REMOTE_PROVIDER_THREAD_COUNT)
 		);
 		provider.init();
 		return provider;
+	}
+
+	private static String getDb4oDataFile() {
+		return System.getProperty("user.home") + DB4O_DATA_FILE;
 	}
 }

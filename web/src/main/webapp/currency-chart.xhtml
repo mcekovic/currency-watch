@@ -4,6 +4,7 @@
       xmlns:c="http://java.sun.com/jsp/jstl/core">
 <h:head>
 	<title>#{chartPage.title}</title>
+	<h:outputStylesheet name="currency-watch.css" library="css"/>
 	<script type="text/javascript">
 		function setMovAvgPeriodEnabled() {
 			var showMovAvg = document.getElementById("chartForm:showMovAvg");
@@ -11,20 +12,23 @@
 			var movAvgPeriod = document.getElementById("chartForm:movAvgPeriod");
 			movAvgPeriod.disabled = !(showMovAvg.checked || showBollBands.checked);
 		}
-		function showLoadingLabel() {
-			var chartImage = document.getElementById("chartImage");
+		function showChart() {
+			var chartForm = document.getElementById("chartForm");
+			var chartTable = document.getElementById("chartTable");
 			var loadingDiv = document.getElementById("loadingDiv");
-			if (chartImage)
-				chartImage.style.display = "none";
+			if (chartTable)
+				chartTable.style.display = "none";
 			loadingDiv.style.display = "inline";
+			chartForm.submit();
 		}
 	</script>
 </h:head>
 <h:body>
-	<h:outputStylesheet name="currency-watch.css" library="css"/>
-	<h1>Currency Watch</h1>
-	<h:form id="chartForm" onsubmit="showLoadingLabel()">
+	<f:view contentType="text/html">
+	<h:form id="chartForm">
 		<table cellspacing="10"><tr>
+			<td colspan="8" style="text-align: center"><h1>Currency Watch</h1></td>
+		</tr><tr>
 			<td>
 				<h:outputLabel for="currency" value="Currency: "/>
 				<h:selectOneMenu id="currency" value="#{chartPage.currency}" title="Currency">
@@ -48,11 +52,11 @@
 				<h:outputLabel for="showBidAsk" value="Bid/Ask"/>
 			</td>
 			<td>
-				<h:selectBooleanCheckbox id="showMovAvg" value="#{chartPage.showMovAvg}" title="Show Moving Average" onchange="setMovAvgPeriodEnabled()"/>
+				<h:selectBooleanCheckbox id="showMovAvg" value="#{chartPage.showMovAvg}" title="Show Moving Average" onclick="setMovAvgPeriodEnabled()"/>
 				<h:outputLabel for="showMovAvg" value="Mov. Avg."/>
 			</td>
 			<td>
-				<h:selectBooleanCheckbox id="showBollBands" value="#{chartPage.showBollBands}" title="Show Bollinger Bands" onchange="setMovAvgPeriodEnabled()"/>
+				<h:selectBooleanCheckbox id="showBollBands" value="#{chartPage.showBollBands}" title="Show Bollinger Bands" onclick="setMovAvgPeriodEnabled()"/>
 				<h:outputLabel for="showBollBands" value="Boll. Bands"/>
 			</td>
 			<td>
@@ -61,17 +65,25 @@
 				</h:selectOneMenu>
 			</td>
 			<td>
-				<h:commandButton id="showChart" value="Show Chart" action="#{chartPage.showChart}" onclick="submit()"/>
+				<h:commandButton id="showChart" type="submit" value="Show Chart" action="#{chartPage.showChart}" onclick="showChart()" title="Show Chart"/>
 			</td>
 		</tr></table>
 	</h:form>
 	<c:if test="#{!empty chartPage.chartFileName}">
-		<h:graphicImage id="chartImage" url="servlet/DisplayChart?filename=#{chartPage.chartFileName}" width="#{chartPage.chartWidth}" height="#{chartPage.chartHeight}" alt="Currency Chart for #{chartPage.currency} (#{chartPage.currency.description()})"/>
+		<table id="chartTable" cellspacing="0" cellpadding="0">
+			<tr>
+				<td><h:graphicImage id="chartImage" url="servlet/DisplayChart?filename=#{chartPage.chartFileName}" width="#{chartPage.chartWidth}" height="#{chartPage.chartHeight}" alt="Currency Chart for #{chartPage.currencyFullName}"/></td>
+			</tr>
+			<tr style="text-align: center">
+				<td><h:outputLabel for="chartImage" value="#{chartPage.currencyFullName}, period: #{chartPage.period}"/></td>
+			</tr>
+		</table>
 	</c:if>
 	<div id="loadingDiv" style="display: none; width: #{chartPage.chartWidth}; height: #{chartPage.chartHeight};">
 		<div style="width: 50%; margin: 0 auto;">
 			<h:graphicImage url="resources/images/loading.gif" width="66" height="66" alt="Loading..."/>
 		</div>
 	</div>
+	</f:view>
 </h:body>
 </html>

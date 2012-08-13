@@ -49,7 +49,7 @@ public class ChartPageBean {
 	}
 
 	public String getTitle() {
-		return chartFileName == null ? PAGE_TITLE : String.format("%1$s - %2$s (%3$s)", PAGE_TITLE, currency, currency.description());
+		return chartFileName == null ? PAGE_TITLE : String.format("%1$s - %2$s", PAGE_TITLE, getCurrencyFullName());
 	}
 
 	public CurrencySymbol getCurrency() {
@@ -58,6 +58,10 @@ public class ChartPageBean {
 
 	public void setCurrency(CurrencySymbol currency) {
 		this.currency = currency;
+	}
+
+	public String getCurrencyFullName() {
+		return String.format("%1$s (%2$s)", currency, currency.description());
 	}
 
 	public Period getPeriod() {

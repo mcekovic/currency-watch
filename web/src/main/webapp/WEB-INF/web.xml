@@ -8,11 +8,6 @@
 		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>
 	</listener>
 
-	<context-param>
-		<param-name>primefaces.skin</param-name>
-		<param-value>none</param-value>
-	</context-param>
-
 	<servlet>
 		<servlet-name>FacesServlet</servlet-name>
 		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
