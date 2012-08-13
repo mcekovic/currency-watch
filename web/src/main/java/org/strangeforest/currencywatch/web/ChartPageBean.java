@@ -33,7 +33,7 @@ public class ChartPageBean {
 	private boolean showBidAsk;
 	private boolean showMovAvg;
 	private boolean showBollBands;
-	private int movAvgPeriod = UIUtil.DEFAULT_MOV_AVG_PERIOD;
+	private Integer movAvgPeriod = UIUtil.DEFAULT_MOV_AVG_PERIOD;
 
 	private String chartFileName;
 
@@ -107,12 +107,12 @@ public class ChartPageBean {
 		this.showBollBands = showBollBands;
 	}
 
-	public int getMovAvgPeriod() {
+	public Integer getMovAvgPeriod() {
 		return movAvgPeriod;
 	}
 
-	public void setMovAvgPeriod(int movAvgPeriod) {
-		this.movAvgPeriod = movAvgPeriod;
+	public void setMovAvgPeriod(Integer movAvgPeriod) {
+		this.movAvgPeriod = movAvgPeriod != null ? movAvgPeriod : UIUtil.DEFAULT_MOV_AVG_PERIOD;
 	}
 
 	public String getChartFileName() {

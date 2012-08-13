@@ -13,9 +13,11 @@
 			movAvgPeriod.disabled = !(showMovAvg.checked || showBollBands.checked);
 		}
 		function showChart() {
+			var movAvgPeriod = document.getElementById("chartForm:movAvgPeriod");
 			var chartForm = document.getElementById("chartForm");
 			var chartTable = document.getElementById("chartTable");
 			var loadingDiv = document.getElementById("loadingDiv");
+			movAvgPeriod.disabled = false;
 			if (chartTable)
 				chartTable.style.display = "none";
 			loadingDiv.style.display = "inline";
@@ -23,7 +25,7 @@
 		}
 	</script>
 </h:head>
-<h:body>
+<h:body onload="setMovAvgPeriodEnabled()">
 	<f:view contentType="text/html">
 	<h:form id="chartForm">
 		<table cellspacing="10"><tr>
@@ -60,7 +62,7 @@
 				<h:outputLabel for="showBollBands" value="Boll. Bands"/>
 			</td>
 			<td>
-				<h:selectOneMenu id="movAvgPeriod" value="#{chartPage.movAvgPeriod}" title="Moving Average period" disabled="true">
+				<h:selectOneMenu id="movAvgPeriod" value="#{chartPage.movAvgPeriod}" title="Moving Average period">
 					<f:selectItems value="#{chartPage.movAvgPeriods}"/>
 				</h:selectOneMenu>
 			</td>

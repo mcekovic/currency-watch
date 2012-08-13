@@ -12,6 +12,29 @@
 	<packaging>war</packaging>
 	<name>Currency Watch Web Application</name>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<configuration>
+					<url>http://ubuntu.beg.finsoft.com:8080/manager/html</url>
+					<server>tomcat</server>
+					<update>true</update>
+					<path>/currency-watch</path>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>deploy-only</goal>
+						</goals>
+						<phase>deploy</phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.strangeforest</groupId>
