@@ -22,7 +22,7 @@
 	</prerequisites>
 
 	<properties>
-		<github.global.server>github</github.global.server>
+		<jaxrs.version>1.13</jaxrs.version>
 		<jacoco-maven-plugin.version>0.5.9.201207300726</jacoco-maven-plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -222,6 +222,17 @@
 				<groupId>com.sun.faces</groupId>
 				<artifactId>jsf-impl</artifactId>
 				<version>2.1.11</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.jersey</groupId>
+				<artifactId>jersey-servlet</artifactId>
+				<version>${jaxrs.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>asm</groupId>
+						<artifactId>asm</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<!-- Test -->

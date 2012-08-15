@@ -72,6 +72,7 @@
 				<groupId>com.github.github</groupId>
 				<artifactId>downloads-maven-plugin</artifactId>
 				<configuration>
+					<server>github</server>
 					<description>${project.name} ${project.version}</description>
 					<includes>
 						<include>currency-watch-${project.version}.*</include>

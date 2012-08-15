@@ -1,4 +1,4 @@
-package org.strangeforest.currencywatch.web;
+package org.strangeforest.currencywatch.web.jsf;
 
 import javax.annotation.*;
 import javax.faces.bean.*;

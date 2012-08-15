@@ -1,4 +1,4 @@
-package org.strangeforest.currencywatch.web;
+package org.strangeforest.currencywatch.web.jsf;
 
 import java.awt.*;
 import java.io.*;
