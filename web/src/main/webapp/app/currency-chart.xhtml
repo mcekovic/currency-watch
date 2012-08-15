@@ -74,7 +74,7 @@
 	<c:if test="#{!empty chartPage.chartFileName}">
 		<table id="chartTable" cellspacing="0" cellpadding="0">
 			<tr>
-				<td><h:graphicImage id="chartImage" url="servlet/DisplayChart?filename=#{chartPage.chartFileName}" width="#{chartPage.chartWidth}" height="#{chartPage.chartHeight}" alt="Currency Chart for #{chartPage.currencyFullName}"/></td>
+				<td><h:graphicImage id="chartImage" url="chart?filename=#{chartPage.chartFileName}" width="#{chartPage.chartWidth}" height="#{chartPage.chartHeight}" alt="Currency Chart for #{chartPage.currencyFullName}"/></td>
 			</tr>
 			<tr style="text-align: center">
 				<td><h:outputLabel for="chartImage" value="#{chartPage.currencyFullName}, period: #{chartPage.period.label()}"/></td>
@@ -83,7 +83,7 @@
 	</c:if>
 	<div id="loadingDiv" style="display: none; width: #{chartPage.chartWidth}; height: #{chartPage.chartHeight};">
 		<div style="width: 50%; margin: 0 auto;">
-			<h:graphicImage url="resources/images/loading.gif" width="66" height="66" alt="Loading..."/>
+			<h:graphicImage url="../resources/images/loading.gif" width="66" height="66" alt="Loading..."/>
 		</div>
 	</div>
 	</f:view>

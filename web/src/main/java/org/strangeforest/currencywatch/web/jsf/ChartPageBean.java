@@ -12,6 +12,7 @@ import javax.servlet.http.*;
 import org.jfree.chart.*;
 import org.jfree.chart.servlet.*;
 import org.slf4j.*;
+import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
 
@@ -169,7 +170,7 @@ public class ChartPageBean {
 		DateRange dateRange = UIUtil.toDateRange(days);
 		chart.setDateRange(dateRange);
 
-		CurrencyRate currencyRate = new CurrencyRate(UIUtil.BASE_CURRENCY, currency.name(), chartApp.getProvider());
+		CurrencyRate currencyRate = new CurrencyRate(Util.BASE_CURRENCY, currency.name(), chartApp.getProvider());
 		Map<Date, RateValue> rates;
 		try {
 			int step = 1 + days/quality.points();
@@ -187,6 +188,6 @@ public class ChartPageBean {
 		jFreeChart.setBackgroundPaint(Color.WHITE);
 		chartFileName = ServletUtilities.saveChartAsPNG(jFreeChart, CHART_WIDTH, CHART_HEIGHT, session);
 
-		return "currency-chart.xhtml";
+		return "app/currency-chart.xhtml";
 	}
 }

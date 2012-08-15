@@ -2,11 +2,12 @@ package test.strangeforest.currencywatch;
 
 import java.util.*;
 
+import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 
 public class TestData {
 
-	public static final String BASE_CURRENCY = "RSD";
+	public static final String BASE_CURRENCY = Util.BASE_CURRENCY;
 	public static final String CURRENCY = "EUR";
 
 	public static final Date DATE = new GregorianCalendar(2012, 4, 1).getTime();

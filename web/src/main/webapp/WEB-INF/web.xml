@@ -4,10 +4,22 @@
          version="3.0">
 	<display-name>Currency Watch Web Application</display-name>
 
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/currency-watch.xml</param-value>
+	</context-param>
+
+	<listener>
+	  <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
 	<listener>
 		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>
 	</listener>
 
+	<servlet>
+		<servlet-name>jaxrs</servlet-name>
+		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+	</servlet>
 	<servlet>
 		<servlet-name>FacesServlet</servlet-name>
 		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -19,12 +31,16 @@
 	</servlet>
 
 	<servlet-mapping>
+		<servlet-name>jaxrs</servlet-name>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>FacesServlet</servlet-name>
 		<url-pattern>*.jsf</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>DisplayChart</servlet-name>
-		<url-pattern>/servlet/DisplayChart</url-pattern>
+		<url-pattern>/app/chart</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<description>Currency Watch Web</description>
+
+	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer" p:nullValue="" p:location="${currencyWatchProperties:WEB-INF/currency-watch.properties}">
+		<property name="properties">
+			<util:properties location="WEB-INF/currency-watch-default.properties"/>
+		</property>
+	</bean>
+
+	<bean id="currencyProvider" class="org.strangeforest.currencywatch.core.ChainedCurrencyRateProvider" init-method="init" destroy-method="close">
+		<constructor-arg index="0" name="localProvider">
+			<bean class="org.strangeforest.currencywatch.db4o.Db4oCurrencyRateProvider">
+				<constructor-arg index="0" name="dbFileName" value="${db4oCurrencyRateProvider.dbFileName}"/>
+			</bean>
+		</constructor-arg>
+		<constructor-arg index="1" name="remoteProvider">
+			<bean class="org.strangeforest.currencywatch.core.ParallelCurrencyRateProviderProxy">
+				<constructor-arg index="0" name="provider">
+					<bean class="org.strangeforest.currencywatch.nbs.NBSCurrencyRateProvider">
+						<property name="format" value="${nbsCurrencyRateProvider.format}"/>
+					</bean>
+				</constructor-arg>
+				<constructor-arg index="1" name="threadCount" value="${parallelCurrencyRateProviderProxy.threadCount}"/>
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<bean id="currencyRateResource" class="org.strangeforest.currencywatch.web.rest.CurrencyRateResource">
+		<constructor-arg index="0" name="provider" ref="currencyProvider"/>
+	</bean>
+
+</beans>

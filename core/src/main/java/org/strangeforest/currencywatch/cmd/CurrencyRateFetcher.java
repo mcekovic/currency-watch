@@ -3,6 +3,7 @@ package org.strangeforest.currencywatch.cmd;
 import java.text.*;
 import java.util.*;
 
+import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.db4o.*;
 import org.strangeforest.currencywatch.nbs.*;
@@ -32,10 +33,10 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	private String currency = UIUtil.DEFAULT_CURRENCY.toString();
 
 	@Parameter(names = "-from", description = "Date to fetch currency rates from in format dd-mm-yyyy.", converter = DateConverter.class)
-	private Date from = UIUtil.START_DATE.getTime();
+	private Date from = Util.START_DATE.getTime();
 
 	@Parameter(names = "-to", description = "Date to fetch currency rates to in format dd-mm-yyyy.", converter = DateConverter.class)
-	private Date to = UIUtil.getLastDate().getTime();
+	private Date to = Util.getLastDate().getTime();
 
 	@Parameter(names = {"-t", "-threads"}, description = "Number of threads to use for fetching.")
 	private int threadCount = THREAD_COUNT;
@@ -84,7 +85,7 @@ public class CurrencyRateFetcher implements AutoCloseable {
 		System.out.printf("Fetching currency rates for currency %1$s from %2$td-%2$tm-%2$tY to %3$td-%3$tm-%3$tY...%n", currency, from, to);
 		initAndPrintProgress();
 		startTime = System.currentTimeMillis();
-		try (CurrencyRate currencyRate = new CurrencyRate(UIUtil.BASE_CURRENCY, currency, provider)) {
+		try (CurrencyRate currencyRate = new CurrencyRate(Util.BASE_CURRENCY, currency, provider)) {
 			currencyRate.getRates(dates);
 			System.out.printf("%nFetching finished.%n");
 		}
@@ -96,7 +97,7 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	}
 
 	private synchronized void initAndPrintProgress() {
-		try (CurrencyRate currencyRate = new CurrencyRate(UIUtil.BASE_CURRENCY, currency, provider.getLocalProvider())) {
+		try (CurrencyRate currencyRate = new CurrencyRate(Util.BASE_CURRENCY, currency, provider.getLocalProvider())) {
 			localFetchedDays = currencyRate.getRates(dates).size();
 		}
 		fetchedDays = localFetchedDays;

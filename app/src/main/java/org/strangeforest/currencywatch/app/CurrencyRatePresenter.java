@@ -8,6 +8,7 @@ import javax.swing.Timer;
 
 import org.jfree.chart.*;
 import org.slf4j.*;
+import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
 
@@ -88,7 +89,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	private CurrencyRate getCurrencyRate(String currency, final int movAvgPeriod) {
 		if (currencyRate != null)
 			currencyRate.close();
-		currencyRate = new CurrencyRate(UIUtil.BASE_CURRENCY, currency, provider);
+		currencyRate = new CurrencyRate(Util.BASE_CURRENCY, currency, provider);
 		currencyRate.addListener(new CurrencyRateListener() {
 			@Override public void newRate(final CurrencyRateEvent rateEvent) {
 				SwingUtilities.invokeLater(new Runnable() {

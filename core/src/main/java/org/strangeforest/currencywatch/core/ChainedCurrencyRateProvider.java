@@ -82,7 +82,7 @@ public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvi
 				if (hasAnyListener() && !isRemoteProviderObservable)
 					notifyListeners(baseCurrency, currency, newDateRates);
 				localProvider.setRates(baseCurrency, currency, newDateRates);
-				dateRates = new HashMap<>(dateRates);
+				dateRates = new TreeMap<>(dateRates);
 				dateRates.putAll(newDateRates);
 			}
 		}

@@ -5,18 +5,27 @@ import java.util.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
+import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
-import org.strangeforest.currencywatch.ui.*;
 
 import com.finsoft.util.*;
 
 @Path("/")
 public class CurrencyRateResource {
 
-	private CurrencyRateProvider provider;
-	private String baseCurrency;
+	private final CurrencyRateProvider provider;
+	private String baseCurrency = Util.BASE_CURRENCY;
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+
+	public CurrencyRateResource(CurrencyRateProvider provider) {
+		super();
+		this.provider = provider;
+	}
+
+	public void setBaseCurrency(String baseCurrency) {
+		this.baseCurrency = baseCurrency;
+	}
 
 	@GET @Produces(MediaType.TEXT_PLAIN)
 	public String info() {
@@ -27,15 +36,15 @@ public class CurrencyRateResource {
 	public List<RateObject> rates(
 		@PathParam("currency") String currency,
 		@QueryParam("fromDate") String fromDate,
-		@QueryParam("fromDate") String toDate
+		@QueryParam("toDate") String toDate
 	) {
 		try {
 			Date from = parseDate(fromDate);
 			if (from == null)
-				from = UIUtil.START_DATE.getTime();
+				from = Util.START_DATE.getTime();
 			Date to = parseDate(toDate);
 			if (to == null)
-				to = UIUtil.getLastDate().getTime();
+				to = Util.getLastDate().getTime();
 			Map<Date, RateValue> rates = provider.getRates(baseCurrency, currency, new DateRange(from, to).dates());
 			return Algorithms.transform(rates.entrySet(), new Transformer<Map.Entry<Date, RateValue>, RateObject>() {
 				@Override public RateObject transform(Map.Entry<Date, RateValue> rate) {

@@ -96,7 +96,7 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 				return dateRates;
 			}
 		});
-		return rates != null ? rates : new HashMap<Date, RateValue>();
+		return rates != null ? rates : Collections.<Date, RateValue>emptyMap();
 	}
 
 	@Override public void setRate(final String baseCurrency, final String currency, final Date date, final RateValue rateValue) {
