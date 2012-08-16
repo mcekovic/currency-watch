@@ -1,4 +1,4 @@
-package org.strangeforest.currencywatch.web.rest;
+package org.strangeforest.currencywatch.rest;
 
 import java.util.*;
 import javax.xml.bind.annotation.*;
@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.*;
 @XmlType(name = "rates", propOrder = {"rates"}, namespace = "http://currencywatch.strangeforest.org")
 public class RatesType {
 
-	@XmlElement(required=true, name = "rate") List<RateType> rates;
+	@XmlElement(name = "rate", required=true) private List<RateType> rates;
 
 	public RatesType() {}
 

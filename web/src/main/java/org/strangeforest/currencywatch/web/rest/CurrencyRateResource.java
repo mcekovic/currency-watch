@@ -7,8 +7,12 @@ import javax.ws.rs.core.*;
 
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
+import org.strangeforest.currencywatch.rest.*;
 
 import com.finsoft.util.*;
+
+import static javax.ws.rs.core.MediaType.*;
+import static javax.ws.rs.core.Response.Status.*;
 
 @Path("/")
 public class CurrencyRateResource {
@@ -16,7 +20,7 @@ public class CurrencyRateResource {
 	private final CurrencyRateProvider provider;
 	private String baseCurrency = Util.BASE_CURRENCY;
 
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+	private static final String DATE_SEPARATOR = String.valueOf(RESTCurrencyWatchProvider.DATE_SEPARATOR);
 
 	public CurrencyRateResource(CurrencyRateProvider provider) {
 		super();
@@ -27,25 +31,54 @@ public class CurrencyRateResource {
 		this.baseCurrency = baseCurrency;
 	}
 
-	@GET @Produces(MediaType.TEXT_PLAIN)
+	@GET @Produces(TEXT_PLAIN)
 	public String info() {
 		return "Currency Watch REST API";
 	}
 
-	@GET @Path("/rates/{currency}") @Produces(MediaType.TEXT_XML)
+	@GET @Path("/rate/{currency}") @Produces(TEXT_XML)
+	public RateType rate(
+		@PathParam("currency") String currency,
+		@QueryParam("date") String date
+	) {
+		try {
+			Date aDate = parseDate(date);
+			if (aDate == null)
+				aDate = Util.getLastDate().getTime();
+			return new RateType(aDate, provider.getRate(baseCurrency, currency, aDate));
+		}
+		catch (ParseException pEx) {
+			throw new WebApplicationException(Response.status(BAD_REQUEST).entity(pEx.getMessage()).type(TEXT_PLAIN).build());
+		}
+		catch (Exception ex) {
+			throw new WebApplicationException(ex, Response.status(INTERNAL_SERVER_ERROR).entity(ex.getMessage()).type(TEXT_PLAIN).build());
+		}
+	}
+
+	@GET @Path("/rates/{currency}") @Produces(TEXT_XML)
 	public RatesType rates(
 		@PathParam("currency") String currency,
+		@QueryParam("dates") String dates,
 		@QueryParam("fromDate") String fromDate,
 		@QueryParam("toDate") String toDate
 	) {
 		try {
-			Date from = parseDate(fromDate);
-			Date to = parseDate(toDate);
-			if (to == null)
-				to = Util.getLastDate().getTime();
-			if (from == null)
-				from = to;
-			Map<Date, RateValue> rates = provider.getRates(baseCurrency, currency, new DateRange(from, to).dates());
+			Collection<Date> dateColl;
+			if (dates != null) {
+				dateColl = new ArrayList<>();
+				for (StringTokenizer tokenizer = new StringTokenizer(dates, DATE_SEPARATOR); tokenizer.hasMoreTokens(); )
+					dateColl.add(parseDate(tokenizer.nextToken()));
+			}
+			else {
+				Date from = parseDate(fromDate);
+				Date to = parseDate(toDate);
+				if (to == null)
+					to = Util.getLastDate().getTime();
+				if (from == null)
+					from = to;
+				dateColl = new DateRange(from, to).dates();
+			}
+			Map<Date, RateValue> rates = provider.getRates(baseCurrency, currency, dateColl);
 			return new RatesType(Algorithms.transform(rates.entrySet(), new Transformer<Map.Entry<Date, RateValue>, RateType>() {
 				@Override public RateType transform(Map.Entry<Date, RateValue> rate) {
 					return new RateType(rate.getKey(), rate.getValue());
@@ -53,14 +86,14 @@ public class CurrencyRateResource {
 			}));
 		}
 		catch (ParseException pEx) {
-			throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).entity(pEx.getMessage()).type(MediaType.TEXT_PLAIN).build());
+			throw new WebApplicationException(Response.status(BAD_REQUEST).entity(pEx.getMessage()).type(TEXT_PLAIN).build());
 		}
 		catch (Exception ex) {
-			throw new WebApplicationException(ex, Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).type(MediaType.TEXT_PLAIN).build());
+			throw new WebApplicationException(ex, Response.status(INTERNAL_SERVER_ERROR).entity(ex.getMessage()).type(TEXT_PLAIN).build());
 		}
 	}
 
 	private static Date parseDate(String date) throws ParseException {
-		return !StringUtil.isNullOrEmpty(date) ? DATE_FORMAT.parse(date) : null;
+		return !StringUtil.isNullOrEmpty(date) ? RESTCurrencyWatchProvider.DATE_FORMAT.parse(date) : null;
 	}
 }

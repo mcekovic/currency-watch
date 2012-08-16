@@ -1,4 +1,4 @@
-package org.strangeforest.currencywatch.web.rest;
+package org.strangeforest.currencywatch.rest;
 
 import java.math.*;
 import java.util.*;
@@ -11,7 +11,7 @@ import org.strangeforest.currencywatch.core.*;
 @XmlType(name = "rate", propOrder = {"date", "bid", "ask", "middle"}, namespace = "http://currencywatch.strangeforest.org")
 public class RateType {
 
-	@XmlAttribute(required=true) Date date;
+	@XmlAttribute(required=true) private Date date;
 	@XmlAttribute(required=true) private BigDecimal bid;
 	@XmlAttribute(required=true) private BigDecimal ask;
 	@XmlAttribute(required=true) private BigDecimal middle;

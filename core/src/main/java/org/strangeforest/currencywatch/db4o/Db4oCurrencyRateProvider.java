@@ -85,7 +85,7 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	@Override public Map<Date, RateValue> getRates(final String baseCurrency, final String currency, final Collection<Date> dates) {
 		Map<Date, RateValue> rates = queryDb4o(new Db4oQueryCallback<Map<Date, RateValue>>() {
 			@Override public Map<Date, RateValue> queryDb4o(ObjectContainer db) {
-				Map<Date, RateValue> dateRates = new HashMap<>();
+				Map<Date, RateValue> dateRates = new TreeMap<>();
 				CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
 				if (rate != null) {
 					dateRates.putAll(rate.getRates());

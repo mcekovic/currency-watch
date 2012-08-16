@@ -1,3 +1,6 @@
 body {
 	font-family: tahoma, arial, helvetica, sans-serif;
 }
+.small {
+	font-size: smaller;
+}
