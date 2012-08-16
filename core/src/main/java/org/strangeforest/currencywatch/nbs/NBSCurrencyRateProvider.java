@@ -1,10 +1,13 @@
 package org.strangeforest.currencywatch.nbs;
 
 import java.io.*;
+import java.math.*;
 import java.net.*;
 import java.util.*;
 
 import org.strangeforest.currencywatch.core.*;
+
+import static java.math.BigDecimal.*;
 
 //TODO: Use https://webservices.nbs.rs/CommunicationOfficeService1_0/ExchangeRateXmlService.asmx?WSDL
 public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider {
@@ -133,10 +136,10 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 			sb.append(line);
 			String[] fields = line.split(";");
 			if (fields.length >= 9 && currency.equals(fields[4])) {
-				double unit = Double.parseDouble(fields[5]);
-				double bid = Double.parseDouble(fields[8])/unit;
-				double middle = Double.parseDouble(fields[9])/unit;
-				double ask = Double.parseDouble(fields[10])/unit;
+				int unit = Integer.parseInt(fields[5]);
+				BigDecimal bid = new BigDecimal(fields[8]).divide(valueOf(unit));
+				BigDecimal middle = new BigDecimal(fields[9]).divide(valueOf(unit));
+				BigDecimal ask = new BigDecimal(fields[10]).divide(valueOf(unit));
 				return new RateValue(bid, ask, middle);
 			}
 		}
@@ -163,10 +166,11 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 					break;
 				String[] fields = line.split(",");
 				if (fields.length >= 7 && currency.equals(fields[4])) {
-					double unit = Double.parseDouble(fields[5]);
-					double bid = Double.parseDouble(fields[6])/unit;
-					double ask = Double.parseDouble(fields[7])/unit;
-					return new RateValue(bid, ask, (bid+ask)/2);
+					int unit = Integer.parseInt(fields[5]);
+					BigDecimal bid = new BigDecimal(fields[6]).divide(valueOf(unit));
+					BigDecimal ask = new BigDecimal(fields[7]).divide(valueOf(unit));
+					BigDecimal middle = bid.add(ask).divide(valueOf(2L));
+					return new RateValue(bid, ask, middle);
 				}
 			}
 		}

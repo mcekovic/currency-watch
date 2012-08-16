@@ -1,27 +1,35 @@
 package org.strangeforest.currencywatch.core;
 
+import java.math.*;
+
+import static com.finsoft.util.ObjectUtil.*;
+
 public class RateValue {
 
-	private final double bid;
-	private final double ask;
-	private final double middle;
+	private final BigDecimal bid;
+	private final BigDecimal ask;
+	private final BigDecimal middle;
 
-	public RateValue(double bid, double ask, double middle) {
+	public RateValue(BigDecimal bid, BigDecimal ask, BigDecimal middle) {
 		super();
 		this.bid = bid;
 		this.ask = ask;
 		this.middle = middle;
 	}
 
-	public double getBid() {
+	public RateValue(String bid, String ask, String middle) {
+		this(new BigDecimal(bid), new BigDecimal(ask), new BigDecimal(middle));
+	}
+
+	public BigDecimal getBid() {
 		return bid;
 	}
 
-	public double getAsk() {
+	public BigDecimal getAsk() {
 		return ask;
 	}
 
-	public double getMiddle() {
+	public BigDecimal getMiddle() {
 		return middle;
 	}
 
@@ -30,19 +38,15 @@ public class RateValue {
 
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || !(o instanceof RateValue)) return false;
+		if (!(o instanceof RateValue)) return false;
 		RateValue rateValue = (RateValue)o;
-		return bid == rateValue.bid && ask == rateValue.ask && middle == rateValue.middle;
+		return equal(bid, rateValue.bid) && equal(ask, rateValue.ask) && equal(middle, rateValue.middle);
 	}
 
 	@Override public int hashCode() {
-		long temp = bid != +0.0d ? Double.doubleToLongBits(bid) : 0L;
-		int result = (int)(temp ^ (temp >>> 32));
-		temp = ask != +0.0d ? Double.doubleToLongBits(ask) : 0L;
-		result = 31 * result + (int)(temp ^ (temp >>> 32));
-		temp = middle != +0.0d ? Double.doubleToLongBits(middle) : 0L;
-		result = 31 * result + (int)(temp ^ (temp >>> 32));
-		return result;
+		int result = bid != null ? bid.hashCode() : 0;
+		result = 31 * result + (ask != null ? ask.hashCode() : 0);
+		return 31 * result + (middle != null ? middle.hashCode() : 0);
 	}
 
 	@Override public String toString() {

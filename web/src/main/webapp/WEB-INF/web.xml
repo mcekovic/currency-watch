@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
@@ -17,13 +18,12 @@
 	</listener>
 
 	<servlet>
-		<servlet-name>jaxrs</servlet-name>
+		<servlet-name>JAXRS</servlet-name>
 		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>FacesServlet</servlet-name>
+		<servlet-name>Faces</servlet-name>
 		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>DisplayChart</servlet-name>
@@ -31,11 +31,11 @@
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>jaxrs</servlet-name>
+		<servlet-name>JAXRS</servlet-name>
 		<url-pattern>/api/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>FacesServlet</servlet-name>
+		<servlet-name>Faces</servlet-name>
 		<url-pattern>*.jsf</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>

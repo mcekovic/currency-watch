@@ -33,24 +33,24 @@ public class CurrencyRateResource {
 	}
 
 	@GET @Path("/rates/{currency}") @Produces(MediaType.TEXT_XML)
-	public List<RateObject> rates(
+	public RatesType rates(
 		@PathParam("currency") String currency,
 		@QueryParam("fromDate") String fromDate,
 		@QueryParam("toDate") String toDate
 	) {
 		try {
 			Date from = parseDate(fromDate);
-			if (from == null)
-				from = Util.START_DATE.getTime();
 			Date to = parseDate(toDate);
 			if (to == null)
 				to = Util.getLastDate().getTime();
+			if (from == null)
+				from = to;
 			Map<Date, RateValue> rates = provider.getRates(baseCurrency, currency, new DateRange(from, to).dates());
-			return Algorithms.transform(rates.entrySet(), new Transformer<Map.Entry<Date, RateValue>, RateObject>() {
-				@Override public RateObject transform(Map.Entry<Date, RateValue> rate) {
-					return new RateObject(rate.getKey(), rate.getValue());
+			return new RatesType(Algorithms.transform(rates.entrySet(), new Transformer<Map.Entry<Date, RateValue>, RateType>() {
+				@Override public RateType transform(Map.Entry<Date, RateValue> rate) {
+					return new RateType(rate.getKey(), rate.getValue());
 				}
-			});
+			}));
 		}
 		catch (ParseException pEx) {
 			throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).entity(pEx.getMessage()).type(MediaType.TEXT_PLAIN).build());

@@ -15,12 +15,10 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	private ObjectContainer db;
 	private boolean closed;
 
-	public static final int CURRENT_VERSION = 2;
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(Db4oCurrencyRateProvider.class);
 
 	public Db4oCurrencyRateProvider(String dbFileName) {
-		this(dbFileName, CURRENT_VERSION);
+		this(dbFileName, DataVersion.CURRENT_VERSION);
 	}
 
 	public Db4oCurrencyRateProvider(String dbFileName, int dataVersion) {

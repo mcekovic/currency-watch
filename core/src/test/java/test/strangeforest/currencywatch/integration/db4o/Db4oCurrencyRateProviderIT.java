@@ -58,7 +58,7 @@ public class Db4oCurrencyRateProviderIT {
 		new Db4oCurrencyRateProvider(DB4O_DATA_FILE_UPGRADE).close();
 		assertTrue(new File(DB4O_DATA_FILE_UPGRADE).exists());
 
-		new Db4oCurrencyRateProvider(DB4O_DATA_FILE_UPGRADE, Db4oCurrencyRateProvider.CURRENT_VERSION + 1).close();
+		new Db4oCurrencyRateProvider(DB4O_DATA_FILE_UPGRADE, DataVersion.CURRENT_VERSION + 1).close();
 		assertTrue(new File(DB4O_DATA_FILE_UPGRADE).exists());
 	}
 }

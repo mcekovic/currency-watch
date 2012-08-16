@@ -1,23 +1,24 @@
 package org.strangeforest.currencywatch.web.rest;
 
+import java.math.*;
 import java.util.*;
 import javax.xml.bind.annotation.*;
 
 import org.strangeforest.currencywatch.core.*;
 
-@XmlRootElement
+@XmlRootElement(name = "rate")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "rate", propOrder = {"date", "bid", "ask", "middle"}, namespace = "http://currencywatch.strangeforest.org")
-public class RateObject {
+public class RateType {
 
 	@XmlAttribute(required=true) Date date;
-	@XmlAttribute(required=true) private double bid;
-	@XmlAttribute(required=true) private double ask;
-	@XmlAttribute(required=true) private double middle;
+	@XmlAttribute(required=true) private BigDecimal bid;
+	@XmlAttribute(required=true) private BigDecimal ask;
+	@XmlAttribute(required=true) private BigDecimal middle;
 
-	public RateObject() {}
+	public RateType() {}
 
-	public RateObject(Date date, RateValue rate) {
+	public RateType(Date date, RateValue rate) {
 		this.date = date;
 		this.bid = rate.getBid();
 		this.ask = rate.getAsk();
@@ -32,27 +33,27 @@ public class RateObject {
 		this.date = date;
 	}
 
-	public double getBid() {
+	public BigDecimal getBid() {
 		return bid;
 	}
 
-	public void setBid(double bid) {
+	public void setBid(BigDecimal bid) {
 		this.bid = bid;
 	}
 
-	public double getAsk() {
+	public BigDecimal getAsk() {
 		return ask;
 	}
 
-	public void setAsk(double ask) {
+	public void setAsk(BigDecimal ask) {
 		this.ask = ask;
 	}
 
-	public double getMiddle() {
+	public BigDecimal getMiddle() {
 		return middle;
 	}
 
-	public void setMiddle(double middle) {
+	public void setMiddle(BigDecimal middle) {
 		this.middle = middle;
 	}
 }

@@ -22,6 +22,8 @@ public class DataVersion implements Comparable<DataVersion> {
 
 	private int version;
 
+	public static final int CURRENT_VERSION = 3;
+
 	public DataVersion() {}
 
 	public DataVersion(int version) {

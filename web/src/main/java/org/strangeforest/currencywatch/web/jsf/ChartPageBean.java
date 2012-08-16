@@ -25,8 +25,8 @@ import static java.util.Arrays.*;
 @RequestScoped
 public class ChartPageBean {
 
-	@ManagedProperty("#{chartApp}")
-	private ChartAppBean chartApp;
+	@ManagedProperty("#{currencyProvider}")
+	private CurrencyRateProvider currencyProvider;
 
 	private CurrencySymbol currency = UIUtil.DEFAULT_CURRENCY;
 	private Period period = UIUtil.DEFAULT_PERIOD;
@@ -44,12 +44,12 @@ public class ChartPageBean {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartPageBean.class);
 
-	public ChartAppBean getChartApp() {
-		return chartApp;
+	public CurrencyRateProvider getCurrencyProvider() {
+		return currencyProvider;
 	}
 
-	public void setChartApp(ChartAppBean chartApp) {
-		this.chartApp = chartApp;
+	public void setCurrencyProvider(CurrencyRateProvider currencyProvider) {
+		this.currencyProvider = currencyProvider;
 	}
 
 	public String getTitle() {
@@ -170,7 +170,7 @@ public class ChartPageBean {
 		DateRange dateRange = UIUtil.toDateRange(days);
 		chart.setDateRange(dateRange);
 
-		CurrencyRate currencyRate = new CurrencyRate(Util.BASE_CURRENCY, currency.name(), chartApp.getProvider());
+		CurrencyRate currencyRate = new CurrencyRate(Util.BASE_CURRENCY, currency.name(), currencyProvider);
 		Map<Date, RateValue> rates;
 		try {
 			int step = 1 + days/quality.points();
