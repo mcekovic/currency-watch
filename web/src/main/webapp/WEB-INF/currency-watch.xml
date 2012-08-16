@@ -31,7 +31,7 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="currencyRateResource" class="org.strangeforest.currencywatch.web.rest.CurrencyRateResource">
+	<bean id="currencyRateResource" class="org.strangeforest.currencywatch.rest.CurrencyRateResource">
 		<constructor-arg index="0" name="provider" ref="currencyProvider"/>
 	</bean>
 

@@ -1,4 +1,4 @@
-package org.strangeforest.currencywatch.web.rest;
+package org.strangeforest.currencywatch.rest;
 
 import java.text.*;
 import java.util.*;
@@ -7,7 +7,6 @@ import javax.ws.rs.core.*;
 
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
-import org.strangeforest.currencywatch.rest.*;
 
 import com.finsoft.util.*;
 
@@ -20,7 +19,9 @@ public class CurrencyRateResource {
 	private final CurrencyRateProvider provider;
 	private String baseCurrency = Util.BASE_CURRENCY;
 
-	private static final String DATE_SEPARATOR = String.valueOf(RESTCurrencyWatchProvider.DATE_SEPARATOR);
+	static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+	static final String DATE_SEPARATOR = ",";
+	static final String INFO_MESSAGE = "Currency Watch REST API";
 
 	public CurrencyRateResource(CurrencyRateProvider provider) {
 		super();
@@ -33,7 +34,7 @@ public class CurrencyRateResource {
 
 	@GET @Produces(TEXT_PLAIN)
 	public String info() {
-		return "Currency Watch REST API";
+		return INFO_MESSAGE;
 	}
 
 	@GET @Path("/rate/{currency}") @Produces(TEXT_XML)
@@ -94,6 +95,6 @@ public class CurrencyRateResource {
 	}
 
 	private static Date parseDate(String date) throws ParseException {
-		return !StringUtil.isNullOrEmpty(date) ? RESTCurrencyWatchProvider.DATE_FORMAT.parse(date) : null;
+		return !StringUtil.isNullOrEmpty(date) ? DATE_FORMAT.parse(date) : null;
 	}
 }

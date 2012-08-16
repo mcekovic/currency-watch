@@ -1,9 +1,7 @@
 package org.strangeforest.currencywatch.rest;
 
 import java.net.*;
-import java.text.*;
 import java.util.*;
-import javax.ws.rs.core.*;
 
 import org.strangeforest.currencywatch.core.*;
 
@@ -12,10 +10,10 @@ import com.sun.jersey.client.apache.*;
 
 import com.finsoft.util.*;
 
-public class RESTCurrencyWatchProvider extends BaseCurrencyRateProvider {
+import static javax.ws.rs.core.MediaType.*;
+import static org.strangeforest.currencywatch.rest.CurrencyRateResource.*;
 
-	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
-	public static final char DATE_SEPARATOR = ',';
+public class RESTCurrencyWatchProvider extends BaseCurrencyRateProvider {
 
 	private final URI uri;
 	private Client client;
@@ -37,7 +35,7 @@ public class RESTCurrencyWatchProvider extends BaseCurrencyRateProvider {
 
 	public boolean ping() {
 		try {
-			return ObjectUtil.equal(resource.accept(MediaType.TEXT_PLAIN).get(String.class), "Currency Watch REST API");
+			return ObjectUtil.equal(resource.accept(TEXT_PLAIN).get(String.class), INFO_MESSAGE);
 		}
 		catch (UniformInterfaceException | ClientHandlerException ex) {
 			ex.printStackTrace();
@@ -47,12 +45,12 @@ public class RESTCurrencyWatchProvider extends BaseCurrencyRateProvider {
 
 	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
 		return toRateValue(resource.path("rate/" + currency).queryParam("date", formatDate(date))
-				.accept(MediaType.TEXT_XML).get(RateType.class));
+			.accept(TEXT_XML).get(RateType.class));
 	}
 
 	@Override public Map<Date, RateValue> getRates(String baseCurrency, String currency, Collection<Date> dates) {
 		return toRateValuesMap(resource.path("rates/" + currency).queryParam("dates", formatDates(dates))
-				.accept(MediaType.TEXT_XML).get(RatesType.class));
+			.accept(TEXT_XML).get(RatesType.class));
 	}
 
 	private String formatDate(Date date) {
