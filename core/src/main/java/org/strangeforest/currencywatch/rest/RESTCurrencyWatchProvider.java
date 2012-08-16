@@ -17,18 +17,18 @@ public class RESTCurrencyWatchProvider extends BaseCurrencyRateProvider {
 	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 	public static final char DATE_SEPARATOR = ',';
 
-	private final URI currencyWatchURI;
+	private final URI uri;
 	private Client client;
-	private WebResource currencyRateResource;
+	private WebResource resource;
 
-	public RESTCurrencyWatchProvider(URI currencyWatchURI) {
+	public RESTCurrencyWatchProvider(URI uri) {
 		super();
-		this.currencyWatchURI = currencyWatchURI;
+		this.uri = uri;
 	}
 
 	@Override public void init() {
 		client = ApacheHttpClient.create();
-		currencyRateResource = client.resource(currencyWatchURI);
+		resource = client.resource(uri);
 	}
 
 	@Override public void close() {
@@ -37,7 +37,7 @@ public class RESTCurrencyWatchProvider extends BaseCurrencyRateProvider {
 
 	public boolean ping() {
 		try {
-			return ObjectUtil.equal(currencyRateResource.accept(MediaType.TEXT_PLAIN).get(String.class), "Currency Watch REST API");
+			return ObjectUtil.equal(resource.accept(MediaType.TEXT_PLAIN).get(String.class), "Currency Watch REST API");
 		}
 		catch (UniformInterfaceException | ClientHandlerException ex) {
 			ex.printStackTrace();
@@ -46,13 +46,13 @@ public class RESTCurrencyWatchProvider extends BaseCurrencyRateProvider {
 	}
 
 	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
-		return toRateValue(currencyRateResource.path("rate/" + currency).queryParam("date", formatDate(date))
-			.accept(MediaType.TEXT_XML).get(RateType.class));
+		return toRateValue(resource.path("rate/" + currency).queryParam("date", formatDate(date))
+				.accept(MediaType.TEXT_XML).get(RateType.class));
 	}
 
 	@Override public Map<Date, RateValue> getRates(String baseCurrency, String currency, Collection<Date> dates) {
-		return toRateValuesMap(currencyRateResource.path("rates/" + currency).queryParam("dates", formatDates(dates))
-			.accept(MediaType.TEXT_XML).get(RatesType.class));
+		return toRateValuesMap(resource.path("rates/" + currency).queryParam("dates", formatDates(dates))
+				.accept(MediaType.TEXT_XML).get(RatesType.class));
 	}
 
 	private String formatDate(Date date) {

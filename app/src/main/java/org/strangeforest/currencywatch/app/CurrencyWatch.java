@@ -20,6 +20,12 @@ public class CurrencyWatch {
 	@Parameter(names = {"-db", "-dbFileName"}, description = "DB file used to store currency rates.")
 	private String dbFileName = DB_FILE_NAME;
 
+	@Parameter(names = {"-r", "-useRest"}, description = "Fetch data from REST API.")
+	private boolean useRest = false;
+
+	@Parameter(names = {"-u", "-url"}, description = "REST API URL to fetch data from.")
+	private String url;
+
 	@Parameter(names = {"-t", "-threads"}, description = "Number of threads to use for fetching.")
 	private int threadCount = REMOTE_PROVIDER_THREAD_COUNT;
 
@@ -81,16 +87,44 @@ public class CurrencyWatch {
 	}
 
 	private CurrencyRateProvider createRemoteProvider() throws URISyntaxException {
-		RESTCurrencyWatchProvider restProvider = createRESTProvider();
-		restProvider.init();
-		if (restProvider.ping()) {
-			restProvider.close();
-			LOGGER.info("Using RESTCurrencyWatchProvider.");
-			return restProvider;
+		if (url != null) {
+			RESTCurrencyWatchProvider provider = tryUseRESTProvider(URI.create(url));
+			if (provider != null)
+				return provider;
 		}
-		else {
-			LOGGER.info("Using NBSCurrencyRateProvider.");
-			return createNBSProvider();
+		if (useRest) {
+			for (URI uri : REST_URIS) {
+				RESTCurrencyWatchProvider provider = tryUseRESTProvider(uri);
+				if (provider != null)
+					return provider;
+			}
+		}
+		LOGGER.info("Using NBSCurrencyRateProvider.");
+		return createNBSProvider();
+	}
+
+	private static final URI[] REST_URIS = new URI[] {
+		URI.create("http://localhost:8080/currency-watch-web-1.3/api"),
+		URI.create("http://ubuntu.beg.finsoft.com:8080/currency-watch/api")
+	};
+
+	private static RESTCurrencyWatchProvider tryUseRESTProvider(URI uri) {
+		RESTCurrencyWatchProvider provider = createRESTProvider(uri);
+		if (provider != null)
+			LOGGER.info("Using RESTCurrencyWatchProvider at " + uri);
+		else
+			LOGGER.warn("Unable to use RESTCurrencyWatchProvider at " + uri);
+		return provider;
+	}
+
+	private static RESTCurrencyWatchProvider createRESTProvider(URI uri) {
+		try (RESTCurrencyWatchProvider provider = new RESTCurrencyWatchProvider(uri)) {
+			provider.init();
+			return provider.ping() ? provider : null;
+		}
+		catch (Exception ex) {
+			LOGGER.debug("Error pinging RESTCurrencyWatchProvider.", ex);
+			return null;
 		}
 	}
 
@@ -103,10 +137,5 @@ public class CurrencyWatch {
 			}
 		});
 		return new ParallelCurrencyRateProviderProxy(nbsProvider, threadCount);
-	}
-
-	private RESTCurrencyWatchProvider createRESTProvider() throws URISyntaxException {
-//		return new RESTCurrencyWatchProvider(new URI("http://ubuntu.beg.finsoft.com:8080/currency-watch/api"));
-		return new RESTCurrencyWatchProvider(new URI("http://localhost:8080/currency-watch-web-1.3/api"));
 	}
 }
