@@ -36,6 +36,7 @@ public class ChartPageBean {
 	private boolean showBollBands;
 	private Integer movAvgPeriod = UIUtil.DEFAULT_MOV_AVG_PERIOD;
 
+	private CurrentRate currentRate;
 	private String chartFileName;
 
 	private static final String PAGE_TITLE = "Currency Chart";
@@ -116,6 +117,10 @@ public class ChartPageBean {
 		this.movAvgPeriod = movAvgPeriod != null ? movAvgPeriod : UIUtil.DEFAULT_MOV_AVG_PERIOD;
 	}
 
+	public CurrentRate getCurrentRate() {
+		return currentRate;
+	}
+
 	public String getChartFileName() {
 		return chartFileName;
 	}
@@ -181,6 +186,8 @@ public class ChartPageBean {
 			LOGGER.error("Error getting currency data.", ex);
 			rates = currencyRate.getRates();
 		}
+
+		currentRate = CurrentRate.forRates(rates);
 
 		chart.updateBaseSeries(rates);
 		chart.updateDerivedSeries(movAvgPeriod);

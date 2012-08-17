@@ -92,7 +92,7 @@ public class CurrencyWatch {
 
 	private CurrencyRateProvider createRemoteProvider() throws URISyntaxException {
 		if (url != null) {
-			CurrencyRateProvider provider = tryUseRESTProvider(URI.create(url));
+			CurrencyRateProvider provider = tryUseRESTProvider(url.equals(LOCAL_URL) ? LOCAL_REST_URI : URI.create(url));
 			if (provider != null)
 				return provider;
 		}
@@ -107,18 +107,23 @@ public class CurrencyWatch {
 		return createNBSProvider();
 	}
 
+	private static final String LOCAL_URL = "local";
+	private static final URI LOCAL_REST_URI = URI.create("http://localhost:8080/currency-watch-web-1.3/api");
+
 	private static final URI[] REST_URIS = new URI[] {
-		URI.create("http://localhost:8080/currency-watch-web-1.3/api"),
 		URI.create("http://ubuntu.beg.finsoft.com:8080/currency-watch/api")
 	};
 
 	private CurrencyRateProvider tryUseRESTProvider(URI uri) {
 		RESTCurrencyWatchProvider provider = createRESTProvider(uri);
-		if (provider != null)
+		if (provider != null) {
 			LOGGER.info("Using RESTCurrencyWatchProvider at " + uri);
-		else
+			return new BatchedCurrencyRateProviderProxy(provider, batchSize);
+		}
+		else {
 			LOGGER.warn("Unable to use RESTCurrencyWatchProvider at " + uri);
-		return new BatchedCurrencyRateProviderProxy(provider, batchSize);
+			return null;
+		}
 	}
 
 	private static RESTCurrencyWatchProvider createRESTProvider(URI uri) {

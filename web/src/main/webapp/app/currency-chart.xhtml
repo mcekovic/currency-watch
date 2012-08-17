@@ -3,7 +3,7 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:c="http://java.sun.com/jsp/jstl/core">
 <h:head>
-	<title>#{chartPage.title}</title>
+	<title>${chartPage.title}</title>
 	<h:outputStylesheet name="currency-watch.css" library="css"/>
 	<script type="text/javascript">
 		function setMovAvgPeriodEnabled() {
@@ -78,6 +78,14 @@
 			</tr>
 			<tr style="text-align: center">
 				<td><h:outputLabel for="chartImage" value="#{chartPage.currencyFullName}, period: #{chartPage.period.label()}"/></td>
+			</tr>
+			<tr style="text-align: center">
+				<td>
+					<h:outputText value="${chartPage.currentRate.date}"><f:convertDateTime pattern="dd-MM-yyyy"/></h:outputText> -
+					Bid: <h:outputText value="${chartPage.currentRate.rate.bid}"><f:convertNumber maxFractionDigits="2"/></h:outputText>,
+					Middle: <span style="color: ${chartPage.currentRate.color};font-weight: bold;"><h:outputText value="${chartPage.currentRate.rate.middle}"><f:convertNumber maxFractionDigits="2"/></h:outputText></span>,
+					Ask: <h:outputText value="${chartPage.currentRate.rate.ask}"><f:convertNumber maxFractionDigits="2"/></h:outputText>
+				</td>
 			</tr>
 		</table>
 	</c:if>

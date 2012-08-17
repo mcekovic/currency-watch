@@ -2,9 +2,11 @@ package org.strangeforest.currencywatch.app;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
 
 import org.jfree.chart.*;
+import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
 
 import com.finsoft.util.*;
@@ -25,8 +27,9 @@ public class CurrencyChartForm {
 	private JButton exitButton;
 	private ChartPanel chartPanel;
 	private JPanel statusPanel;
-	private JLabel speedLabel;
+	private JLabel messageLabel;
 	private JProgressBar progressBar;
+	private JLabel speedLabel;
 	private JLabel statusLabel;
 
 	private final CurrencyRatePresenter presenter;
@@ -93,6 +96,10 @@ public class CurrencyChartForm {
 	}
 
 	private class FormCurrencyRatePresenterListener implements CurrencyRatePresenterListener {
+		@Override public void currentRate(CurrentRate currentRate) {
+			RateValue rate = currentRate.getRate();
+			messageLabel.setText(String.format("<html>%1$td-%1$tm-%1$tY: Bid %2$.2f, Middle <span style='color: %5$s;'>%3$.2f</span>, Ask %4$.2f</html>", currentRate.getDate(), rate.getBid(), rate.getMiddle(), rate.getAsk(), currentRate.getColor()));
+		}
 		@Override public void statusChanged(String status, boolean isError) {
 			statusLabel.setText(StringUtil.maxLength(status, 25));
 			statusLabel.setForeground(isError ? Color.RED : Color.BLACK);

@@ -144,8 +144,8 @@ public class CurrencyRatePresenter implements AutoCloseable {
 				try {
 					loading = true;
 					try {
-						rate.getRates(dateRange.dates(step*10)); // Fetch outline first
-						rate.getRates(dates);
+						notifyCurrentRate(rate.getRates(dateRange.dates(step*10))); // Fetch outline first
+						notifyCurrentRate(rate.getRates(dates));
 					}
 					finally {
 						loading = false;
@@ -187,6 +187,14 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	private void setLoadingStatus() {
 		if (loading)
 			notifyStatusChanged("Loading...", false);
+	}
+
+	private void notifyCurrentRate(Map<Date, RateValue> rates) {
+		CurrentRate currentRate = CurrentRate.forRates(rates);
+		if (currentRate != null) {
+			for (CurrencyRatePresenterListener listener : listeners)
+				listener.currentRate(currentRate);
+		}
 	}
 
 	private void notifyStatusChanged(String status, boolean isError) {
