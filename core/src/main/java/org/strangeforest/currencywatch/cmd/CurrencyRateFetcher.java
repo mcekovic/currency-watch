@@ -14,20 +14,8 @@ import org.strangeforest.currencywatch.ui.*;
 
 public class CurrencyRateFetcher implements AutoCloseable {
 
-	private static final String DB_FILE_NAME = "data/currency-rates.db4o";
-	private static final int THREAD_COUNT = 20;
-
-	public static void main(String[] args) {
-		try (CurrencyRateFetcher fetcher = new CurrencyRateFetcher()) {
-			if (fetcher.parseArguments(args)) {
-				fetcher.init();
-				fetcher.fetch();
-			}
-		}
-	}
-
 	@Parameter(names = {"-db", "-dbFileName"}, description = "DB file used to store currency rates.")
-	private String dbFileName = DB_FILE_NAME;
+	private String dbFileName = System.getProperty("user.home") + DB_FILE_NAME;
 
 	@Parameter(names = {"-c", "-currency"}, description = "Currency symbol.")
 	private String currency = UIUtil.DEFAULT_CURRENCY.toString();
@@ -43,6 +31,18 @@ public class CurrencyRateFetcher implements AutoCloseable {
 
 	@Parameter(names = {"-?", "-h", "-help"}, description = "Shows usage.", help = true)
 	private boolean help;
+
+	private static final String DB_FILE_NAME = "/.currency-watch/data/currency-rates.db4o";
+	private static final int THREAD_COUNT = 20;
+
+	public static void main(String[] args) {
+		try (CurrencyRateFetcher fetcher = new CurrencyRateFetcher()) {
+			if (fetcher.parseArguments(args)) {
+				fetcher.init();
+				fetcher.fetch();
+			}
+		}
+	}
 
 	private ChainedCurrencyRateProvider provider;
 	private DateRange dates;
