@@ -5,6 +5,7 @@ import java.util.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
+import org.slf4j.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 
@@ -22,6 +23,8 @@ public class CurrencyRateResource {
 	static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 	static final String DATE_SEPARATOR = ",";
 	static final String INFO_MESSAGE = "Currency Watch REST API";
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyRateResource.class);
 
 	public CurrencyRateResource(CurrencyRateProvider provider) {
 		super();
@@ -48,11 +51,12 @@ public class CurrencyRateResource {
 				aDate = Util.getLastDate().getTime();
 			return new RateType(aDate, provider.getRate(baseCurrency, currency, aDate));
 		}
-		catch (ParseException pEx) {
-			throw new WebApplicationException(Response.status(BAD_REQUEST).entity(pEx.getMessage()).type(TEXT_PLAIN).build());
+		catch (ParseException ex) {
+			throw new WebApplicationException(Response.status(BAD_REQUEST).entity(ex.getMessage()).type(TEXT_PLAIN).build());
 		}
-		catch (Exception ex) {
-			throw new WebApplicationException(ex, Response.status(INTERNAL_SERVER_ERROR).entity(ex.getMessage()).type(TEXT_PLAIN).build());
+		catch (Throwable th) {
+			LOGGER.error("Error getting currency rate.", th);
+			throw new WebApplicationException(Response.status(INTERNAL_SERVER_ERROR).entity(th.getMessage()).type(TEXT_PLAIN).build());
 		}
 	}
 
@@ -86,11 +90,12 @@ public class CurrencyRateResource {
 				}
 			}));
 		}
-		catch (ParseException pEx) {
-			throw new WebApplicationException(Response.status(BAD_REQUEST).entity(pEx.getMessage()).type(TEXT_PLAIN).build());
+		catch (ParseException ex) {
+			throw new WebApplicationException(Response.status(BAD_REQUEST).entity(ex.getMessage()).type(TEXT_PLAIN).build());
 		}
-		catch (Exception ex) {
-			throw new WebApplicationException(ex, Response.status(INTERNAL_SERVER_ERROR).entity(ex.getMessage()).type(TEXT_PLAIN).build());
+		catch (Throwable th) {
+			LOGGER.error("Error getting currency rates.", th);
+			throw new WebApplicationException(Response.status(INTERNAL_SERVER_ERROR).entity(th.getMessage()).type(TEXT_PLAIN).build());
 		}
 	}
 

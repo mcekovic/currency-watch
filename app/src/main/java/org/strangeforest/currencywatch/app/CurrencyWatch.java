@@ -26,13 +26,17 @@ public class CurrencyWatch {
 	@Parameter(names = {"-u", "-url"}, description = "REST API URL to fetch data from.")
 	private String url;
 
-	@Parameter(names = {"-t", "-threads"}, description = "Number of threads to use for fetching.")
+	@Parameter(names = {"-b", "-batch"}, description = "Batch size to use for fetching from REST service.")
+	private int batchSize = REMOTE_PROVIDER_BATCH_SIZE;
+
+	@Parameter(names = {"-t", "-threads"}, description = "Number of threads to use for fetching from NBS.")
 	private int threadCount = REMOTE_PROVIDER_THREAD_COUNT;
 
 	@Parameter(names = {"-?", "-h", "-help"}, description = "Shows usage.", help = true)
 	private boolean help;
 
 	private static final String DB_FILE_NAME = "data/currency-rates.db4o";
+	private static final int REMOTE_PROVIDER_BATCH_SIZE   = 20;
 	private static final int REMOTE_PROVIDER_THREAD_COUNT = 10;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyWatch.class);
@@ -88,13 +92,13 @@ public class CurrencyWatch {
 
 	private CurrencyRateProvider createRemoteProvider() throws URISyntaxException {
 		if (url != null) {
-			RESTCurrencyWatchProvider provider = tryUseRESTProvider(URI.create(url));
+			CurrencyRateProvider provider = tryUseRESTProvider(URI.create(url));
 			if (provider != null)
 				return provider;
 		}
 		if (useRest) {
 			for (URI uri : REST_URIS) {
-				RESTCurrencyWatchProvider provider = tryUseRESTProvider(uri);
+				CurrencyRateProvider provider = tryUseRESTProvider(uri);
 				if (provider != null)
 					return provider;
 			}
@@ -108,13 +112,13 @@ public class CurrencyWatch {
 		URI.create("http://ubuntu.beg.finsoft.com:8080/currency-watch/api")
 	};
 
-	private static RESTCurrencyWatchProvider tryUseRESTProvider(URI uri) {
+	private CurrencyRateProvider tryUseRESTProvider(URI uri) {
 		RESTCurrencyWatchProvider provider = createRESTProvider(uri);
 		if (provider != null)
 			LOGGER.info("Using RESTCurrencyWatchProvider at " + uri);
 		else
 			LOGGER.warn("Unable to use RESTCurrencyWatchProvider at " + uri);
-		return provider;
+		return new BatchedCurrencyRateProviderProxy(provider, batchSize);
 	}
 
 	private static RESTCurrencyWatchProvider createRESTProvider(URI uri) {

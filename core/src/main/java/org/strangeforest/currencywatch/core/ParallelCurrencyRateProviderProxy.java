@@ -56,7 +56,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 	}
 
 	@Override public Map<Date, RateValue> getRates(final String baseCurrency, final String currency, Collection<Date> dates) {
-		Map<Date, RateValue> dateValues = new TreeMap<>();
+		Map<Date, RateValue> dateRates = new TreeMap<>();
 		final AtomicInteger retriesLeft = new AtomicInteger(retryCount);
 		final Queue<Future<DateRateValue>> results = new ArrayDeque<>();
 		for (final Date date : dates) {
@@ -93,9 +93,9 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 		int exCount = 0;
 		while (!results.isEmpty() && !Thread.currentThread().isInterrupted()) {
 			try {
-				DateRateValue dateValue = results.remove().get();
-				if (dateValue != null)
-					dateValues.put(dateValue.date, dateValue.value);
+				DateRateValue dateRate = results.remove().get();
+				if (dateRate != null)
+					dateRates.put(dateRate.date, dateRate.value);
 			}
 			catch (InterruptedException ignored) {
 				break;
@@ -109,7 +109,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 					LOGGER.error("Maximum errors exceeded.", cause);
 			}
 		}
-		return dateValues;
+		return dateRates;
 	}
 
 	private static class DateRateValue {

@@ -141,16 +141,21 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		startSpeedUpdate();
 		dataThread = new Thread(new Runnable() {
 			@Override public void run() {
-				loading = true;
 				try {
-					rate.getRates(dateRange.dates(step*10)); // Fetch outline first
-					rate.getRates(dates);
+					loading = true;
+					try {
+						rate.getRates(dateRange.dates(step*10)); // Fetch outline first
+						rate.getRates(dates);
+					}
+					finally {
+						loading = false;
+						stopSpeedUpdate();
+						updateSpeed();
+						notifyStatusChanged(StringUtil.EMPTY, false);
+					}
 				}
-				finally {
-					loading = false;
-					stopSpeedUpdate();
-					updateSpeed();
-					notifyStatusChanged(StringUtil.EMPTY, false);
+				catch (Throwable th) {
+					LOGGER.error("Error fetching data.", th);
 				}
 			}
 		}, "Currency Data Fetcher");
