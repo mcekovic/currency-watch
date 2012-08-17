@@ -4,8 +4,8 @@ import java.util.*;
 
 public class ObservableCurrencyRateProviderProxy extends BaseObservableCurrencyRateProvider {
 
-	protected final CurrencyRateProvider provider;
-	protected final boolean isProviderObservable;
+	private final CurrencyRateProvider provider;
+	private final boolean isProviderObservable;
 	private final CurrencyRateListener providerListener;
 
 	public ObservableCurrencyRateProviderProxy(CurrencyRateProvider provider) {
@@ -40,6 +40,11 @@ public class ObservableCurrencyRateProviderProxy extends BaseObservableCurrencyR
 	@Override public void close() {
 		unsubscribeFromProvider();
 		provider.close();
+	}
+
+	protected void resetProvider() {
+		provider.close();
+		provider.init();
 	}
 
 	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {

@@ -17,8 +17,7 @@ public class CurrencyRateIT {
 
 	@BeforeClass
 	public void setUp() {
-		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider();
-		remoteProvider.addListener(new CurrencyRateAdapter() {
+		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider(new CurrencyRateAdapter() {
 			@Override public void newRate(CurrencyRateEvent rateEvent) {
 				System.out.println(rateEvent);
 			}

@@ -27,6 +27,13 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		this.format = format;
 	}
 
+	public NBSCurrencyRateProvider() {}
+
+	public NBSCurrencyRateProvider(CurrencyRateListener listener) {
+		super();
+		addListener(listener);
+	}
+
 	@Override public void init() {
 		try {
 			URLConnection conn = new URL(NBS_URL + "?lang=lat").openConnection();

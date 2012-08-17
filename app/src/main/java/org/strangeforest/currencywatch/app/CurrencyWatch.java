@@ -133,13 +133,7 @@ public class CurrencyWatch {
 	}
 
 	private CurrencyRateProvider createNBSProvider() {
-		ObservableCurrencyRateProvider nbsProvider = new NBSCurrencyRateProvider();
-		nbsProvider.addListener(new CurrencyRateAdapter() {
-			@Override public void newRate(CurrencyRateEvent rateEvent) {
-				if (LOGGER.isDebugEnabled())
-					LOGGER.debug(rateEvent.toString());
-			}
-		});
+		ObservableCurrencyRateProvider nbsProvider = new NBSCurrencyRateProvider(new CurrencyRateTracer());
 		return new ParallelCurrencyRateProviderProxy(nbsProvider, threadCount);
 	}
 }

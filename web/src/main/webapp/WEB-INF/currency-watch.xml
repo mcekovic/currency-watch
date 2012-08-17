@@ -23,6 +23,9 @@
 			<bean class="org.strangeforest.currencywatch.core.ParallelCurrencyRateProviderProxy">
 				<constructor-arg index="0" name="provider">
 					<bean class="org.strangeforest.currencywatch.nbs.NBSCurrencyRateProvider">
+						<constructor-arg index="0" name="listener">
+							<bean class="org.strangeforest.currencywatch.core.CurrencyRateTracer"/>
+						</constructor-arg>
 						<property name="format" value="${nbsCurrencyRateProvider.format}"/>
 					</bean>
 				</constructor-arg>

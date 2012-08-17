@@ -66,8 +66,7 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	}
 
 	private void init() {
-		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider();
-		remoteProvider.addListener(new CurrencyRateAdapter() {
+		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider(new CurrencyRateAdapter() {
 			@Override public void newRate(CurrencyRateEvent rateEvent) {
 				incFetchedAndPrintProgress();
 			}

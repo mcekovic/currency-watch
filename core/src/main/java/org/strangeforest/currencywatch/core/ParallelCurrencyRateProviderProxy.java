@@ -63,9 +63,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 			Callable<DateRateValue> task = new Callable<DateRateValue>() {
 				@Override public DateRateValue call() throws Exception {
 					try {
-						RateValue rateValue = provider.getRate(baseCurrency, currency, date);
-						if (!isProviderObservable && hasAnyListener())
-							notifyListeners(baseCurrency, currency, date, rateValue);
+						RateValue rateValue = ParallelCurrencyRateProviderProxy.super.getRate(baseCurrency, currency, date);
 						return new DateRateValue(date, rateValue);
 					}
 					catch (Exception ex) {
@@ -80,8 +78,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 							notifyListeners(ExceptionUtil.getRootMessage(ex));
 							if (resetProviderOnRetryFail) {
 								LOGGER.warn("Too many retry failures, resetting provider.");
-								provider.close();
-								provider.init();
+								resetProvider();
 							}
 							throw ex;
 						}
