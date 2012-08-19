@@ -3,7 +3,7 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.finsoft.com/db sqls.xsd">
 
-	<sql-group name="JDBCCurrencyRateProvider.H2">
+	<sql-group name="JDBCCurrencyRateProvider">
 
 		<sql name="FetchRate">
 			SELECT Bid, Middle, Ask FROM CurrencyRate

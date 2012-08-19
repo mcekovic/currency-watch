@@ -9,4 +9,15 @@ public abstract class ITUtil {
 		file.delete();
 		file.deleteOnExit();
 	}
+
+	public static void deleteFiles(String dir, final String pattern) {
+		for (File file : new File(dir).listFiles(new FileFilter() {
+			@Override public boolean accept(File file) {
+				return file.getPath().matches(".*" + pattern);
+			}
+		})) {
+			file.delete();
+			file.deleteOnExit();
+		}
+	}
 }

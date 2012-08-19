@@ -24,6 +24,7 @@ public class Db4oCurrencyRateProviderIT {
 		ITUtil.deleteFile(DB4O_DATA_FILE);
 		ITUtil.deleteFile(DB4O_DATA_FILE_UPGRADE);
 		currencyRateProvider = new Db4oCurrencyRateProvider(DB4O_DATA_FILE);
+		currencyRateProvider.init();
 	}
 
 	@AfterClass

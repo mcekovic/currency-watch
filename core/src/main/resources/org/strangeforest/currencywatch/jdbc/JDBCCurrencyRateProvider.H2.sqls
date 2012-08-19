@@ -3,7 +3,7 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.finsoft.com/db sqls.xsd">
 
-	<sql-group name="DML">
+	<sql-group name="JDBCCurrencyRateProvider">
 
 		<sql name="FetchRate">
 			SELECT Bid, Middle, Ask FROM CurrencyWatch.CurrencyRate
@@ -14,57 +14,9 @@
 
 		<sql name="MergeRate">
 			MERGE INTO CurrencyWatch.CurrencyRate
-			(BaseCurrencyId, CurrencyId, Date, Bid, Middle, Ask)
+			(BaseCurrencyId, CurrencyId, Date, Bid, Ask, Middle)
 			VALUES
-			(:baseCurrency, :currency, :date, :bid, :middle, :ask)
-		</sql>
-
-	</sql-group>
-
-	<sql-group name="DDL">
-
-		<sql name="SchemaExists">
-			SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA
-			WHERE SCHEMA_NAME = 'CurrencyWatch'
-		</sql>
-
-		<sql name="CreateUser">
-			CREATE USER CurrencyWatch PASSWORD CurrencyWatch ADMIN
-		</sql>
-
-		<sql name="CreateSchema">
-			CREATE SCHEMA CurrencyWatch AUTHORIZATION CurrencyWatch
-		</sql>
-
-		<sql name="FetchSchemaVersion">
-			SELECT MAX(Version) AS Version FROM CurrencyWatch.SchemaVersion
-		</sql>
-
-		<sql name="CreateSchemaVersionTable">
-			CREATE TABLE CurrencyWatch.SchemaVersion (
-				Version INT NOT NULL PRIMARY KEY,
-				IsUpgrade BOOLEAN NOT NULL,
-				Created TIMESTAMP NOT NULL
-			)
-		</sql>
-
-		<sql name="CreateCurrencyRateTable">
-			CREATE TABLE CurrencyWatch.CurrencyRate (
-				BaseCurrencyId VARCHAR(5) NOT NULL,
-				CurrencyId VARCHAR(5) NOT NULL,
-				Date DATE NOT NULL,
-				Bid DECIMAL(20),
-				Middle DECIMAL(20),
-				Ask DECIMAL(20)
-			)
-		</sql>
-
-		<sql name="CreateCurrencyRatePK">
-			CREATE PRIMARY KEY ON CurrencyWatch.CurrencyRatePK (BaseCurrencyId, CurrencyId, Date)
-		</sql>
-
-		<sql name="CreateCurrencyRateDateIndex">
-			CREATE INDEX CurrencyWatch.CurrencyRateDateIndex ON CurrencyWatch.CurrencyRate (Date)
+			(:baseCurrency, :currency, :date, :bid, :ask, :middle)
 		</sql>
 
 	</sql-group>

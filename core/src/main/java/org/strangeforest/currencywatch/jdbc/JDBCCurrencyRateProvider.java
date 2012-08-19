@@ -17,10 +17,10 @@ public class JDBCCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	private final SchemaManager schemaManager;
 	private final DBGateway db;
 
-	public JDBCCurrencyRateProvider(DataSource dataSource, SchemaManager schemaManager) {
+	public JDBCCurrencyRateProvider(DataSource dataSource, String dialect) {
 		super();
-		this.schemaManager = schemaManager;
-		db = new DBGateway(dataSource, schemaManager.getSQLS(getClass()));
+		this.schemaManager = new SchemaManager(dataSource, dialect);
+		db = new DBGateway(dataSource, SQLsFactory.getSQLs(getClass(), dialect));
 	}
 
 	@Override public void init() {
@@ -70,15 +70,15 @@ public class JDBCCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		@Override public RateValue read(ResultSet rs) throws SQLException {
 			return new RateValue(
 				getBigDecimal(rs, "Bid"),
-				getBigDecimal(rs, "Middle"),
-				getBigDecimal(rs, "Ask")
+				getBigDecimal(rs, "Ask"),
+				getBigDecimal(rs, "Middle")
 			);
 		}
 	};
 
 	private static void setRateValue(PreparedStatementHelper st, RateValue rateValue) throws SQLException {
 		setDecimal(st, "bid", rateValue.getBid());
-		setDecimal(st, "middle", rateValue.getMiddle());
 		setDecimal(st, "ask", rateValue.getAsk());
+		setDecimal(st, "middle", rateValue.getMiddle());
 	}
 }

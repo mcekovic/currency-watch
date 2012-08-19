@@ -41,7 +41,7 @@ public class CurrencyWatch {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyWatch.class);
 
-	public static void main(String[] args) throws IOException, URISyntaxException {
+	public static void main(String[] args) throws Exception {
 		CurrencyWatch app = new CurrencyWatch();
 		if (app.parseArguments(args))
 			app.launchApp();
@@ -85,6 +85,7 @@ public class CurrencyWatch {
 		CurrencyRateProvider provider = new ChainedCurrencyRateProvider(
 			new Db4oCurrencyRateProvider(dbFileName),
 			createRemoteProvider()
+
 		);
 		provider.init();
 		return provider;

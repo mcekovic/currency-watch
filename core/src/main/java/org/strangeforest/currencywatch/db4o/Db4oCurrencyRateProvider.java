@@ -12,6 +12,7 @@ import com.db4o.config.*;
 public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implements UpdatableCurrencyRateProvider {
 
 	private final String dbFileName;
+	private final int dataVersion;
 	private ObjectContainer db;
 	private boolean closed;
 
@@ -24,11 +25,16 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	public Db4oCurrencyRateProvider(String dbFileName, int dataVersion) {
 		super();
 		this.dbFileName = dbFileName;
-		File dbFile = new File(dbFileName);
+		this.dataVersion = dataVersion;
+		init();
+	}
+
+	@Override public synchronized void init() {
+		File dbFile = new File(this.dbFileName);
 		dbFile.getParentFile().mkdirs();
 		boolean existed = dbFile.exists();
 		openDb();
-		DataVersion newVersion = new DataVersion(dataVersion);
+		DataVersion newVersion = new DataVersion(this.dataVersion);
 		if (existed) {
 			DataVersion oldVersion = exactlyOne(db.query(DataVersion.class), null);
 			if (oldVersion == null || oldVersion.compareTo(newVersion) < 0)

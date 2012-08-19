@@ -1,44 +1,22 @@
 package org.strangeforest.currencywatch.jdbc;
 
-import java.io.*;
-
 import javax.sql.*;
 
 import com.finsoft.db.gateway.*;
 
 public class SchemaManager {
 
-	private final DataSource dataSource;
-	private String dialect = DIALECT;
-	private DBGateway db;
+	private final DBGateway db;
 
-	private static final String DIALECT = "H2";
 	private static final int SCHEMA_VERSION = 1;
 
-	public SchemaManager(DataSource dataSource) {
+	public SchemaManager(DataSource dataSource, String dialect) {
 		super();
-		this.dataSource = dataSource;
-	}
-
-	public void setDialect(String dialect) {
-		this.dialect = dialect;
-	}
-
-	public SQLs getSQLS(Class<?> cls) {
-		String sqlsName = cls.getSimpleName();
-		if (dialect != null)
-			sqlsName += '.' + dialect;
-		sqlsName += ".sqls";
-		InputStream in = cls.getResourceAsStream(sqlsName);
-		if (in != null)
-			return new SQLs(in);
-		else
-			throw new DBException("Cannot find SQLs: " + sqlsName);
+		db = new DBGateway(dataSource, SQLsFactory.getSQLs(getClass(), dialect));
 	}
 
 
 	public void ensureSchema() {
-		initDB();
 		if (schemaExists()) {
 			int version = getSchemaVersion();
 			if (version < SCHEMA_VERSION)
@@ -46,10 +24,6 @@ public class SchemaManager {
 		}
 		else
 			createSchema();
-	}
-
-	public void initDB() {
-		db = new DBGateway(dataSource, getSQLS(getClass()));
 	}
 
 	private boolean schemaExists() {
@@ -65,7 +39,6 @@ public class SchemaManager {
 		db.executeDDL("CreateUser");
 		db.executeDDL("CreateSchema");
 		db.executeDDL("CreateSchemaVersionTable");
-		db.executeDDL("CreateCurrencyRateTable");
 		db.executeDDL("CreateCurrencyRateTable");
 		db.executeDDL("CreateCurrencyRatePK");
 		db.executeDDL("CreateCurrencyRateDateIndex");

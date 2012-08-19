@@ -33,6 +33,10 @@ public class RateValue {
 		return middle;
 	}
 
+	public RateValue setScale(int scale) {
+		return new RateValue(bid.setScale(scale), ask.setScale(scale), middle.setScale(scale));
+	}
+
 
 	// Object methods
 
