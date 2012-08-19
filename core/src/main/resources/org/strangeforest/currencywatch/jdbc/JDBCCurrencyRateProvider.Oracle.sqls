@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sqls xmlns="http://www.finsoft.com/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.finsoft.com/db sqls.xsd">
+
+	<sql-group name="JDBCCurrencyRateProvider.H2">
+
+		<sql name="FetchRate">
+			SELECT Bid, Middle, Ask FROM CurrencyRate
+			WHERE BaseCurrencyId = :baseCurrency
+			AND CurrencyId = :currency
+			AND Date = :date
+		</sql>
+
+		<sql name="MergeRate">
+			MERGE INTO CurrencyRate
+		   USING (SELECT * FROM DUAL)
+		   ON (c.BaseCurrencyId = :baseCurrency AND c.CurrencyId = :currency AND c.Date = :date)
+		   WHEN MATCHED THEN
+				UPDATE SET Bid = :bid, Middle = :middle, Ask = :ask
+		   WHEN NOT MATCHED THEN
+				INSERT INTO CurrencyRate
+				(BaseCurrencyId, CurrencyId, Date, Bid, Middle, Ask)
+				VALUES
+				(:baseCurrency, :currency, :date, :bid, :middle, :ask)
+		</sql>
+
+	</sql-group>
+
+</sqls>

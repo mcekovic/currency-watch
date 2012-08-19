@@ -24,7 +24,7 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>2.12.2</version>
+					<version>${maven-failsafe-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-antrun-plugin</artifactId>
@@ -86,6 +86,10 @@
 			<artifactId>fin-util</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.finsoft</groupId>
+			<artifactId>fin-db</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
@@ -96,6 +100,10 @@
 		<dependency>
 			<groupId>com.db4o</groupId>
 			<artifactId>db4o-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey.contribs</groupId>
