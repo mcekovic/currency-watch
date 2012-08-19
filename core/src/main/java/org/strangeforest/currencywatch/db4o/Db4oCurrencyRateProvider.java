@@ -26,7 +26,6 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		super();
 		this.dbFileName = dbFileName;
 		this.dataVersion = dataVersion;
-		init();
 	}
 
 	@Override public synchronized void init() {
@@ -74,7 +73,8 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	}
 
 	@Override public synchronized void close() {
-		db.close();
+		if (db != null)
+			db.close();
 		closed = true;
 		super.close();
 	}

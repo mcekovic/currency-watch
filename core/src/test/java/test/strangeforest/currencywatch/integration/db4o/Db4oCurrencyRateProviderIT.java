@@ -56,10 +56,14 @@ public class Db4oCurrencyRateProviderIT {
 
 	@Test(dependsOnMethods = "getRates")
 	public void upgradeData() throws NoSuchFieldException, IllegalAccessException {
-		new Db4oCurrencyRateProvider(DB4O_DATA_FILE_UPGRADE).close();
+		try (CurrencyRateProvider provider = new Db4oCurrencyRateProvider(DB4O_DATA_FILE_UPGRADE)) {
+			provider.init();
+		}
 		assertTrue(new File(DB4O_DATA_FILE_UPGRADE).exists());
 
-		new Db4oCurrencyRateProvider(DB4O_DATA_FILE_UPGRADE, DataVersion.CURRENT_VERSION + 1).close();
+		try (CurrencyRateProvider provider = new Db4oCurrencyRateProvider(DB4O_DATA_FILE_UPGRADE, DataVersion.CURRENT_VERSION + 1)) {
+			provider.init();
+		}
 		assertTrue(new File(DB4O_DATA_FILE_UPGRADE).exists());
 	}
 }
