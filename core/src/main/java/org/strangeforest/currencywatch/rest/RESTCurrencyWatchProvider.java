@@ -76,8 +76,11 @@ public class RESTCurrencyWatchProvider extends BaseCurrencyRateProvider {
 
 	private Map<Date, RateValue> toRateValuesMap(RatesType rates) {
 		Map<Date, RateValue> rateValueMap = new HashMap<>();
-		for (RateType rate : rates.getRates())
-			rateValueMap.put(rate.getDate(), toRateValue(rate));
+		List<RateType> rateTypes = rates.getRates();
+		if (rateTypes != null) {
+			for (RateType rate : rateTypes)
+				rateValueMap.put(rate.getDate(), toRateValue(rate));
+		}
 		return rateValueMap;
 	}
 }

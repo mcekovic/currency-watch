@@ -6,9 +6,9 @@
 		</encoder>
 	</appender>
 	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>currency-watch.log</file>
+		<file>../logs/currency-watch.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>currency-watch.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>../logs/currency-watch.%d{yyyy-MM-dd}.log</fileNamePattern>
 			<maxHistory>30</maxHistory>
 		</rollingPolicy>
 		<encoder>

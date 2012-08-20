@@ -29,8 +29,8 @@ public class CurrencyChartForm {
 	private JPanel statusPanel;
 	private JLabel messageLabel;
 	private JProgressBar progressBar;
-	private JLabel speedLabel;
 	private JLabel statusLabel;
+	private JLabel speedLabel;
 
 	private final CurrencyRatePresenter presenter;
 

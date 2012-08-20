@@ -103,7 +103,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 				if (++exCount > maxExceptions)
 					throw CurrencyRateException.wrap(cause);
 				else
-					LOGGER.error("Maximum errors exceeded.", cause);
+					LOGGER.warn("Error collecting currency rates.", cause);
 			}
 		}
 		return dateRates;
