@@ -3,6 +3,8 @@ package org.strangeforest.currencywatch.jdbc;
 import java.sql.*;
 import javax.sql.*;
 
+import org.slf4j.*;
+
 import com.finsoft.db.*;
 import com.finsoft.db.gateway.*;
 import com.finsoft.xml.helpers.*;
@@ -20,6 +22,8 @@ public class SchemaManager {
 	public static final int VERSION = 1;
 	private static final String USERNAME = "CW";
 	private static final String PASSWORD = "";
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(SchemaManager.class);
 
 	public SchemaManager(DataSource dataSource, String dialect) {
 		this(dataSource, dialect, VERSION);
@@ -72,6 +76,7 @@ public class SchemaManager {
 	}
 
 	public void createSchema() {
+		LOGGER.info("Creating database schema...");
 		SQLTransformer usernameTransformer = new SQLTransformer() {
 			@Override public void transform(ElementHelper sql) {
 				sql.replaceElement("username", username);
@@ -88,10 +93,13 @@ public class SchemaManager {
 		db.executeDDL("CreateCurrencyRatePK");
 		db.executeDDL("CreateCurrencyRateDateIndex");
 		updateSchemaVersion(schemaVersion, false);
+		LOGGER.info("Database schema created.");
 	}
 
 	public void upgradeSchema(int oldVersion, int newVersion) {
+		LOGGER.info(String.format("Upgrading database schema from version %1$d to version %2$d...", oldVersion, newVersion));
 		updateSchemaVersion(newVersion, true);
+		LOGGER.info("Database schema upgraded.");
 	}
 
 	private void updateSchemaVersion(final int version, final boolean upgrade) {
