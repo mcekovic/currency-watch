@@ -1,7 +1,6 @@
 package test.strangeforest.currencywatch.integration.jdbc;
 
 import java.util.*;
-import javax.sql.*;
 
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.jdbc.*;
@@ -14,31 +13,30 @@ import com.finsoft.util.*;
 
 import static org.testng.Assert.*;
 import static test.strangeforest.currencywatch.TestData.*;
+import static test.strangeforest.currencywatch.integration.jdbc.H2Data.*;
 
 public class JDBCCurrencyRateProviderIT {
 
+	private ConnectionPoolDataSource smDataSource;
+	private ConnectionPoolDataSource dataSource;
 	private UpdatableCurrencyRateProvider currencyRateProvider;
-
-	private static final String DRIVER_CLASS = "org.h2.Driver";
-	private static final String H2_DATA_DIR = "data";
-	private static final String H2_DATA_FILE_NAME = "test-rates-h2";
-	private static final String H2_DATA_FILE = H2_DATA_DIR + '/' + H2_DATA_FILE_NAME;
-	private static final String JDBC_URL = "jdbc:h2:" + H2_DATA_FILE;
-	private static final String USERNAME = "sa";
-	private static final String PASSWORD = "";
-	private static final String DIALECT = "H2";
 
 	@BeforeClass
 	private void setUp() throws ClassNotFoundException {
-		DataSource dataSource = new DriverDataSource(DRIVER_CLASS, JDBC_URL, USERNAME, PASSWORD);
+		smDataSource = new ConnectionPoolDataSource(DRIVER_CLASS, JDBC_URL, ADMIN_USERNAME, ADMIN_PASSWORD);
+		smDataSource.init();
+		dataSource = new ConnectionPoolDataSource(DRIVER_CLASS, JDBC_URL, APP_USERNAME, APP_PASSWORD);
+		dataSource.init();
 		ITUtil.deleteFiles(H2_DATA_DIR, H2_DATA_FILE_NAME + "\\..+\\.db");
-		currencyRateProvider = new JDBCCurrencyRateProvider(dataSource, DIALECT);
+		currencyRateProvider = new JDBCCurrencyRateProvider(new SchemaManager(smDataSource, DIALECT), dataSource, DIALECT);
 		currencyRateProvider.init();
 	}
 
 	@AfterClass
 	private void cleanUp() {
 		currencyRateProvider.close();
+		dataSource.close();
+		smDataSource.close();
 	}
 
 	@Test

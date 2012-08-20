@@ -17,9 +17,9 @@ public class JDBCCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	private final SchemaManager schemaManager;
 	private final DBGateway db;
 
-	public JDBCCurrencyRateProvider(DataSource dataSource, String dialect) {
+	public JDBCCurrencyRateProvider(SchemaManager schemaManager, DataSource dataSource, String dialect) {
 		super();
-		this.schemaManager = new SchemaManager(dataSource, dialect);
+		this.schemaManager = schemaManager;
 		db = new DBGateway(dataSource, SQLsFactory.getSQLs(getClass(), dialect));
 	}
 
@@ -69,9 +69,9 @@ public class JDBCCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	private static final ObjectReader<RateValue> RATE_VALUE_READER = new ObjectReader<RateValue>() {
 		@Override public RateValue read(ResultSet rs) throws SQLException {
 			return new RateValue(
-				getBigDecimal(rs, "Bid"),
-				getBigDecimal(rs, "Ask"),
-				getBigDecimal(rs, "Middle")
+				getBigDecimal(rs, "BID"),
+				getBigDecimal(rs, "ASK"),
+				getBigDecimal(rs, "MIDDLE")
 			);
 		}
 	};

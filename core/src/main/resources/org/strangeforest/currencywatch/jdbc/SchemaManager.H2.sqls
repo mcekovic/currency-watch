@@ -7,46 +7,53 @@
 
 		<sql name="SchemaExists">
 			SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA
-			WHERE SCHEMA_NAME = 'CurrencyWatch'
+			WHERE SCHEMA_NAME = 'CURRENCY_WATCH'
 		</sql>
 
 		<sql name="CreateUser">
-			CREATE USER CurrencyWatch PASSWORD 'CurrencyWatch' ADMIN
+			CREATE USER CW PASSWORD '' ADMIN
 		</sql>
 
 		<sql name="CreateSchema">
-			CREATE SCHEMA CurrencyWatch AUTHORIZATION CurrencyWatch
+			CREATE SCHEMA CURRENCY_WATCH AUTHORIZATION CW
 		</sql>
 
 		<sql name="FetchSchemaVersion">
-			SELECT MAX(Version) AS Version FROM CurrencyWatch.SchemaVersion
+			SELECT MAX(VERSION) AS VERSION FROM CURRENCY_WATCH.SCHEMA_VERSION
 		</sql>
 
 		<sql name="CreateSchemaVersionTable">
-			CREATE TABLE CurrencyWatch.SchemaVersion (
-				Version INT NOT NULL PRIMARY KEY,
-				IsUpgrade BOOLEAN NOT NULL,
-				Created TIMESTAMP NOT NULL
+			CREATE TABLE CURRENCY_WATCH.SCHEMA_VERSION (
+				VERSION INT NOT NULL PRIMARY KEY,
+				UPGRADE BOOLEAN NOT NULL,
+				CREATED TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 			)
 		</sql>
 
 		<sql name="CreateCurrencyRateTable">
-			CREATE TABLE CurrencyWatch.CurrencyRate (
-				BaseCurrencyId VARCHAR(5) NOT NULL,
-				CurrencyId VARCHAR(5) NOT NULL,
-				Date DATE NOT NULL,
-				Bid DECIMAL(20, 8),
-				Ask DECIMAL(20, 8),
-				Middle DECIMAL(20, 8)
+			CREATE TABLE CURRENCY_WATCH.CURRENCY_RATE (
+				BASE_CURRENCY VARCHAR(5) NOT NULL,
+				CURRENCY VARCHAR(5) NOT NULL,
+				DATE DATE NOT NULL,
+				BID DECIMAL(20, 8),
+				ASK DECIMAL(20, 8),
+				MIDDLE DECIMAL(20, 8)
 			)
 		</sql>
 
 		<sql name="CreateCurrencyRatePK">
-			CREATE PRIMARY KEY ON CurrencyWatch.CurrencyRate (BaseCurrencyId, CurrencyId, Date)
+			CREATE PRIMARY KEY ON CURRENCY_WATCH.CURRENCY_RATE (BASE_CURRENCY, CURRENCY, DATE)
 		</sql>
 
 		<sql name="CreateCurrencyRateDateIndex">
-			CREATE INDEX CurrencyWatch.CurrencyRateDateIndex ON CurrencyWatch.CurrencyRate (Date)
+			CREATE INDEX CURRENCY_WATCH.CURRENCY_RATE_DATE ON CURRENCY_WATCH.CURRENCY_RATE (DATE)
+		</sql>
+
+		<sql name="SetSchemaVersion">
+			INSERT INTO CURRENCY_WATCH.SCHEMA_VERSION
+			(VERSION, UPGRADE)
+			VALUES
+			(:version, :upgrade)
 		</sql>
 
 	</sql-group>

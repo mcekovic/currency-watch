@@ -1,0 +1,71 @@
+package test.strangeforest.currencywatch.integration.jdbc;
+
+import org.strangeforest.currencywatch.jdbc.*;
+import org.testng.annotations.*;
+
+import test.strangeforest.currencywatch.integration.*;
+
+import com.finsoft.db.*;
+
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.*;
+import static test.strangeforest.currencywatch.integration.jdbc.H2Data.*;
+
+public class SchemaManagerIT {
+
+	private ConnectionPoolDataSource dataSource;
+	private SchemaManager schemaManager;
+
+	@BeforeClass
+	public void setUp() {
+		dataSource = new ConnectionPoolDataSource(DRIVER_CLASS, JDBC_URL + "-sm", ADMIN_USERNAME, ADMIN_PASSWORD);
+		dataSource.init();
+		ITUtil.deleteFiles(H2_DATA_DIR, H2_DATA_FILE_NAME + "-sm\\..+\\.db");
+		schemaManager = new SchemaManager(dataSource, DIALECT);
+	}
+
+
+	@AfterClass
+	private void cleanUp() {
+		dataSource.close();
+	}
+
+	@Test
+	public void schemaIsCreated() {
+		SchemaManager schemaManagerSpy = spy(schemaManager);
+		schemaManagerSpy.ensureSchema();
+
+		assertTrue(schemaManager.schemaExists());
+		assertEquals(schemaManager.getSchemaVersion(), SchemaManager.SCHEMA_VERSION);
+		verify(schemaManagerSpy).ensureSchema();
+		verify(schemaManagerSpy).schemaExists();
+		verify(schemaManagerSpy).createSchema();
+		verifyNoMoreInteractions(schemaManagerSpy);
+	}
+
+	@Test(dependsOnMethods = "schemaIsCreated")
+	public void schemaIsUpToDate() {
+		SchemaManager schemaManagerSpy = spy(schemaManager);
+		schemaManagerSpy.ensureSchema();
+
+		assertEquals(schemaManager.getSchemaVersion(), SchemaManager.SCHEMA_VERSION);
+		verify(schemaManagerSpy).ensureSchema();
+		verify(schemaManagerSpy).schemaExists();
+		verify(schemaManagerSpy).getSchemaVersion();
+		verifyNoMoreInteractions(schemaManagerSpy);
+	}
+
+	@Test(dependsOnMethods = "schemaIsUpToDate")
+	public void schemaIsUpgraded() {
+		SchemaManager newSchemaManager = new SchemaManager(dataSource, DIALECT, SchemaManager.SCHEMA_VERSION + 1);
+		SchemaManager schemaManagerSpy = spy(newSchemaManager);
+		schemaManagerSpy.ensureSchema();
+
+		assertEquals(newSchemaManager.getSchemaVersion(), SchemaManager.SCHEMA_VERSION + 1);
+		verify(schemaManagerSpy).ensureSchema();
+		verify(schemaManagerSpy).schemaExists();
+		verify(schemaManagerSpy).getSchemaVersion();
+		verify(schemaManagerSpy).upgradeSchema(SchemaManager.SCHEMA_VERSION, SchemaManager.SCHEMA_VERSION + 1);
+		verifyNoMoreInteractions(schemaManagerSpy);
+	}
+}
