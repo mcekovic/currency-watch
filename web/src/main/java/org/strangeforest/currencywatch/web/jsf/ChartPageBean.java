@@ -25,7 +25,7 @@ import static java.util.Arrays.*;
 @RequestScoped
 public class ChartPageBean {
 
-	@ManagedProperty("#{currencyProvider}")
+	@ManagedProperty("#{currencyRateProvider}")
 	private CurrencyRateProvider currencyProvider;
 
 	private CurrencySymbol currency = UIUtil.DEFAULT_CURRENCY;

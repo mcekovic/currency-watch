@@ -18,10 +18,12 @@ public class SchemaManagerIT {
 
 	@BeforeClass
 	public void setUp() {
-		dataSource = new ConnectionPoolDataSource(DRIVER_CLASS, JDBC_URL + "-sm", ADMIN_USERNAME, ADMIN_PASSWORD);
+		dataSource = new ConnectionPoolDataSource(DRIVER_CLASS, ADMIN_JDBC_URL + "-sm", ADMIN_USERNAME, ADMIN_PASSWORD);
 		dataSource.init();
 		ITUtil.deleteFiles(H2_DATA_DIR, H2_DATA_FILE_NAME + "-sm\\..+\\.db");
 		schemaManager = new SchemaManager(dataSource, DIALECT);
+		schemaManager.setUsername(APP_USERNAME);
+		schemaManager.setPassword(APP_PASSWORD);
 	}
 
 
@@ -33,10 +35,11 @@ public class SchemaManagerIT {
 	@Test
 	public void schemaIsCreated() {
 		SchemaManager schemaManagerSpy = spy(schemaManager);
+
 		schemaManagerSpy.ensureSchema();
 
 		assertTrue(schemaManager.schemaExists());
-		assertEquals(schemaManager.getSchemaVersion(), SchemaManager.SCHEMA_VERSION);
+		assertEquals(schemaManager.getSchemaVersion(), SchemaManager.VERSION);
 		verify(schemaManagerSpy).ensureSchema();
 		verify(schemaManagerSpy).schemaExists();
 		verify(schemaManagerSpy).createSchema();
@@ -46,9 +49,10 @@ public class SchemaManagerIT {
 	@Test(dependsOnMethods = "schemaIsCreated")
 	public void schemaIsUpToDate() {
 		SchemaManager schemaManagerSpy = spy(schemaManager);
+
 		schemaManagerSpy.ensureSchema();
 
-		assertEquals(schemaManager.getSchemaVersion(), SchemaManager.SCHEMA_VERSION);
+		assertEquals(schemaManager.getSchemaVersion(), SchemaManager.VERSION);
 		verify(schemaManagerSpy).ensureSchema();
 		verify(schemaManagerSpy).schemaExists();
 		verify(schemaManagerSpy).getSchemaVersion();
@@ -57,15 +61,18 @@ public class SchemaManagerIT {
 
 	@Test(dependsOnMethods = "schemaIsUpToDate")
 	public void schemaIsUpgraded() {
-		SchemaManager newSchemaManager = new SchemaManager(dataSource, DIALECT, SchemaManager.SCHEMA_VERSION + 1);
+		SchemaManager newSchemaManager = new SchemaManager(dataSource, DIALECT, SchemaManager.VERSION + 1);
+		newSchemaManager.setUsername(APP_USERNAME);
+		newSchemaManager.setPassword(APP_PASSWORD);
 		SchemaManager schemaManagerSpy = spy(newSchemaManager);
+
 		schemaManagerSpy.ensureSchema();
 
-		assertEquals(newSchemaManager.getSchemaVersion(), SchemaManager.SCHEMA_VERSION + 1);
+		assertEquals(newSchemaManager.getSchemaVersion(), SchemaManager.VERSION + 1);
 		verify(schemaManagerSpy).ensureSchema();
 		verify(schemaManagerSpy).schemaExists();
 		verify(schemaManagerSpy).getSchemaVersion();
-		verify(schemaManagerSpy).upgradeSchema(SchemaManager.SCHEMA_VERSION, SchemaManager.SCHEMA_VERSION + 1);
+		verify(schemaManagerSpy).upgradeSchema(SchemaManager.VERSION, SchemaManager.VERSION + 1);
 		verifyNoMoreInteractions(schemaManagerSpy);
 	}
 }

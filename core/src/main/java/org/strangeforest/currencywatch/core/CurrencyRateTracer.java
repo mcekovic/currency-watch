@@ -6,7 +6,17 @@ import org.slf4j.*;
 
 public class CurrencyRateTracer extends CurrencyRateAdapter {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyRateTracer.class);
+	private final Logger LOGGER;
+
+	public CurrencyRateTracer() {
+		super();
+		LOGGER = LoggerFactory.getLogger(CurrencyRateTracer.class);
+	}
+
+	public CurrencyRateTracer(String loggerName) {
+		super();
+		LOGGER = LoggerFactory.getLogger(loggerName);
+	}
 
 	@Override public void newRate(CurrencyRateEvent rateEvent) {
 		if (LOGGER.isTraceEnabled())

@@ -107,8 +107,8 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
+			<groupId>com.db4o</groupId>
+			<artifactId>db4o-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jfree</groupId>

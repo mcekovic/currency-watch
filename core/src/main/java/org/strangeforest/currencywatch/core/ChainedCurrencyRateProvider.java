@@ -4,7 +4,7 @@ import java.util.*;
 
 public class ChainedCurrencyRateProvider extends BaseObservableCurrencyRateProvider {
 
-	private final UpdatableCurrencyRateProvider localProvider;
+	protected final UpdatableCurrencyRateProvider localProvider;
 	private final CurrencyRateProvider remoteProvider;
 	private final boolean isLocalProviderObservable;
 	private final boolean isRemoteProviderObservable;

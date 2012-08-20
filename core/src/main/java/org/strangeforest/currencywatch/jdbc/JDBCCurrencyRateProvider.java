@@ -17,10 +17,10 @@ public class JDBCCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	private final SchemaManager schemaManager;
 	private final DBGateway db;
 
-	public JDBCCurrencyRateProvider(SchemaManager schemaManager, DataSource dataSource, String dialect) {
+	public JDBCCurrencyRateProvider(SchemaManager schemaManager, DataSource dataSource) {
 		super();
 		this.schemaManager = schemaManager;
-		db = new DBGateway(dataSource, SQLsFactory.getSQLs(getClass(), dialect));
+		db = new DBGateway(dataSource, SQLsFactory.getSQLs(getClass(), schemaManager.getDialect()));
 	}
 
 	@Override public void init() {

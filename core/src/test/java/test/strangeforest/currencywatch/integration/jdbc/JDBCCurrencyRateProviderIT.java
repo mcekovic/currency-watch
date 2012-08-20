@@ -23,12 +23,16 @@ public class JDBCCurrencyRateProviderIT {
 
 	@BeforeClass
 	private void setUp() throws ClassNotFoundException {
-		smDataSource = new ConnectionPoolDataSource(DRIVER_CLASS, JDBC_URL, ADMIN_USERNAME, ADMIN_PASSWORD);
+		smDataSource = new ConnectionPoolDataSource(DRIVER_CLASS, ADMIN_JDBC_URL, ADMIN_USERNAME, ADMIN_PASSWORD);
 		smDataSource.init();
-		dataSource = new ConnectionPoolDataSource(DRIVER_CLASS, JDBC_URL, APP_USERNAME, APP_PASSWORD);
+		dataSource = new ConnectionPoolDataSource(DRIVER_CLASS, APP_JDBC_URL, APP_USERNAME, APP_PASSWORD);
+		dataSource.setLogger(new SLF4JConnectionPoolLogger(JDBCCurrencyRateProvider.class.getPackage().getName()));
 		dataSource.init();
 		ITUtil.deleteFiles(H2_DATA_DIR, H2_DATA_FILE_NAME + "\\..+\\.db");
-		currencyRateProvider = new JDBCCurrencyRateProvider(new SchemaManager(smDataSource, DIALECT), dataSource, DIALECT);
+		SchemaManager schemaManager = new SchemaManager(smDataSource, DIALECT);
+		schemaManager.setUsername(APP_USERNAME);
+		schemaManager.setPassword(APP_PASSWORD);
+		currencyRateProvider = new JDBCCurrencyRateProvider(schemaManager, dataSource);
 		currencyRateProvider.init();
 	}
 

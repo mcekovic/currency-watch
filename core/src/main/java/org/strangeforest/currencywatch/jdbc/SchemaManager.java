@@ -5,24 +5,51 @@ import javax.sql.*;
 
 import com.finsoft.db.*;
 import com.finsoft.db.gateway.*;
+import com.finsoft.xml.helpers.*;
 
 import static com.finsoft.db.gateway.DataHelper.*;
 
 public class SchemaManager {
 
-	private final DBGateway db;
+	private final String dialect;
 	private final int schemaVersion;
+	private final DBGateway db;
+	private String username = USERNAME;
+	private String password = PASSWORD;
 
-	public static final int SCHEMA_VERSION = 1;
+	public static final int VERSION = 1;
+	private static final String USERNAME = "CW";
+	private static final String PASSWORD = "";
 
 	public SchemaManager(DataSource dataSource, String dialect) {
-		this(dataSource, dialect, SCHEMA_VERSION);
+		this(dataSource, dialect, VERSION);
 	}
 
 	public SchemaManager(DataSource dataSource, String dialect, int schemaVersion) {
 		super();
+		this.dialect = dialect;
 		this.schemaVersion = schemaVersion;
 		db = new DBGateway(dataSource, SQLsFactory.getSQLs(getClass(), dialect));
+	}
+
+	public String getDialect() {
+		return dialect;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public void ensureSchema() {
@@ -45,8 +72,17 @@ public class SchemaManager {
 	}
 
 	public void createSchema() {
-		db.executeDDL("CreateUser");
-		db.executeDDL("CreateSchema");
+		SQLTransformer usernameTransformer = new SQLTransformer() {
+			@Override public void transform(ElementHelper sql) {
+				sql.replaceElement("username", username);
+			}
+		};
+		db.executeDDL("CreateUser", usernameTransformer, new StatementPreparer() {
+			@Override public void prepare(PreparedStatementHelper st) throws SQLException {
+				setString(st, "password", password);
+			}
+		});
+		db.executeDDL("CreateSchema", usernameTransformer);
 		db.executeDDL("CreateSchemaVersionTable");
 		db.executeDDL("CreateCurrencyRateTable");
 		db.executeDDL("CreateCurrencyRatePK");

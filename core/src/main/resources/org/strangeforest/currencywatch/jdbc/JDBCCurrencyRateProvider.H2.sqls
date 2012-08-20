@@ -6,14 +6,14 @@
 	<sql-group name="JDBCCurrencyRateProvider">
 
 		<sql name="FetchRate">
-			SELECT BID, ASK, MIDDLE FROM CURRENCY_WATCH.CURRENCY_RATE
+			SELECT BID, ASK, MIDDLE FROM CURRENCY_RATE
 			WHERE BASE_CURRENCY = :baseCurrency
 			AND CURRENCY = :currency
 			AND DATE = :date
 		</sql>
 
 		<sql name="MergeRate">
-			MERGE INTO CURRENCY_WATCH.CURRENCY_RATE
+			MERGE INTO CURRENCY_RATE
 			(BASE_CURRENCY, CURRENCY, DATE, BID, ASK, MIDDLE)
 			VALUES
 			(:baseCurrency, :currency, :date, :bid, :ask, :middle)

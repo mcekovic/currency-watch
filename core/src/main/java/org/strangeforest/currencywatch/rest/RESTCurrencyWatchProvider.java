@@ -30,7 +30,8 @@ public class RESTCurrencyWatchProvider extends BaseCurrencyRateProvider {
 	}
 
 	@Override public void close() {
-		client.destroy();
+		if (client != null)
+			client.destroy();
 	}
 
 	public boolean ping() {

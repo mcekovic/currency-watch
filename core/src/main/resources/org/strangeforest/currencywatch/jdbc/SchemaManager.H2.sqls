@@ -11,11 +11,11 @@
 		</sql>
 
 		<sql name="CreateUser">
-			CREATE USER CW PASSWORD '' ADMIN
+			CREATE USER <username/> PASSWORD :password ADMIN
 		</sql>
 
 		<sql name="CreateSchema">
-			CREATE SCHEMA CURRENCY_WATCH AUTHORIZATION CW
+			CREATE SCHEMA CURRENCY_WATCH AUTHORIZATION <username/>
 		</sql>
 
 		<sql name="FetchSchemaVersion">

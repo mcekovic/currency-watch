@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
@@ -13,29 +14,82 @@
 		</property>
 	</bean>
 
-	<bean id="currencyProvider" class="org.strangeforest.currencywatch.core.ChainedCurrencyRateProvider" init-method="init" destroy-method="close">
+	<bean id="dataSource" abstract="true" class="com.finsoft.db.ConnectionPoolDataSource" init-method="init" destroy-method="close">
+		<constructor-arg index="0" name="driverClass" value="${dataSource.driverClass}"/>
+		<property name="initialPoolSize" value="0"/>
+		<property name="minPoolSize" value="0"/>
+		<property name="maxPoolSize" value="5"/>
+		<property name="minIdleCount" value="1"/>
+		<property name="maxPendingCount" value="5"/>
+		<property name="checkQuery" value="SELECT 1"/>
+		<property name="checkTime" value="60"/>
+		<property name="maxWaitTime" value="0"/>
+		<property name="maxIdleTime" value="300"/>
+		<property name="maxBusyTime" value="600"/>
+		<property name="maxLiveTime" value="3600"/>
+		<property name="propertyCycle" value="60"/>
+		<property name="maxStatements" value="10"/>
+		<property name="logger">
+			<bean class="org.strangeforest.currencywatch.jdbc.SLF4JConnectionPoolLogger" c:loggerName="org.strangeforest.currencywatch.jdbc"/>
+		</property>
+		<property name="collectStatementStatistics" value="true"/>
+	</bean>
+
+	<bean id="adminDataSource" parent="dataSource">
+		<constructor-arg index="1" name="dbURL" value="${adminDataSource.dbURL}"/>
+		<constructor-arg index="2" name="username" value="${adminDataSource.username}"/>
+		<constructor-arg index="3" name="password" value="${adminDataSource.password}"/>
+		<property name="maxPoolSize" value="1"/>
+	</bean>
+
+	<bean id="appDataSource" parent="dataSource">
+		<constructor-arg index="1" name="dbURL" value="${appDataSource.dbURL}"/>
+		<constructor-arg index="2" name="username" value="${appDataSource.username}"/>
+		<constructor-arg index="3" name="password" value="${appDataSource.password}"/>
+		<property name="maxPoolSize" value="${appDataSource.maxPoolSize}"/>
+	</bean>
+
+	<bean id="localCurrencyRateProvider" class="org.strangeforest.currencywatch.core.UpdatableChainedCurrencyRateProvider">
 		<constructor-arg index="0" name="localProvider">
-			<bean class="org.strangeforest.currencywatch.db4o.Db4oCurrencyRateProvider">
-				<constructor-arg index="0" name="dbFileName" value="${db4oCurrencyRateProvider.dbFileName}"/>
-			</bean>
+			<bean class="org.strangeforest.currencywatch.core.CurrencyRateCache"/>
 		</constructor-arg>
 		<constructor-arg index="1" name="remoteProvider">
-			<bean class="org.strangeforest.currencywatch.core.ParallelCurrencyRateProviderProxy">
-				<constructor-arg index="0" name="provider">
-					<bean class="org.strangeforest.currencywatch.nbs.NBSCurrencyRateProvider">
-						<constructor-arg index="0" name="listener">
-							<bean class="org.strangeforest.currencywatch.core.CurrencyRateTracer"/>
-						</constructor-arg>
-						<property name="format" value="${nbsCurrencyRateProvider.format}"/>
+			<bean class="org.strangeforest.currencywatch.jdbc.JDBCCurrencyRateProvider">
+				<constructor-arg index="0" name="schemaManager">
+					<bean class="org.strangeforest.currencywatch.jdbc.SchemaManager">
+						<constructor-arg index="0" name="dataSource" ref="adminDataSource"/>
+						<constructor-arg index="1" name="dialect" value="${jdbcCurrencyRateProvider.dialect}"/>
 					</bean>
 				</constructor-arg>
-				<constructor-arg index="1" name="threadCount" value="${parallelCurrencyRateProviderProxy.threadCount}"/>
+				<constructor-arg index="1" name="dataSource" ref="appDataSource"/>
 			</bean>
 		</constructor-arg>
 	</bean>
 
+	<bean id="remoteCurrencyRateProvider" class="org.strangeforest.currencywatch.core.ParallelCurrencyRateProviderProxy">
+		<constructor-arg index="0" name="provider">
+			<bean class="org.strangeforest.currencywatch.nbs.NBSCurrencyRateProvider">
+				<constructor-arg index="0" name="listener">
+					<bean class="org.strangeforest.currencywatch.core.CurrencyRateTracer" c:loggerName="org.strangeforest.currencywatch.nbs"/>
+				</constructor-arg>
+				<property name="format" value="${nbsCurrencyRateProvider.format}"/>
+			</bean>
+		</constructor-arg>
+		<constructor-arg index="1" name="threadCount" value="${parallelCurrencyRateProviderProxy.threadCount}"/>
+	</bean>
+
+	<bean id="currencyRateProvider" class="org.strangeforest.currencywatch.core.TracingCurrencyRateProviderProxy" init-method="init" destroy-method="close">
+		<constructor-arg index="0" name="provider">
+			<bean id="currencyRateProvider" class="org.strangeforest.currencywatch.core.ChainedCurrencyRateProvider">
+				<constructor-arg index="0" name="localProvider" ref="localCurrencyRateProvider"/>
+				<constructor-arg index="1" name="remoteProvider" ref="remoteCurrencyRateProvider"/>
+			</bean>
+		</constructor-arg>
+		<constructor-arg index="1" name="loggerName" value="org.strangeforest.currencywatch.web.provider"/>
+	</bean>
+
 	<bean id="currencyRateResource" class="org.strangeforest.currencywatch.rest.CurrencyRateResource">
-		<constructor-arg index="0" name="provider" ref="currencyProvider"/>
+		<constructor-arg index="0" name="provider" ref="currencyRateProvider"/>
 	</bean>
 
 </beans>
