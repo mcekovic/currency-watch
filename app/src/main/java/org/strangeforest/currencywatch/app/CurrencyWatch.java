@@ -119,7 +119,7 @@ public class CurrencyWatch {
 		RESTCurrencyWatchProvider provider = createRESTProvider(uri);
 		if (provider != null) {
 			LOGGER.info("Using RESTCurrencyWatchProvider at " + uri);
-			return new BatchedCurrencyRateProviderProxy(provider, batchSize);
+			return new BatchingCurrencyRateProviderProxy(provider, batchSize);
 		}
 		else {
 			LOGGER.warn("Unable to use RESTCurrencyWatchProvider at " + uri);

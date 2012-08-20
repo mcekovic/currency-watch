@@ -25,14 +25,14 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 		if (isProviderObservable) {
 			providerListener = new CurrencyRateListener() {
 				@Override public void newRate(CurrencyRateEvent rateEvent) {
-					if (putRate(rateEvent.getDate(), rateEvent.getRate()))
+					if (setRate(rateEvent.getDate(), rateEvent.getRate()))
 						notifyListeners(rateEvent);
 				}
 				@Override public void newRates(CurrencyRateEvent[] rateEvents) {
 					int eventCount = rateEvents.length;
 					List<CurrencyRateEvent> newRateEvents = new ArrayList<>(eventCount);
 					for (CurrencyRateEvent rateEvent : rateEvents) {
-						if (putRate(rateEvent.getDate(), rateEvent.getRate()))
+						if (setRate(rateEvent.getDate(), rateEvent.getRate()))
 							newRateEvents.add(rateEvent);
 					}
 					if (!newRateEvents.isEmpty())
@@ -97,7 +97,7 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 				for (Map.Entry<Date, RateValue> dateRate : fetchedRates.entrySet()) {
 					Date date = dateRate.getKey();
 					RateValue rate = dateRate.getValue();
-					if (putRate(date, rate))
+					if (setRate(date, rate))
 						newRateEvents.add(new CurrencyRateEvent(this, baseCurrency, currency, date, rate));
 				}
 				if (!newRateEvents.isEmpty())
@@ -108,7 +108,7 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 		return resultRates;
 	}
 
-	private boolean putRate(Date date, RateValue rateValue) {
+	public boolean setRate(Date date, RateValue rateValue) {
 		if (rateValue != null) {
 			RateValue oldRateValue = dateRates.lockedPut(date, rateValue);
 			return oldRateValue == null || !oldRateValue.equals(rateValue);

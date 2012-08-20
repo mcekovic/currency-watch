@@ -34,7 +34,7 @@ public class CurrencyRateTest {
 	@Test
 	public void getRatesFromProvider() {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
-		when(provider.getRates(BASE_CURRENCY, CURRENCY, new ArrayList<>(DATES))).thenReturn(RATES);
+		when(provider.getRates(BASE_CURRENCY, CURRENCY, DATE_LIST)).thenReturn(RATES);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
 		try (CurrencyRate currencyRate = createCurrencyRate(provider, listener)) {
@@ -74,7 +74,7 @@ public class CurrencyRateTest {
 	@Test
 	public void getRatesFromObservableProvider() {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
-		when(provider.getRates(BASE_CURRENCY, CURRENCY, new ArrayList<>(DATES))).thenReturn(RATES);
+		when(provider.getRates(BASE_CURRENCY, CURRENCY, DATE_LIST)).thenReturn(RATES);
 		ObservableCurrencyRateProviderProxy observableProvider = new ObservableCurrencyRateProviderProxy(provider);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 

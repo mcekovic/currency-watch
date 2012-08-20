@@ -2,17 +2,17 @@ package org.strangeforest.currencywatch.core;
 
 import java.util.*;
 
-public class BatchedCurrencyRateProviderProxy extends ObservableCurrencyRateProviderProxy {
+public class BatchingCurrencyRateProviderProxy extends ObservableCurrencyRateProviderProxy {
 
 	private int batchSize;
 
 	private static final int BATCH_SIZE = 20;
 
-	public BatchedCurrencyRateProviderProxy(CurrencyRateProvider provider) {
+	public BatchingCurrencyRateProviderProxy(CurrencyRateProvider provider) {
 		this(provider, BATCH_SIZE);
 	}
 
-	public BatchedCurrencyRateProviderProxy(CurrencyRateProvider provider, int batchSize) {
+	public BatchingCurrencyRateProviderProxy(CurrencyRateProvider provider, int batchSize) {
 		super(provider);
 		this.batchSize = batchSize;
 	}

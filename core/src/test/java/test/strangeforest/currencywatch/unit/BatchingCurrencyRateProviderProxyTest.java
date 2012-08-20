@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static test.strangeforest.currencywatch.TestData.*;
 
-public class BatchedCurrencyRateProviderProxyTest {
+public class BatchingCurrencyRateProviderProxyTest {
 
 	@Test
 	public void getRate() {
@@ -19,8 +19,8 @@ public class BatchedCurrencyRateProviderProxyTest {
 		when(provider.getRate(BASE_CURRENCY, CURRENCY, DATE)).thenReturn(RATE);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		try (BatchedCurrencyRateProviderProxy batchedProvider = createBatchedProvider(provider, listener, 1)) {
-			RateValue rate = batchedProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
+		try (BatchingCurrencyRateProviderProxy batchingProvider = createBatchedProvider(provider, listener, 1)) {
+			RateValue rate = batchingProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
 
 			assertEquals(RATE, rate);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
@@ -40,7 +40,7 @@ public class BatchedCurrencyRateProviderProxyTest {
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
 		int batchSize = 2;
-		try (BatchedCurrencyRateProviderProxy parallelProvider = createBatchedProvider(provider, listener, batchSize)) {
+		try (BatchingCurrencyRateProviderProxy parallelProvider = createBatchedProvider(provider, listener, batchSize)) {
 			Map<Date, RateValue> rates = parallelProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet());
 
 			assertEquals(RATES, rates);
@@ -50,10 +50,10 @@ public class BatchedCurrencyRateProviderProxyTest {
 		}
 	}
 
-	private BatchedCurrencyRateProviderProxy createBatchedProvider(CurrencyRateProvider provider, CurrencyRateListener listener, int batchSize) {
-		BatchedCurrencyRateProviderProxy batchedProvider = new BatchedCurrencyRateProviderProxy(provider, batchSize);
-		batchedProvider.addListener(listener);
-		batchedProvider.init();
-		return batchedProvider;
+	private BatchingCurrencyRateProviderProxy createBatchedProvider(CurrencyRateProvider provider, CurrencyRateListener listener, int batchSize) {
+		BatchingCurrencyRateProviderProxy batchingProvider = new BatchingCurrencyRateProviderProxy(provider, batchSize);
+		batchingProvider.addListener(listener);
+		batchingProvider.init();
+		return batchingProvider;
 	}
 }
