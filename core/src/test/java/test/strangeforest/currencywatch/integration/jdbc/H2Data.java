@@ -9,8 +9,8 @@ public abstract class H2Data {
 	public static final String ADMIN_JDBC_URL = "jdbc:h2:" + H2_DATA_FILE;
 	public static final String APP_JDBC_URL = ADMIN_JDBC_URL + ";SCHEMA=CURRENCY_WATCH";
 	public static final String ADMIN_USERNAME = "SA";
-	public static final String ADMIN_PASSWORD = "";
+	public static final String ADMIN_PASSWORD = "SA";
 	public static final String APP_USERNAME = "CW";
-	public static final String APP_PASSWORD = "";
+	public static final String APP_PASSWORD = "CW";
 	public static final String DIALECT = "H2";
 }

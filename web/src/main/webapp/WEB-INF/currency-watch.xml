@@ -59,6 +59,8 @@
 					<bean class="org.strangeforest.currencywatch.jdbc.SchemaManager">
 						<constructor-arg index="0" name="dataSource" ref="adminDataSource"/>
 						<constructor-arg index="1" name="dialect" value="${jdbcCurrencyRateProvider.dialect}"/>
+						<property name="username" value="${appDataSource.username}"/>
+						<property name="password" value="${appDataSource.password}"/>
 					</bean>
 				</constructor-arg>
 				<constructor-arg index="1" name="dataSource" ref="appDataSource"/>

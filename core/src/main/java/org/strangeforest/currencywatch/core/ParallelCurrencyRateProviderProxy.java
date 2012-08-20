@@ -100,8 +100,11 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 			catch (ExecutionException ex) {
 				Throwable cause = ex.getCause();
 				cause = cause != null ? cause : ex;
-				if (++exCount > maxExceptions)
+				if (++exCount > maxExceptions) {
+					for (Future<DateRateValue> result : results)
+						result.cancel(false);
 					throw CurrencyRateException.wrap(cause);
+				}
 				else
 					LOGGER.warn("Error collecting currency rates.", cause);
 			}
