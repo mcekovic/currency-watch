@@ -6,7 +6,7 @@ public class BatchingCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 
 	private int batchSize;
 
-	private static final int BATCH_SIZE = 20;
+	private static final int BATCH_SIZE = 50;
 
 	public BatchingCurrencyRateProviderProxy(CurrencyRateProvider provider) {
 		this(provider, BATCH_SIZE);

@@ -36,7 +36,7 @@ public class CurrencyWatch {
 	private boolean help;
 
 	private static final String DB_FILE_NAME = "/.currency-watch/data/currency-rates.db4o";
-	private static final int REMOTE_PROVIDER_BATCH_SIZE   = 20;
+	private static final int REMOTE_PROVIDER_BATCH_SIZE   = 50;
 	private static final int REMOTE_PROVIDER_THREAD_COUNT = 10;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyWatch.class);
