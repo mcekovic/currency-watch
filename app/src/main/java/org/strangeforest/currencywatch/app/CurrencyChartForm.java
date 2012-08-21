@@ -2,7 +2,6 @@ package org.strangeforest.currencywatch.app;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import javax.swing.*;
 
 import org.jfree.chart.*;

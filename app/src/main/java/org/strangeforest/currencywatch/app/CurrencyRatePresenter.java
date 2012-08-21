@@ -149,9 +149,9 @@ public class CurrencyRatePresenter implements AutoCloseable {
 					}
 					finally {
 						loading = false;
+						notifyStatusChanged(StringUtil.EMPTY, false);
 						stopSpeedUpdate();
 						updateSpeed();
-						notifyStatusChanged(StringUtil.EMPTY, false);
 					}
 				}
 				catch (Throwable th) {
@@ -160,6 +160,10 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			}
 		}, "Currency Data Fetcher");
 		dataThread.start();
+	}
+
+	public void waitForData() throws InterruptedException {
+		dataThread.join();
 	}
 
 	private void updateProgress() {
