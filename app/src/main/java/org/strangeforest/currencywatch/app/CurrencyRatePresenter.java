@@ -89,8 +89,8 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	}
 
 	private CurrencyRate getCurrencyRate(String currency, final int movAvgPeriod) {
-		CurrencyRate currencyRate = new CurrencyRate(Util.BASE_CURRENCY, currency, provider);
-		currencyRate.addListener(new CurrencyRateListener() {
+		CurrencyRate rate = new CurrencyRate(Util.BASE_CURRENCY, currency, provider);
+		rate.addListener(new CurrencyRateListener() {
 			@Override public void newRate(final CurrencyRateEvent rateEvent) {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override public void run() {
@@ -122,7 +122,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 				});
 			}
 		});
-		return currencyRate;
+		return rate;
 	}
 
 	private void applyPeriod(final CurrencyRate rate, int days, int maxPoints) {
