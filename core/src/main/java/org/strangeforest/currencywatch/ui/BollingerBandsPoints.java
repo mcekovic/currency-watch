@@ -11,11 +11,11 @@ public class BollingerBandsPoints extends MovingAveragePoints {
 		this.factor = factor;
 	}
 
-	@Override public BollingerBandsPoint[] createPointArray(int count) {
+	@Override protected BollingerBandsPoint[] createPointArray(int count) {
 		return new BollingerBandsPoint[count];
 	}
 
-	@Override public BollingerBandsPoint createPoint(long x) {
+	@Override protected BollingerBandsPoint createPoint(long x) {
 		return new BollingerBandsPoint(x);
 	}
 

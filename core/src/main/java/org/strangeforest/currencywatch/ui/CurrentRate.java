@@ -25,7 +25,7 @@ public class CurrentRate {
 		return new CurrentRate(date, rate, direction);
 	}
 
-	public CurrentRate(Date date, RateValue rate, int direction) {
+	private CurrentRate(Date date, RateValue rate, int direction) {
 		this.date = date;
 		this.rate = rate;
 		this.direction = direction;

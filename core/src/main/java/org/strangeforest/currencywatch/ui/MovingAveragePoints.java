@@ -13,11 +13,11 @@ public class MovingAveragePoints extends DerivedPoints<MovingAveragePoint> {
 		halfPeriod = (period / 2) * TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
 	}
 
-	@Override public MovingAveragePoint[] createPointArray(int count) {
+	@Override protected MovingAveragePoint[] createPointArray(int count) {
 		return new MovingAveragePoint[count];
 	}
 
-	@Override public MovingAveragePoint createPoint(long x) {
+	@Override protected MovingAveragePoint createPoint(long x) {
 		return new MovingAveragePoint(x);
 	}
 

@@ -28,7 +28,6 @@ public class CurrencyChart {
 	private static final Color MOV_AVG_COLOR = new Color(0, 0, 255);
 	private static final Color BOLL_BANDS_COLOR = new Color(192, 224, 255, 64);
 	private static final Color BOLL_BANDS_2_COLOR = new Color(255, 255, 255, 255);
-	private static final Color TRANSPARENT_PAINT = new Color(255, 255, 255, 0);
 
 	private static final BasicStroke BID_ASK_STROKE = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{4.0f, 4.0f}, 0.0f);
 	private static final BasicStroke MOV_AVG_STOKE = new BasicStroke(2);
@@ -57,9 +56,8 @@ public class CurrencyChart {
 		renderer.setSeriesPaint(0, MIDDLE_COLOR);
 
 		XYAreaRenderer2 bbRenderer = new XYAreaRenderer2();
-		bbRenderer.setSeriesPaint(0, TRANSPARENT_PAINT);
-		bbRenderer.setSeriesPaint(1, BOLL_BANDS_2_COLOR);
-		bbRenderer.setSeriesPaint(2, BOLL_BANDS_COLOR);
+		bbRenderer.setSeriesPaint(0, BOLL_BANDS_2_COLOR);
+		bbRenderer.setSeriesPaint(1, BOLL_BANDS_COLOR);
 		bbRenderer.setOutline(false);
 
 		XYPlot plot = new XYPlot(null, xAxis, yAxis, renderer);
@@ -98,7 +96,7 @@ public class CurrencyChart {
 		plot.setDataset(0, dataSet);
 
 		if (showBollBands) {
-			TimeSeriesCollection bbDataSet = new TimeSeriesCollection(middleSeries);
+			TimeSeriesCollection bbDataSet = new TimeSeriesCollection();
 			bollBandsSeries = new TimeSeries[] {
 				new TimeSeries(String.format("BBLow(%s)", currency)),
 				new TimeSeries(String.format("BBHigh(%s)", currency))
