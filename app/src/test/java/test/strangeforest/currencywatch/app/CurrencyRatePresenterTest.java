@@ -41,21 +41,9 @@ public class CurrencyRatePresenterTest {
 
 		CurrencyRatePresenter presenter = new CurrencyRatePresenter(provider);
 		presenter.addListener(listener);
-		presenter.addListener(new CurrencyRatePresenterListener() {
-			@Override public void currentRate(CurrentRate currentRate) {
-				System.out.println("CurrentRate: " + currentRate.getRate());
-			}
-			@Override public void statusChanged(String status, boolean isError) {
-				System.out.println("Status: " + status);
-			}
-			@Override public void progressChanged(int progress) {
-				System.out.println("Progress: " + progress);
-			}
-			@Override public void ratesPerSecChanged(double ratesPerSec) {
-				System.out.println("Speed: " + ratesPerSec);
-			}
-		});
+
 		presenter.inputDataChanged(CurrencySymbol.EUR, Period.WEEK, SeriesQuality.NORMAL, true, true, true, 2);
+
 		presenter.waitForData();
 		waitForEventQueueEmpty();
 
