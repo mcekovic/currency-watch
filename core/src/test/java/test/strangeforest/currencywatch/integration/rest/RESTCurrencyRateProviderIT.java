@@ -20,7 +20,7 @@ import static javax.ws.rs.core.Response.Status.*;
 import static org.testng.Assert.*;
 import static test.strangeforest.currencywatch.TestData.*;
 
-public class RESTCurrencyRateProviderTest {
+public class RESTCurrencyRateProviderIT {
 
 	private HttpServer httpServer;
 
