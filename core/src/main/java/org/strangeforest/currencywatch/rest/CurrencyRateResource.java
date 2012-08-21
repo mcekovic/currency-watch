@@ -49,7 +49,8 @@ public class CurrencyRateResource {
 			Date aDate = parseDate(date);
 			if (aDate == null)
 				aDate = Util.getLastDate().getTime();
-			return new RateType(aDate, provider.getRate(baseCurrency, currency, aDate));
+			RateValue rate = provider.getRate(baseCurrency, currency, aDate);
+			return rate != null ? new RateType(aDate, rate) : null;
 		}
 		catch (ParseException ex) {
 			throw new WebApplicationException(Response.status(BAD_REQUEST).entity(ex.getMessage()).type(TEXT_PLAIN).build());

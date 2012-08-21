@@ -12,17 +12,18 @@ import com.sun.jersey.client.apache.*;
 import com.finsoft.util.*;
 
 import static javax.ws.rs.core.MediaType.*;
+import static javax.ws.rs.core.Response.Status.*;
 import static org.strangeforest.currencywatch.rest.CurrencyRateResource.*;
 
-public class RESTCurrencyWatchProvider extends BaseCurrencyRateProvider {
+public class RESTCurrencyRateProvider extends BaseCurrencyRateProvider {
 
 	private final URI uri;
 	private Client client;
 	private WebResource resource;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(RESTCurrencyWatchProvider.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RESTCurrencyRateProvider.class);
 
-	public RESTCurrencyWatchProvider(URI uri) {
+	public RESTCurrencyRateProvider(URI uri) {
 		super();
 		this.uri = uri;
 	}
@@ -48,8 +49,9 @@ public class RESTCurrencyWatchProvider extends BaseCurrencyRateProvider {
 	}
 
 	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
-		return toRateValue(resource.path("rate/" + currency).queryParam("date", formatDate(date))
-			.accept(TEXT_XML).get(RateType.class));
+		ClientResponse response = resource.path("rate/" + currency).queryParam("date", formatDate(date))
+			.accept(TEXT_XML).get(ClientResponse.class);
+		return response.getStatus() != NO_CONTENT.getStatusCode() ? toRateValue(response.getEntity(RateType.class)) : null;
 	}
 
 	@Override public Map<Date, RateValue> getRates(String baseCurrency, String currency, Collection<Date> dates) {

@@ -116,24 +116,24 @@ public class CurrencyWatch {
 	};
 
 	private CurrencyRateProvider tryUseRESTProvider(URI uri) {
-		RESTCurrencyWatchProvider provider = createRESTProvider(uri);
+		RESTCurrencyRateProvider provider = createRESTProvider(uri);
 		if (provider != null) {
-			LOGGER.info("Using RESTCurrencyWatchProvider at " + uri);
+			LOGGER.info("Using RESTCurrencyRateProvider at " + uri);
 			return new BatchingCurrencyRateProviderProxy(provider, batchSize);
 		}
 		else {
-			LOGGER.warn("Unable to use RESTCurrencyWatchProvider at " + uri);
+			LOGGER.warn("Unable to use RESTCurrencyRateProvider at " + uri);
 			return null;
 		}
 	}
 
-	private RESTCurrencyWatchProvider createRESTProvider(URI uri) {
-		try (RESTCurrencyWatchProvider provider = new RESTCurrencyWatchProvider(uri)) {
+	private RESTCurrencyRateProvider createRESTProvider(URI uri) {
+		try (RESTCurrencyRateProvider provider = new RESTCurrencyRateProvider(uri)) {
 			provider.init();
 			return provider.ping() ? provider : null;
 		}
 		catch (Exception ex) {
-			LOGGER.debug("Error pinging RESTCurrencyWatchProvider.", ex);
+			LOGGER.debug("Error pinging RESTCurrencyRateProvider.", ex);
 			return null;
 		}
 	}

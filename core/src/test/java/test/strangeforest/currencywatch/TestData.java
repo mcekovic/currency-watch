@@ -30,4 +30,6 @@ public class TestData {
 
 	public static final NavigableSet<Date> DATES = RATES.navigableKeySet();
 	public static final List<Date> DATE_LIST = new ArrayList<>(DATES);
+
+	public static final Date UNKNOWN_DATE = new GregorianCalendar(2000, 1, 1).getTime();
 }
