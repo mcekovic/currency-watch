@@ -23,7 +23,7 @@ public class CurrencyRateResourceFixture {
 	public static final java.net.URI URI = java.net.URI.create("http://localhost:" + PORT + PATH);
 
 	@BeforeSuite
-	public void setUp() throws IOException {
+	public void start() throws IOException {
 		httpServer = createHTTPServer();
 		registerResource(httpServer, createResource());
 		httpServer.start();
@@ -49,7 +49,7 @@ public class CurrencyRateResourceFixture {
 	}
 
 	@AfterSuite
-	public void shutDown() {
+	public void stop() {
 		httpServer.stop(0);
 	}
 }

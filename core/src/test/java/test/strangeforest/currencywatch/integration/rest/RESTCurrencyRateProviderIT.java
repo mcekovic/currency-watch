@@ -22,8 +22,13 @@ public class RESTCurrencyRateProviderIT {
 
 
 	@AfterClass
-	public void shutDown() {
+	public void cleanUp() {
 		provider.close();
+	}
+
+	@Test
+	public void ping() {
+		assertTrue(provider.ping());
 	}
 
 	@Test

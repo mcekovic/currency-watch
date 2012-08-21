@@ -14,7 +14,7 @@ import static org.strangeforest.currencywatch.rest.CurrencyRateResource.DATE_FOR
 import static org.testng.Assert.*;
 import static test.strangeforest.currencywatch.TestData.*;
 
-public class CurrencyRateResourceIT {
+public class CurrencyRateResourceIT extends CurrencyRateResourceFixture {
 
 	private ApacheHttpClient httpClient;
 	private WebResource resource;
@@ -22,11 +22,11 @@ public class CurrencyRateResourceIT {
 	@BeforeClass
 	public void setUp() throws IOException {
 		httpClient = ApacheHttpClient.create();
-		resource = httpClient.resource(CurrencyRateResourceFixture.URI);
+		resource = httpClient.resource(URI);
 	}
 
 	@AfterClass
-	public void shutDown() {
+	public void cleanUp() {
 		httpClient.destroy();
 	}
 
