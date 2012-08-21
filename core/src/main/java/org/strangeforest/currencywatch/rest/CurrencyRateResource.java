@@ -20,7 +20,7 @@ public class CurrencyRateResource {
 	private final CurrencyRateProvider provider;
 	private String baseCurrency = Util.BASE_CURRENCY;
 
-	static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 	static final String DATE_SEPARATOR = ",";
 	static final String INFO_MESSAGE = "Currency Watch REST API";
 
