@@ -156,11 +156,11 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		return !closed ? callback.queryDb4o(db) : null;
 	}
 
-	private static interface Db4oCallback {
-		public void doInDb4o(ObjectContainer db);
+	private interface Db4oCallback {
+		void doInDb4o(ObjectContainer db);
 	}
 
-	private static interface Db4oQueryCallback<T> {
-		public T queryDb4o(ObjectContainer db);
+	private interface Db4oQueryCallback<T> {
+		T queryDb4o(ObjectContainer db);
 	}
 }

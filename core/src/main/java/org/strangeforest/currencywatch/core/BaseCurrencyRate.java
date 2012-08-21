@@ -31,7 +31,7 @@ public abstract class BaseCurrencyRate {
 
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || !(o instanceof BaseCurrencyRate)) return false;
+		if (!(o instanceof BaseCurrencyRate)) return false;
 		BaseCurrencyRate rate = (BaseCurrencyRate)o;
 		return baseCurrency.equals(rate.baseCurrency) && currency.equals(rate.currency);
 	}

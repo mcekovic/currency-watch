@@ -3,6 +3,7 @@ package org.strangeforest.currencywatch.rest;
 import java.net.*;
 import java.util.*;
 
+import org.slf4j.*;
 import org.strangeforest.currencywatch.core.*;
 
 import com.sun.jersey.api.client.*;
@@ -18,6 +19,8 @@ public class RESTCurrencyWatchProvider extends BaseCurrencyRateProvider {
 	private final URI uri;
 	private Client client;
 	private WebResource resource;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(RESTCurrencyWatchProvider.class);
 
 	public RESTCurrencyWatchProvider(URI uri) {
 		super();
@@ -39,7 +42,7 @@ public class RESTCurrencyWatchProvider extends BaseCurrencyRateProvider {
 			return ObjectUtil.equal(resource.accept(TEXT_PLAIN).get(String.class), INFO_MESSAGE);
 		}
 		catch (UniformInterfaceException | ClientHandlerException ex) {
-			ex.printStackTrace();
+			LOGGER.debug("Error pinging REST Currency Watch API.");
 			return false;
 		}
 	}

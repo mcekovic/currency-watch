@@ -61,7 +61,7 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 		final Queue<Future<DateRateValue>> results = new ArrayDeque<>();
 		for (final Date date : dates) {
 			Callable<DateRateValue> task = new Callable<DateRateValue>() {
-				@Override public DateRateValue call() throws Exception {
+				@Override public DateRateValue call() {
 					try {
 						RateValue rateValue = ParallelCurrencyRateProviderProxy.super.getRate(baseCurrency, currency, date);
 						return new DateRateValue(date, rateValue);

@@ -28,8 +28,8 @@ public class DataVersion implements Comparable<DataVersion> {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof DataVersion)) return false;
-		DataVersion version = (DataVersion)o;
-		return this.version == version.version;
+		DataVersion dataVersion = (DataVersion)o;
+		return this.version == dataVersion.version;
 	}
 
 	@Override public int hashCode() {

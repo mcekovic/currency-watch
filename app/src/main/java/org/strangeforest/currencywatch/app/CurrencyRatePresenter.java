@@ -81,15 +81,15 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	}
 
 	public void inputDataChanged(CurrencySymbol currency, Period period, SeriesQuality quality, boolean showBidAsk, boolean showMovAvg, boolean showBollBands, int movAvgPeriod) {
+		if (currencyRate != null)
+			currencyRate.close();
 		chart.createSeries(currency, showBidAsk, showMovAvg, showBollBands);
-		CurrencyRate currencyRate = getCurrencyRate(currency.toString(), movAvgPeriod);
+		currencyRate = getCurrencyRate(currency.toString(), movAvgPeriod);
 		applyPeriod(currencyRate, period.days(), quality.points());
 	}
 
 	private CurrencyRate getCurrencyRate(String currency, final int movAvgPeriod) {
-		if (currencyRate != null)
-			currencyRate.close();
-		currencyRate = new CurrencyRate(Util.BASE_CURRENCY, currency, provider);
+		CurrencyRate currencyRate = new CurrencyRate(Util.BASE_CURRENCY, currency, provider);
 		currencyRate.addListener(new CurrencyRateListener() {
 			@Override public void newRate(final CurrencyRateEvent rateEvent) {
 				SwingUtilities.invokeLater(new Runnable() {

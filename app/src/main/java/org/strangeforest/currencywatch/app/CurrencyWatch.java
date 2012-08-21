@@ -127,7 +127,7 @@ public class CurrencyWatch {
 		}
 	}
 
-	private static RESTCurrencyWatchProvider createRESTProvider(URI uri) {
+	private RESTCurrencyWatchProvider createRESTProvider(URI uri) {
 		try (RESTCurrencyWatchProvider provider = new RESTCurrencyWatchProvider(uri)) {
 			provider.init();
 			return provider.ping() ? provider : null;

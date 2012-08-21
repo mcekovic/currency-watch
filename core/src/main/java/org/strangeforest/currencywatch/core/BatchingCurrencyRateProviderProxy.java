@@ -17,10 +17,6 @@ public class BatchingCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 		this.batchSize = batchSize;
 	}
 
-	@Override public void close() {
-		super.close();
-	}
-
 	public int getBatchSize() {
 		return batchSize;
 	}

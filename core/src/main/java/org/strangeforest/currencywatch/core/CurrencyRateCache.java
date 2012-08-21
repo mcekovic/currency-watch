@@ -42,7 +42,7 @@ public class CurrencyRateCache extends BaseUpdatableCurrencyRateProvider {
 
 		@Override public boolean equals(Object o) {
 			if (this == o) return true;
-			if (o == null || !(o instanceof CurrencyRateKey)) return false;
+			if (!(o instanceof CurrencyRateKey)) return false;
 			CurrencyRateKey key = (CurrencyRateKey)o;
 			return baseCurrency.equals(key.baseCurrency) && currency.equals(key.currency);
 		}
