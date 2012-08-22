@@ -19,7 +19,7 @@ public class SchemaManager {
 	private String username = USERNAME;
 	private String password = PASSWORD;
 
-	public static final int VERSION = 1;
+	public static final int VERSION = 2;
 	private static final String USERNAME = "CW";
 	private static final String PASSWORD = "";
 
@@ -89,17 +89,23 @@ public class SchemaManager {
 		});
 		db.executeDDL("CreateSchema", usernameTransformer);
 		db.executeDDL("CreateSchemaVersionTable");
-		db.executeDDL("CreateCurrencyRateTable");
-		db.executeDDL("CreateCurrencyRatePK");
-		db.executeDDL("CreateCurrencyRateDateIndex");
+		createCurrencyRateTable();
 		updateSchemaVersion(schemaVersion, false);
 		LOGGER.info("Database schema created.");
 	}
 
 	public void upgradeSchema(int oldVersion, int newVersion) {
 		LOGGER.info(String.format("Upgrading database schema from version %1$d to version %2$d...", oldVersion, newVersion));
+		db.executeDDL("DropCurrencyRateTable");
+		createCurrencyRateTable();
 		updateSchemaVersion(newVersion, true);
 		LOGGER.info("Database schema upgraded.");
+	}
+
+	private void createCurrencyRateTable() {
+		db.executeDDL("CreateCurrencyRateTable");
+		db.executeDDL("CreateCurrencyRatePK");
+		db.executeDDL("CreateCurrencyRateDateIndex");
 	}
 
 	private void updateSchemaVersion(final int version, final boolean upgrade) {

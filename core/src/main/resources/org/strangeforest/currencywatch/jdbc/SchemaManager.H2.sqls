@@ -30,14 +30,18 @@
 			)
 		</sql>
 
+		<sql name="DropCurrencyRateTable">
+			DROP TABLE CURRENCY_WATCH.CURRENCY_RATE CASCADE
+		</sql>
+
 		<sql name="CreateCurrencyRateTable">
 			CREATE TABLE CURRENCY_WATCH.CURRENCY_RATE (
 				BASE_CURRENCY VARCHAR(5) NOT NULL,
 				CURRENCY VARCHAR(5) NOT NULL,
 				DATE DATE NOT NULL,
-				BID DECIMAL(20, 8),
-				ASK DECIMAL(20, 8),
-				MIDDLE DECIMAL(20, 8)
+				BID DECIMAL(20, 4),
+				ASK DECIMAL(20, 4),
+				MIDDLE DECIMAL(20, 4)
 			)
 		</sql>
 

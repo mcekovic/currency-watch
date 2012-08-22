@@ -68,7 +68,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 			}
 		}
 		catch (Exception ex) {
-			throw new CurrencyRateException("Error getting currency rate from %1$s tp %2$s for date: %3$td-%3$tm-%3$tY", ex, baseCurrency, currency, date);
+			throw new CurrencyRateException("Error getting currency rate from %1$s to %2$s for date: %3$td-%3$tm-%3$tY", ex, baseCurrency, currency, date);
 		}
 	}
 
