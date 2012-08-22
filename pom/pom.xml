@@ -33,7 +33,7 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:git:https://github.com/mcekovic/currency-watch</developerConnection>
+		<developerConnection>scm:git:https://github.com/mcekovic/currency-watch.git</developerConnection>
 		<url>https://github.com/mcekovic/currency-watch</url>
 	</scm>
 
