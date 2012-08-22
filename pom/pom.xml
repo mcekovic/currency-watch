@@ -32,6 +32,11 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
+	<scm>
+		<developerConnection>scm:git:https://github.com/mcekovic/currency-watch.git</developerConnection>
+		<url>https://github.com/mcekovic/currency-watch</url>
+	</scm>
+
 	<build>
 
 		<pluginManagement>
@@ -110,6 +115,10 @@
 					<configuration>
 						<skip>true</skip>
 					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.3.2</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-site-plugin</artifactId>
