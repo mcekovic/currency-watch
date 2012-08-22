@@ -13,12 +13,19 @@ public class TracingCurrencyRateProviderProxyTest {
 	public void allMethodsAreProxied() {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
 
-		TracingCurrencyRateProviderProxy proxy = new TracingCurrencyRateProviderProxy(provider);
-		proxy.getRate(BASE_CURRENCY, CURRENCY, DATE);
-		proxy.getRates(BASE_CURRENCY, CURRENCY, DATES);
+		try (CurrencyRateProvider proxy = createTracingProxy(provider)) {
+			proxy.getRate(BASE_CURRENCY, CURRENCY, DATE);
+			proxy.getRates(BASE_CURRENCY, CURRENCY, DATES);
+		}
 
 		InOrder order = inOrder(provider);
 		order.verify(provider).getRate(BASE_CURRENCY, CURRENCY, DATE);
 		order.verify(provider).getRates(BASE_CURRENCY, CURRENCY, DATES);
+	}
+
+	private CurrencyRateProvider createTracingProxy(CurrencyRateProvider provider) {
+		CurrencyRateProvider proxy = new TracingCurrencyRateProviderProxy(provider);
+		proxy.init();
+		return proxy;
 	}
 }
