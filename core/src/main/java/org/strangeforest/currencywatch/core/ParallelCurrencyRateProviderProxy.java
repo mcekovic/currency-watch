@@ -31,24 +31,12 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 		executor.shutdownNow();
 	}
 
-	public int getRetryCount() {
-		return retryCount;
-	}
-
 	public void setRetryCount(int retryCount) {
 		this.retryCount = retryCount;
 	}
 
-	public boolean isResetProviderOnRetryFail() {
-		return resetProviderOnRetryFail;
-	}
-
 	public void setResetProviderOnRetryFail(boolean resetProviderOnRetryFail) {
 		this.resetProviderOnRetryFail = resetProviderOnRetryFail;
-	}
-
-	public int getMaxExceptions() {
-		return maxExceptions;
 	}
 
 	public void setMaxExceptions(int maxExceptions) {

@@ -29,31 +29,15 @@ public class RateType {
 		return date;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
 	public BigDecimal getBid() {
 		return bid;
-	}
-
-	public void setBid(BigDecimal bid) {
-		this.bid = bid;
 	}
 
 	public BigDecimal getAsk() {
 		return ask;
 	}
 
-	public void setAsk(BigDecimal ask) {
-		this.ask = ask;
-	}
-
 	public BigDecimal getMiddle() {
 		return middle;
-	}
-
-	public void setMiddle(BigDecimal middle) {
-		this.middle = middle;
 	}
 }

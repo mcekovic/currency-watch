@@ -19,8 +19,4 @@ public class RatesType {
 	public List<RateType> getRates() {
 		return rates;
 	}
-
-	public void setRates(List<RateType> rates) {
-		this.rates = rates;
-	}
 }

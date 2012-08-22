@@ -62,9 +62,6 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 			}
 			return rateValue;
 		}
-		catch (CurrencyRateException ex) {
-			return null;
-		}
 		finally {
 			dateRates.unlock(date);
 		}

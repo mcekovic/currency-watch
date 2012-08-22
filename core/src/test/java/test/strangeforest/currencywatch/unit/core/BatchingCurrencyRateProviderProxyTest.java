@@ -28,7 +28,16 @@ public class BatchingCurrencyRateProviderProxyTest {
 	}
 
 	@Test
-	public void getRates() {
+	public void getRatesInBatches() {
+		getRates(2);
+	}
+
+	@Test
+	public void getRatesInOneBatch() {
+		getRates(10);
+	}
+
+	private void getRates(int batchSize) {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
 		when(provider.getRates(eq(BASE_CURRENCY), eq(CURRENCY), any(Collection.class))).thenAnswer(new Answer<Object>() {
 			@Override public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -39,12 +48,11 @@ public class BatchingCurrencyRateProviderProxyTest {
 		});
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		int batchSize = 2;
 		try (BatchingCurrencyRateProviderProxy parallelProvider = createBatchedProvider(provider, listener, batchSize)) {
 			Map<Date, RateValue> rates = parallelProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet());
 
 			assertEquals(RATES, rates);
-			int batchCount = (RATES.size()+1)/batchSize;
+			int batchCount = 1+(RATES.size()-1)/batchSize;
 			verify(provider, times(batchCount)).getRates(eq(BASE_CURRENCY), eq(CURRENCY), any(Collection.class));
 			verify(listener, times(batchCount)).newRates(any(CurrencyRateEvent[].class));
 		}

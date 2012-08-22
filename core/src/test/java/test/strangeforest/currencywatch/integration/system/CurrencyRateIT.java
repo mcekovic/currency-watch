@@ -18,11 +18,7 @@ public class CurrencyRateIT {
 	@BeforeClass
 	public void setUp() {
 		ITUtil.deleteFile(DB4O_DATA_FILE);
-		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider(new CurrencyRateAdapter() {
-			@Override public void newRate(CurrencyRateEvent rateEvent) {
-				System.out.println(rateEvent);
-			}
-		});
+		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider(new CurrencyRateTracer());
 		currencyRateProvider = new ChainedCurrencyRateProvider(
 			new Db4oCurrencyRateProvider(DB4O_DATA_FILE),
 			new ParallelCurrencyRateProviderProxy(remoteProvider, 5)
