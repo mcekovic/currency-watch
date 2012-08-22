@@ -1,9 +1,9 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>org.strangeforest</groupId>
 		<artifactId>currency-watch-parent-pom</artifactId>
-		<version>1.3.0-SNAPSHOT</version>
+		<version>1.3.0</version>
 		<relativePath>pom</relativePath>
 	</parent>
 
@@ -52,12 +52,12 @@
 								</goals>
 								<configuration>
 									<target xmlns:jacoco="antlib:org.jacoco.ant">
-										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml"/>
+										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" />
 										<jacoco:merge destfile="${project.basedir}/core/target/jacoco-all.exec">
 											<fileset dir="${project.basedir}">
-												<include name="core/target/*.exec"/>
-												<include name="app/target/*.exec"/>
-												<exclude name="**/jacoco-all.exec"/>
+												<include name="core/target/*.exec" />
+												<include name="app/target/*.exec" />
+												<exclude name="**/jacoco-all.exec" />
 											</fileset>
 										</jacoco:merge>
 									</target>
@@ -71,7 +71,7 @@
 								</goals>
 								<configuration>
 									<target>
-										<copy file="${project.basedir}/app/target/jacoco.exec" tofile="${project.basedir}/app/target/jacoco-all.exec"/>
+										<copy file="${project.basedir}/app/target/jacoco.exec" tofile="${project.basedir}/app/target/jacoco-all.exec" />
 									</target>
 								</configuration>
 							</execution>
@@ -83,20 +83,20 @@
 								</goals>
 								<configuration>
 									<target xmlns:jacoco="antlib:org.jacoco.ant">
-										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml"/>
+										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" />
 										<jacoco:report>
 											<executiondata>
-												<file file="${project.basedir}/core/target/jacoco-all.exec"/>
+												<file file="${project.basedir}/core/target/jacoco-all.exec" />
 											</executiondata>
 											<structure name="Currency Watch Core">
 												<classfiles>
-													<fileset dir="${project.basedir}/core/target/classes"/>
+													<fileset dir="${project.basedir}/core/target/classes" />
 												</classfiles>
 												<sourcefiles encoding="UTF-8">
-													<fileset dir="${project.basedir}/core/src/main/java"/>
+													<fileset dir="${project.basedir}/core/src/main/java" />
 												</sourcefiles>
 											</structure>
-											<html destdir="${project.basedir}/core/target/site/jacoco-all"/>
+											<html destdir="${project.basedir}/core/target/site/jacoco-all" />
 										</jacoco:report>
 									</target>
 								</configuration>
