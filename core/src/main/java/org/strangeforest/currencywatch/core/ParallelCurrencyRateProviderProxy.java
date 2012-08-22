@@ -55,17 +55,18 @@ public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRatePro
 						return new DateRateValue(date, rateValue);
 					}
 					catch (Exception ex) {
-						int left = retriesLeft.decrementAndGet();
-						if (left >= 0) {
-							LOGGER.warn(String.format("Retrying request: getRate(%1$s, %2$s, %3$td-%3$tm-%3$tY): %4$s", baseCurrency, currency, date, ex));
+						String message = ExceptionUtil.getRootMessage(ex);
+						if (retriesLeft.decrementAndGet() >= 0) {
+							LOGGER.warn(String.format("Retrying request: getRate(%1$s, %2$s, %3$td-%3$tm-%3$tY): %4$s", baseCurrency, currency, date, message));
 							notifyListeners("Retrying...");
 							results.add(executor.submit(this));
 							return null;
 						}
 						else {
-							notifyListeners(ExceptionUtil.getRootMessage(ex));
+							notifyListeners(message);
 							if (resetProviderOnRetryFail) {
 								LOGGER.error("Too many retry failures, resetting provider.");
+								retriesLeft.addAndGet(retryCount);
 								resetProvider();
 							}
 							throw ex;

@@ -4,10 +4,6 @@ public class CurrencyRateException extends RuntimeException {
 
 	private boolean recoverable;
 
-	public CurrencyRateException() {
-		super();
-	}
-
 	public CurrencyRateException(boolean recoverable) {
 		super();
 		this.recoverable = recoverable;

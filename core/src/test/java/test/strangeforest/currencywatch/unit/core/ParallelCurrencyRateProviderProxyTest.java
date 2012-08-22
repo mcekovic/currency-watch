@@ -20,7 +20,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 		when(provider.getRate(BASE_CURRENCY, CURRENCY, DATE)).thenReturn(RATE);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		try (ParallelCurrencyRateProviderProxy parallelProvider = createParallelProvider(provider, listener, 1)) {
+		try (CurrencyRateProvider parallelProvider = createParallelProvider(provider, listener, 1)) {
 			RateValue rate = parallelProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
 
 			assertEquals(RATE, rate);
@@ -31,14 +31,14 @@ public class ParallelCurrencyRateProviderProxyTest {
 	@Test
 	public void getRates() {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
-		when(provider.getRate(eq(BASE_CURRENCY), eq(CURRENCY), any(Date.class))).thenAnswer(new Answer<Object>() {
-			@Override public Object answer(InvocationOnMock invocation) throws Throwable {
+		when(provider.getRate(eq(BASE_CURRENCY), eq(CURRENCY), any(Date.class))).thenAnswer(new Answer<RateValue>() {
+			@Override public RateValue answer(InvocationOnMock invocation) throws Throwable {
 				return RATES.get(invocation.getArguments()[2]);
 			}
 		});
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		try (ParallelCurrencyRateProviderProxy parallelProvider = createParallelProvider(provider, listener, 2)) {
+		try (CurrencyRateProvider parallelProvider = createParallelProvider(provider, listener, 2)) {
 			Map<Date, RateValue> rates = parallelProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet());
 
 			assertEquals(RATES, rates);
@@ -52,12 +52,13 @@ public class ParallelCurrencyRateProviderProxyTest {
 		when(provider.getRate(BASE_CURRENCY, CURRENCY, DATE)).thenThrow(new CurrencyRateException("Booom!")).thenReturn(RATE);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		try (ParallelCurrencyRateProviderProxy parallelProvider = createParallelProvider(provider, listener, 1)) {
+		try (CurrencyRateProvider parallelProvider = createParallelProvider(provider, listener, 1)) {
 			Map<Date, RateValue> rates = parallelProvider.getRates(BASE_CURRENCY, CURRENCY, Collections.singleton(DATE));
 
 			assertEquals(Collections.singletonMap(DATE, RATE), rates);
 			verify(provider, times(2)).getRate(BASE_CURRENCY, CURRENCY, DATE);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
+			verify(listener).error(any(String.class));
 		}
 	}
 
@@ -67,8 +68,9 @@ public class ParallelCurrencyRateProviderProxyTest {
 		when(provider.getRate(BASE_CURRENCY, CURRENCY, DATE)).thenThrow(new CurrencyRateException("Booom!"));
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
+		int retryCount = 2;
 		try (ParallelCurrencyRateProviderProxy parallelProvider = createParallelProvider(provider, listener, 1)) {
-			parallelProvider.setRetryCount(2);
+			parallelProvider.setRetryCount(retryCount);
 			parallelProvider.setMaxExceptions(0);
 			try {
 				parallelProvider.getRates(BASE_CURRENCY, CURRENCY, Collections.singleton(DATE));
@@ -77,10 +79,11 @@ public class ParallelCurrencyRateProviderProxyTest {
 			catch (CurrencyRateException ex) {
 				InOrder inOrder = inOrder(provider);
 				inOrder.verify(provider).init();
-				inOrder.verify(provider, times(3)).getRate(BASE_CURRENCY, CURRENCY, DATE);
+				inOrder.verify(provider, times(1+retryCount)).getRate(BASE_CURRENCY, CURRENCY, DATE);
 				inOrder.verify(provider).close();
 				inOrder.verify(provider).init();
 				verify(listener, never()).newRate(any(CurrencyRateEvent.class));
+				verify(listener, times(1+retryCount)).error(any(String.class));
 			}
 		}
 	}

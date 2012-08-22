@@ -28,8 +28,8 @@ public class CurrencyRatePresenterTest {
 	@Test
 	public void currencyRatesArePresented() throws InterruptedException, InvocationTargetException {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
-		when(provider.getRates(eq(BASE_CURRENCY), eq(CurrencySymbol.EUR.name()), anyCollectionOf(Date.class))).thenAnswer(new Answer<Object>() {
-			@Override public Object answer(InvocationOnMock invocation) throws Throwable {
+		when(provider.getRates(eq(BASE_CURRENCY), eq(CurrencySymbol.EUR.name()), anyCollectionOf(Date.class))).thenAnswer(new Answer<Map<Date, RateValue>>() {
+			@Override public Map<Date, RateValue> answer(InvocationOnMock invocation) throws Throwable {
 				return Algorithms.transformToMap((Collection<Date>)(invocation.getArguments()[2]), new Transformer<Date, RateValue>() {
 					@Override public RateValue transform(Date date) {
 						return new RateValue(BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN);
