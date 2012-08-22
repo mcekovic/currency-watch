@@ -33,8 +33,7 @@
 	</properties>
 
 	<scm>
-		<!--<connection>scm:git:https://github.com/mcekovic/currency-watch</connection>-->
-		<developerConnection>scm:git:https://github.com/mcekovic/currency-watch</developerConnection>
+		<developerConnection>scm:git:https://github.com/mcekovic/currency-watch.git</developerConnection>
 		<url>https://github.com/mcekovic/currency-watch</url>
 	</scm>
 
@@ -121,7 +120,7 @@
 					<artifactId>maven-release-plugin</artifactId>
 					<version>2.3.2</version>
 					<configuration>
-						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<tagBase>https://github.com/mcekovic/currency-watch.git/releases</tagBase>
 					</configuration>
 				</plugin>
 				<plugin>
