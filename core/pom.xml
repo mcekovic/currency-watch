@@ -14,32 +14,6 @@
 
 	<build>
 
-		<!-- Workaround for Maven profile inheritance issue -->
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>${jacoco-maven-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>${maven-failsafe-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<artifactId>maven-antrun-plugin</artifactId>
-					<version>${maven-antrun-plugin.version}</version>
-					<dependencies>
-						<dependency>
-							<groupId>org.jacoco</groupId>
-							<artifactId>org.jacoco.ant</artifactId>
-							<version>${jacoco-maven-plugin.version}</version>
-						</dependency>
-					</dependencies>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-
 		<plugins>
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -192,36 +166,6 @@
 									<dataFile>${project.build.directory}/jacoco-it.exec</dataFile>
 									<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
 								</configuration>
-							</execution>
-							<execution>
-								<id>report-all</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>report</goal>
-								</goals>
-								<configuration>
-									<dataFile>${project.build.directory}/jacoco-all.exec</dataFile>
-									<outputDirectory>${project.reporting.outputDirectory}/jacoco-all</outputDirectory>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>post-integration-test</phase>
-								<configuration>
-									<target xmlns:jacoco="antlib:org.jacoco.ant">
-										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml"/>
-										<jacoco:merge destfile="${project.build.directory}/jacoco-all.exec">
-											<fileset dir="${project.build.directory}" includes="*.exec" excludes="jacoco-all.exec"/>
-										</jacoco:merge>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
 							</execution>
 						</executions>
 					</plugin>

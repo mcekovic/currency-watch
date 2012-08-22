@@ -14,16 +14,6 @@
 
 	<build>
 
-		<!-- Workaround for Maven profile inheritance issue -->
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<artifactId>maven-antrun-plugin</artifactId>
-					<version>${maven-antrun-plugin.version}</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-
 		<resources>
 			<resource>
 				<directory>${basedir}/src/main/java</directory>
@@ -165,31 +155,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>integration-tests</id>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>post-integration-test</phase>
-								<configuration>
-									<target>
-										<copy file="${project.build.directory}/jacoco.exec" tofile="${project.build.directory}/jacoco-all.exec"/>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 </project>

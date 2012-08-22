@@ -20,4 +20,92 @@
 		<module>web</module>
 	</modules>
 
+	<profiles>
+		<profile>
+			<id>integration-tests</id>
+			<build>
+
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<artifactId>maven-antrun-plugin</artifactId>
+							<dependencies>
+								<dependency>
+									<groupId>org.jacoco</groupId>
+									<artifactId>org.jacoco.ant</artifactId>
+									<version>${jacoco-maven-plugin.version}</version>
+								</dependency>
+							</dependencies>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>merge-core-jacoco-coverage</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target xmlns:jacoco="antlib:org.jacoco.ant">
+										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml"/>
+										<jacoco:merge destfile="${project.basedir}/core/target/jacoco-all.exec">
+											<fileset dir="${project.basedir}">
+												<include name="core/target/*.exec"/>
+												<include name="app/target/*.exec"/>
+												<exclude name="**/jacoco-all.exec"/>
+											</fileset>
+										</jacoco:merge>
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>merge-app-jacoco-coverage</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<copy file="${project.basedir}/app/target/jacoco.exec" tofile="${project.basedir}/app/target/jacoco-all.exec"/>
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>report-core-jacoco-coverage</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target xmlns:jacoco="antlib:org.jacoco.ant">
+										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml"/>
+										<jacoco:report>
+											<executiondata>
+												<file file="${project.basedir}/core/target/jacoco-all.exec"/>
+											</executiondata>
+											<structure name="Currency Watch Core">
+												<classfiles>
+													<fileset dir="${project.basedir}/core/target/classes"/>
+												</classfiles>
+												<sourcefiles encoding="UTF-8">
+													<fileset dir="${project.basedir}/core/src/main/java"/>
+												</sourcefiles>
+											</structure>
+											<html destdir="${project.basedir}/core/target/site/jacoco-all"/>
+										</jacoco:report>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
