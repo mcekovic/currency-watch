@@ -21,7 +21,7 @@ public class SchemaManager {
 
 	public static final int VERSION = 2;
 	private static final String USERNAME = "CW";
-	private static final String PASSWORD = "";
+	private static final String PASSWORD = "CW";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SchemaManager.class);
 
