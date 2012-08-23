@@ -2,6 +2,10 @@ package org.strangeforest.currencywatch;
 
 import java.util.*;
 
+import org.strangeforest.currencywatch.core.*;
+
+import com.finsoft.util.*;
+
 public abstract class Util {
 
 	public static final String BASE_CURRENCY = "RSD";
@@ -14,5 +18,11 @@ public abstract class Util {
 		if (now.get(Calendar.HOUR_OF_DAY) < 8)
 			lastDate.add(Calendar.DATE, -1);
 		return lastDate;
+	}
+
+	public static DateRange trimDateRange(DateRange range) {
+		Date minFrom = START_DATE.getTime();
+		Date maxTo = getLastDate().getTime();
+		return new DateRange(ObjectUtil.max(range.getFrom(), minFrom), ObjectUtil.min(range.getTo(), maxTo));
 	}
 }

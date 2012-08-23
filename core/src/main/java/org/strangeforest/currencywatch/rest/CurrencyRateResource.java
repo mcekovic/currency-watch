@@ -82,7 +82,7 @@ public class CurrencyRateResource {
 					to = Util.getLastDate().getTime();
 				if (from == null)
 					from = to;
-				dateColl = new DateRange(from, to).dates();
+				dateColl = Util.trimDateRange(new DateRange(from, to)).dates();
 			}
 			Map<Date, RateValue> rates = provider.getRates(baseCurrency, currency, dateColl);
 			return new RatesType(Algorithms.transform(rates.entrySet(), new Transformer<Map.Entry<Date, RateValue>, RateType>() {

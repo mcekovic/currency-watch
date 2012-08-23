@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.Timer;
 
 import org.jfree.chart.*;
+import org.jfree.chart.event.*;
 import org.slf4j.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
@@ -30,12 +31,26 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	private volatile int currRemoteItems;
 	private volatile long startTime;
 
+	private volatile CurrencySymbol currency;
+	private volatile Period period;
+	private volatile SeriesQuality quality;
+	private volatile int movAvgPeriod;
+	private final AxisChangeListener axisChangeListener;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyRatePresenter.class);
 
 	public CurrencyRatePresenter(CurrencyRateProvider provider) {
 		super();
 		this.provider = provider;
 		chart = new CurrencyChart();
+		axisChangeListener = new AxisChangeListener() {
+			@Override public void axisChanged(AxisChangeEvent event) {
+				if (currencyRate != null)
+					currencyRate.close();
+				currencyRate = getCurrencyRate(currency.toString(), movAvgPeriod);
+				applyPeriod(currencyRate, chart.getDateRange(), quality.points());
+			}
+		};
 		setUpSpeedMeasuring();
 	}
 
@@ -81,11 +96,22 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	}
 
 	public void inputDataChanged(CurrencySymbol currency, Period period, SeriesQuality quality, boolean showBidAsk, boolean showMovAvg, boolean showBollBands, int movAvgPeriod) {
+		chart.removeDomainAxisChangeListener(axisChangeListener);
 		if (currencyRate != null)
 			currencyRate.close();
+		this.currency = currency;
+		if (period != this.period) {
+			this.period = period;
+			chart.setAutoRange();
+		}
+		this.quality = quality;
+		this.movAvgPeriod = movAvgPeriod;
 		chart.createSeries(currency, showBidAsk, showMovAvg, showBollBands);
+		DateRange dateRange = UIUtil.toDateRange(period.days());
+		chart.setDateRange(dateRange);
 		currencyRate = getCurrencyRate(currency.toString(), movAvgPeriod);
-		applyPeriod(currencyRate, period.days(), quality.points());
+		applyPeriod(currencyRate, dateRange, quality.points());
+		chart.addDomainAxisChangeListener(axisChangeListener);
 	}
 
 	private CurrencyRate getCurrencyRate(String currency, final int movAvgPeriod) {
@@ -125,12 +151,10 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		return rate;
 	}
 
-	private void applyPeriod(final CurrencyRate rate, int days, int maxPoints) {
+	private void applyPeriod(final CurrencyRate rate, final DateRange dateRange, int maxPoints) {
 		if (dataThread != null)
 			dataThread.interrupt();
-		final DateRange dateRange = UIUtil.toDateRange(days);
-		chart.setDateRange(dateRange);
-		final int step = 1 + days/maxPoints;
+		final int step = 1 + dateRange.size()/maxPoints;
 		final Collection<Date> dates = dateRange.dates(step);
 		itemCount = dates.size();
 		currItems = 0;

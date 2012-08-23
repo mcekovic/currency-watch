@@ -6,12 +6,17 @@ import java.util.*;
 
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
+import org.jfree.chart.event.*;
 import org.jfree.chart.labels.*;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.time.*;
+import org.jfree.ui.*;
+import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.core.DateRange;
+
+import com.finsoft.util.*;
 
 public class CurrencyChart {
 
@@ -130,9 +135,30 @@ public class CurrencyChart {
 		}
 	}
 
+	public DateRange getDateRange() {
+		DateAxis domainAxis = (DateAxis)chart.getXYPlot().getDomainAxis();
+		Date fromDate = DateUtil.extractDate(new Date(domainAxis.getMinimumDate().getTime() + DateUtil.MILLISECONDS_PER_DAY / 2));
+		Date toDate = DateUtil.extractDate(new Date(domainAxis.getMaximumDate().getTime() - DateUtil.MILLISECONDS_PER_DAY/2));
+		return Util.trimDateRange(new DateRange(fromDate, toDate));
+	}
+
 	public void setDateRange(DateRange dateRange) {
 		middleSeries.addOrUpdate(new Day(dateRange.getFrom()), 0);
 		middleSeries.addOrUpdate(new Day(dateRange.getTo()), 0);
+	}
+
+	public void setAutoRange() {
+		XYPlot plot = chart.getXYPlot();
+		plot.getDomainAxis().setAutoRange(true);
+		plot.getRangeAxis().setAutoRange(true);
+	}
+
+	public void addDomainAxisChangeListener(AxisChangeListener listener) {
+		chart.getXYPlot().getDomainAxis().addChangeListener(listener);
+	}
+
+	public void removeDomainAxisChangeListener(AxisChangeListener listener) {
+		chart.getXYPlot().getDomainAxis().removeChangeListener(listener);
 	}
 
 	public void updateBaseSeries(Map<Date, RateValue> rates) {
