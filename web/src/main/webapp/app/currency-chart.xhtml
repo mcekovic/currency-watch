@@ -4,7 +4,8 @@
       xmlns:c="http://java.sun.com/jsp/jstl/core">
 <h:head>
 	<title>${chartPage.title}</title>
-	<h:outputStylesheet name="currency-watch.css" library="css"/>
+	<script src="../resources/js/jquery.min.js"></script>
+	<script src="../resources/js/jquery.Jcrop.min.js"></script>
 	<script type="text/javascript">
 		function setMovAvgPeriodEnabled() {
 			var showMovAvg = document.getElementById("chartForm:showMovAvg");
@@ -23,7 +24,24 @@
 			loadingDiv.style.display = "inline";
 			chartForm.submit();
 		}
+		$(function() {
+			$('#chartImage').Jcrop({
+				onSelect: showZoomButton,
+				onRelease: hideZoomButton
+			});
+		});
+		function showZoomButton(c) {
+			var zoomButton = document.getElementById("chartForm:zoomButton");
+			zoomButton.style.display = "block";
+			zoomButton.style.left = c.x + (c.w - 80)/2;
+			zoomButton.style.top = 120 + c.y + (c.h - 20)/2;
+		}
+		function hideZoomButton() {
+			document.getElementById("chartForm:zoomButton").style.display = "none";
+		}
 	</script>
+	<h:outputStylesheet name="currency-watch.css" library="css"/>
+	<link rel="stylesheet" href="../resources/css/jquery.Jcrop.min.css" type="text/css"/>
 </h:head>
 <h:body onload="setMovAvgPeriodEnabled()">
 	<f:view contentType="text/html">
@@ -70,30 +88,33 @@
 				<h:commandButton id="showChart" type="submit" value="Show Chart" action="#{chartPage.showChart}" onclick="showChart()" title="Show Chart"/>
 			</td>
 		</tr></table>
-	</h:form>
-	<c:if test="#{!empty chartPage.chartFileName}">
-		<table id="chartTable" cellspacing="0" cellpadding="0">
-			<tr>
-				<td><h:graphicImage id="chartImage" url="chart?filename=#{chartPage.chartFileName}" width="#{chartPage.chartWidth}" height="#{chartPage.chartHeight}" alt="Currency Chart for #{chartPage.currencyFullName}"/></td>
-			</tr>
-			<tr style="text-align: center">
-				<td><h:outputLabel for="chartImage" value="#{chartPage.currencyFullName}, period: #{chartPage.period.label()}"/></td>
-			</tr>
-			<tr style="text-align: center">
-				<td>
-					<h:outputText value="${chartPage.currentRate.date}"><f:convertDateTime pattern="dd-MM-yyyy"/></h:outputText> -
-					Bid: <h:outputText value="${chartPage.currentRate.rate.bid}"><f:convertNumber maxFractionDigits="2"/></h:outputText>,
-					Middle: <span style="color: ${chartPage.currentRate.color};font-weight: bold;"><h:outputText value="${chartPage.currentRate.rate.middle}"><f:convertNumber maxFractionDigits="2"/></h:outputText></span>,
-					Ask: <h:outputText value="${chartPage.currentRate.rate.ask}"><f:convertNumber maxFractionDigits="2"/></h:outputText>
-				</td>
-			</tr>
-		</table>
-	</c:if>
-	<div id="loadingDiv" style="display: none; width: #{chartPage.chartWidth}; height: #{chartPage.chartHeight};">
-		<div style="width: 50%; margin: 0 auto;">
-			<h:graphicImage url="../resources/images/loading.gif" width="66" height="66" alt="Loading..."/>
+		<c:if test="#{!empty chartPage.chartFileName}">
+			<table id="chartTable" cellspacing="0" cellpadding="0">
+				<tr>
+					<td>
+						<h:commandButton id="zoomButton" type="submit" value="Zoom Chart" action="#{chartPage.zoomChart}" onclick="zoomChart()" title="Zoom Chart" style="position: absolute; display: none; z-index: 2000;"/>
+						<img id="chartImage" src="chart?filename=#{chartPage.chartFileName}" width="#{chartPage.chartWidth}" height="#{chartPage.chartHeight}" alt="Currency Chart for #{chartPage.currencyFullName}"/>
+					</td>
+				</tr>
+				<tr style="text-align: center">
+					<td><h:outputLabel for="chartImage" value="#{chartPage.currencyFullName}, period: #{chartPage.period.label()}"/></td>
+				</tr>
+				<tr style="text-align: center">
+					<td>
+						<h:outputText value="${chartPage.currentRate.date}"><f:convertDateTime pattern="dd-MM-yyyy"/></h:outputText> -
+						Bid: <h:outputText value="${chartPage.currentRate.rate.bid}"><f:convertNumber maxFractionDigits="2"/></h:outputText>,
+						Middle: <span style="color: ${chartPage.currentRate.color};font-weight: bold;"><h:outputText value="${chartPage.currentRate.rate.middle}"><f:convertNumber maxFractionDigits="2"/></h:outputText></span>,
+						Ask: <h:outputText value="${chartPage.currentRate.rate.ask}"><f:convertNumber maxFractionDigits="2"/></h:outputText>
+					</td>
+				</tr>
+			</table>
+		</c:if>
+		<div id="loadingDiv" style="display: none; width: #{chartPage.chartWidth}; height: #{chartPage.chartHeight};">
+			<div style="width: 50%; margin: 0 auto;">
+				<h:graphicImage url="../resources/images/loading.gif" width="66" height="66" alt="Loading..."/>
+			</div>
 		</div>
-	</div>
+	</h:form>
 	<br/>
 	<div class="small" style="width: #{chartPage.chartWidth}; height: #{chartPage.chartHeight}; text-align: center;">
 		<a href="https://github.com/mcekovic/currency-watch/downloads">Download Currency Watch desktop application</a>,&#160;
