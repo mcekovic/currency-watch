@@ -2,6 +2,7 @@ package org.strangeforest.currencywatch.web.jsf;
 
 import java.awt.*;
 import java.io.*;
+import java.text.*;
 import java.util.*;
 import java.util.List;
 import javax.faces.bean.*;
@@ -35,6 +36,8 @@ public class ChartPageBean {
 	private boolean showMovAvg;
 	private boolean showBollBands;
 	private Integer movAvgPeriod = UIUtil.DEFAULT_MOV_AVG_PERIOD;
+	private DateRange dateRange;
+	private double zoomx1, zoomx2;
 
 	private CurrentRate currentRate;
 	private String chartFileName;
@@ -42,6 +45,9 @@ public class ChartPageBean {
 	private static final String PAGE_TITLE = "Currency Chart";
 	private static final int CHART_WIDTH  = 1000;
 	private static final int CHART_HEIGHT =  600;
+	private static final int OFFSET_X1 = 65;
+	private static final int OFFSET_X2 =  8;
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("ddMMyyyy");
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartPageBean.class);
 
@@ -117,6 +123,30 @@ public class ChartPageBean {
 		this.movAvgPeriod = movAvgPeriod != null ? movAvgPeriod : UIUtil.DEFAULT_MOV_AVG_PERIOD;
 	}
 
+	public String getDateRange() {
+		return dateRange != null ? DATE_FORMAT.format(dateRange.getFrom()) + '-' + DATE_FORMAT.format(dateRange.getTo()) : null;
+	}
+
+	public void setDateRange(String dateRange) throws ParseException {
+		this.dateRange = dateRange.length() >= 17 ? new DateRange(DATE_FORMAT.parse(dateRange.substring(0, 8)), DATE_FORMAT.parse(dateRange.substring(9, 17))) : null;
+	}
+
+	public double getZoomx1() {
+		return zoomx1;
+	}
+
+	public void setZoomx1(double zoomx1) {
+		this.zoomx1 = zoomx1;
+	}
+
+	public double getZoomx2() {
+		return zoomx2;
+	}
+
+	public void setZoomx2(double zoomx2) {
+		this.zoomx2 = zoomx2;
+	}
+
 	public CurrentRate getCurrentRate() {
 		return currentRate;
 	}
@@ -167,18 +197,35 @@ public class ChartPageBean {
 	}
 
 	public String showChart() throws IOException {
+		DateRange dateRange = UIUtil.toDateRange(period.days());
+		return doShowChart(dateRange, false);
+	}
+
+	public String zoomChart() throws IOException {
+		double x1Pct = Math.max(0.0, (zoomx1-OFFSET_X1)/(CHART_WIDTH-OFFSET_X1-OFFSET_X2));
+		double x2Pct = Math.min(1.0, (zoomx2-OFFSET_X1)/(CHART_WIDTH-OFFSET_X1-OFFSET_X2));
+		int size = dateRange.size()-1;
+		Date fromDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x1Pct)*DateUtil.MILLISECONDS_PER_DAY);
+		Date toDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x2Pct)*DateUtil.MILLISECONDS_PER_DAY);
+		if (fromDate.before(toDate))
+			dateRange = new DateRange(fromDate, toDate);
+		return doShowChart(dateRange, true);
+	}
+
+	private String doShowChart(DateRange dateRange, boolean autoRangeRangeAxis) throws IOException {
 		HttpSession session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true);
 		CurrencyChart chart = new CurrencyChart();
 		chart.createSeries(currency, showBidAsk, showMovAvg, showBollBands);
 
-		int days = period.days();
-		DateRange dateRange = UIUtil.toDateRange(days);
 		chart.setDateRange(dateRange);
+		if (autoRangeRangeAxis)
+			chart.setAutoRangeRangeAxis();
+		this.dateRange = dateRange;
 
 		CurrencyRate currencyRate = new CurrencyRate(Util.BASE_CURRENCY, currency.name(), currencyProvider);
 		Map<Date, RateValue> rates;
 		try {
-			int step = 1 + days/quality.points();
+			int step = 1 + dateRange.size()/quality.points();
 			currencyRate.getRates(dateRange.dates(step*10)); // Fetch outline first
 			rates = currencyRate.getRates(dateRange.dates(step));
 		}

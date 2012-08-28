@@ -19,7 +19,8 @@ public class BollingerBandsPoint extends MovingAveragePoint {
 	public double[] yBB(double factor) {
 		double yAvg = yAvg();
 		double yStDev = yStDev();
-		return new double[] {yAvg - factor*yStDev, yAvg + factor*yStDev};
+		double yBB = factor * yStDev;
+		return new double[] {yAvg - yBB, yAvg + yBB};
 	}
 
 	private double yStDev() {

@@ -16,9 +16,11 @@
 		function showChart() {
 			var movAvgPeriod = document.getElementById("chartForm:movAvgPeriod");
 			var chartForm = document.getElementById("chartForm");
+			var zoomChart = document.getElementById("chartForm:zoomChart");
 			var chartTable = document.getElementById("chartTable");
 			var loadingDiv = document.getElementById("loadingDiv");
 			movAvgPeriod.disabled = false;
+			zoomChart.style.display = "none";
 			if (chartTable)
 				chartTable.style.display = "none";
 			loadingDiv.style.display = "inline";
@@ -31,13 +33,15 @@
 			});
 		});
 		function showZoomButton(c) {
-			var zoomButton = document.getElementById("chartForm:zoomButton");
-			zoomButton.style.display = "block";
-			zoomButton.style.left = c.x + (c.w - 80)/2;
-			zoomButton.style.top = 120 + c.y + (c.h - 20)/2;
+			var zoomChart = document.getElementById("chartForm:zoomChart");
+			zoomChart.style.display = "block";
+			zoomChart.style.left = 7 + c.x + (c.w - 91)/2;
+			zoomChart.style.top = 125 + c.y + (c.h - 22)/2;
+			document.getElementById("chartForm:zoomx1").value = c.x;
+			document.getElementById("chartForm:zoomx2").value = c.x2;
 		}
 		function hideZoomButton() {
-			document.getElementById("chartForm:zoomButton").style.display = "none";
+			document.getElementById("chartForm:zoomChart").style.display = "none";
 		}
 	</script>
 	<h:outputStylesheet name="currency-watch.css" library="css"/>
@@ -88,16 +92,20 @@
 				<h:commandButton id="showChart" type="submit" value="Show Chart" action="#{chartPage.showChart}" onclick="showChart()" title="Show Chart"/>
 			</td>
 		</tr></table>
+		<h:messages showDetail="true" style="color: red;"/>
+		<h:commandButton id="zoomChart" type="submit" value="Zoom Chart" action="#{chartPage.zoomChart}" onclick="showChart()" title="Zoom Chart" style="position: absolute; display: none; z-index: 2000;"/>
+		<h:inputHidden id="dateRange" name="dateRange" value="#{chartPage.dateRange}"/>
+		<h:inputHidden id="zoomx1" name="zoomx1" value="#{chartPage.zoomx1}"/>
+		<h:inputHidden id="zoomx2" name="zoomx2" value="#{chartPage.zoomx2}"/>
 		<c:if test="#{!empty chartPage.chartFileName}">
 			<table id="chartTable" cellspacing="0" cellpadding="0">
 				<tr>
 					<td>
-						<h:commandButton id="zoomButton" type="submit" value="Zoom Chart" action="#{chartPage.zoomChart}" onclick="zoomChart()" title="Zoom Chart" style="position: absolute; display: none; z-index: 2000;"/>
 						<img id="chartImage" src="chart?filename=#{chartPage.chartFileName}" width="#{chartPage.chartWidth}" height="#{chartPage.chartHeight}" alt="Currency Chart for #{chartPage.currencyFullName}"/>
 					</td>
 				</tr>
 				<tr style="text-align: center">
-					<td><h:outputLabel for="chartImage" value="#{chartPage.currencyFullName}, period: #{chartPage.period.label()}"/></td>
+					<td><h:outputLabel value="#{chartPage.currencyFullName}, period: #{chartPage.period.label()}"/></td>
 				</tr>
 				<tr style="text-align: center">
 					<td>

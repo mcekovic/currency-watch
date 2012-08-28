@@ -11,7 +11,6 @@ import org.jfree.chart.labels.*;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.time.*;
-import org.jfree.ui.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.core.DateRange;
@@ -50,6 +49,8 @@ public class CurrencyChart {
 
 	private static JFreeChart createChart() {
 		DateAxis xAxis = new DateAxis("Date");
+		xAxis.setLowerMargin(0.0);
+		xAxis.setUpperMargin(0.0);
 		NumberAxis yAxis = new NumberAxis("Middle");
 		yAxis.setAutoRangeIncludesZero(false);
 
@@ -138,7 +139,7 @@ public class CurrencyChart {
 	public DateRange getDateRange() {
 		DateAxis domainAxis = (DateAxis)chart.getXYPlot().getDomainAxis();
 		Date fromDate = DateUtil.extractDate(new Date(domainAxis.getMinimumDate().getTime() + DateUtil.MILLISECONDS_PER_DAY / 2));
-		Date toDate = DateUtil.extractDate(new Date(domainAxis.getMaximumDate().getTime() - DateUtil.MILLISECONDS_PER_DAY/2));
+		Date toDate = DateUtil.extractDate(new Date(domainAxis.getMaximumDate().getTime() - DateUtil.MILLISECONDS_PER_DAY / 2));
 		return Util.trimDateRange(new DateRange(fromDate, toDate));
 	}
 
@@ -151,6 +152,10 @@ public class CurrencyChart {
 		XYPlot plot = chart.getXYPlot();
 		plot.getDomainAxis().setAutoRange(true);
 		plot.getRangeAxis().setAutoRange(true);
+	}
+
+	public void setAutoRangeRangeAxis() {
+		chart.getXYPlot().getRangeAxis().setAutoRange(true);
 	}
 
 	public void addDomainAxisChangeListener(AxisChangeListener listener) {
