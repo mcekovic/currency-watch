@@ -4,3 +4,7 @@ body {
 .small {
 	font-size: smaller;
 }
+td.toolbar {
+	padding-left: 5px;
+	padding-right: 5px;
+}

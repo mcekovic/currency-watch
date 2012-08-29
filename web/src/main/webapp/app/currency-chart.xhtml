@@ -8,23 +8,22 @@
 	<script src="../resources/js/jquery.Jcrop.min.js"></script>
 	<script type="text/javascript">
 		function setMovAvgPeriodEnabled() {
-			var showMovAvg = document.getElementById("chartForm:showMovAvg");
-			var showBollBands = document.getElementById("chartForm:showBollBands");
-			var movAvgPeriod = document.getElementById("chartForm:movAvgPeriod");
+			var showMovAvg = document.getElementById("chartForm-showMovAvg");
+			var showBollBands = document.getElementById("chartForm-showBollBands");
+			var movAvgPeriod = document.getElementById("chartForm-movAvgPeriod");
 			movAvgPeriod.disabled = !(showMovAvg.checked || showBollBands.checked);
 		}
 		function showChart() {
-			var movAvgPeriod = document.getElementById("chartForm:movAvgPeriod");
-			var chartForm = document.getElementById("chartForm");
-			var zoomChart = document.getElementById("chartForm:zoomChart");
+			var movAvgPeriod = document.getElementById("chartForm-movAvgPeriod");
+			var zoomChart = document.getElementById("chartForm-zoomChart");
 			var chartTable = document.getElementById("chartTable");
-			var loadingDiv = document.getElementById("loadingDiv");
+			var loadingTable = document.getElementById("loadingTable");
 			movAvgPeriod.disabled = false;
 			zoomChart.style.display = "none";
 			if (chartTable)
 				chartTable.style.display = "none";
-			loadingDiv.style.display = "inline";
-			chartForm.submit();
+			loadingTable.style.display = "inline";
+			return true;
 		}
 		$(function() {
 			$('#chartImage').Jcrop({
@@ -33,102 +32,140 @@
 			});
 		});
 		function showZoomButton(c) {
-			var zoomChart = document.getElementById("chartForm:zoomChart");
+			var chartTable = document.getElementById("chartTable");
+			var zoomChart = document.getElementById("chartForm-zoomChart");
 			zoomChart.style.display = "block";
-			zoomChart.style.left = 7 + c.x + (c.w - 91)/2;
-			zoomChart.style.top = 125 + c.y + (c.h - 22)/2;
-			document.getElementById("chartForm:zoomx1").value = c.x;
-			document.getElementById("chartForm:zoomx2").value = c.x2;
+			zoomChart.style.left = findLeft(chartTable) + c.x + (c.w - zoomChart.offsetWidth)/2;
+			zoomChart.style.top = findTop(chartTable) + c.y + (c.h - zoomChart.offsetHeight)/2;
+			document.getElementById("chartForm-zoomx1").value = c.x;
+			document.getElementById("chartForm-zoomx2").value = c.x2;
 		}
 		function hideZoomButton() {
-			document.getElementById("chartForm:zoomChart").style.display = "none";
+			document.getElementById("chartForm-zoomChart").style.display = "none";
+		}
+		function findLeft(obj) {
+			var left = 0;
+			if (obj.offsetParent) {
+				while(1) {
+					left += obj.offsetLeft;
+					if (!obj.offsetParent)
+						break;
+					obj = obj.offsetParent;
+				}
+			}
+			else if (obj.x)
+				left += obj.x;
+			return left;
+		}
+		function findTop(obj) {
+			var top = 0;
+			if (obj.offsetParent) {
+				while(1) {
+					top += obj.offsetTop;
+					if (!obj.offsetParent)
+						break;
+					obj = obj.offsetParent;
+				}
+			}
+			else if (obj.y)
+				top += obj.y;
+			return top;
 		}
 	</script>
 	<h:outputStylesheet name="currency-watch.css" library="css"/>
-	<link rel="stylesheet" href="../resources/css/jquery.Jcrop.min.css" type="text/css"/>
+	<link rel="stylesheet" type="text/css" href="../resources/css/jquery.Jcrop.min.css"/>
 </h:head>
 <h:body onload="setMovAvgPeriodEnabled()">
 	<f:view contentType="text/html">
 	<h:form id="chartForm">
-		<table cellspacing="10"><tr>
-			<td colspan="8" style="text-align: center"><h1>Currency Watch</h1></td>
+		<table style="text-align: center"><tr>
+			<td><h1 style="width: #{chartPage.chartWidth}">Currency Watch</h1></td>
+		</tr><tr>
+			<td align="center"><table cellspacing="0" cellpadding="0"><tr>
+				<td class="toolbar">
+					<h:outputLabel for="currency" value="Currency: "/>
+					<h:selectOneMenu id="currency" value="#{chartPage.currency}" title="Currency">
+						<f:selectItems value="#{chartPage.currencies}" />
+					</h:selectOneMenu>
+				</td>
+				<td class="toolbar">
+					<h:outputLabel for="period" value="Period: "/>
+					<h:selectOneMenu id="period" value="#{chartPage.period}" title="Chart period">
+						<f:selectItems value="#{chartPage.periods}"/>
+					</h:selectOneMenu>
+				</td>
+				<td class="toolbar">
+					<h:outputLabel for="quality" value="Quality: "/>
+					<h:selectOneMenu id="quality" value="#{chartPage.quality}" title="Series quality">
+						<f:selectItems value="#{chartPage.qualities}"/>
+					</h:selectOneMenu>
+				</td>
+				<td class="toolbar">
+					<h:selectBooleanCheckbox id="showBidAsk" value="#{chartPage.showBidAsk}" title="Show Bid and Ask"/>
+					<h:outputLabel for="showBidAsk" value="Bid/Ask"/>
+				</td>
+				<td class="toolbar">
+					<h:selectBooleanCheckbox id="showMovAvg" value="#{chartPage.showMovAvg}" title="Show Moving Average" onclick="setMovAvgPeriodEnabled()"/>
+					<h:outputLabel for="showMovAvg" value="Mov. Avg."/>
+				</td>
+				<td class="toolbar">
+					<h:selectBooleanCheckbox id="showBollBands" value="#{chartPage.showBollBands}" title="Show Bollinger Bands" onclick="setMovAvgPeriodEnabled()"/>
+					<h:outputLabel for="showBollBands" value="Boll. Bands"/>
+				</td>
+				<td class="toolbar">
+					<h:selectOneMenu id="movAvgPeriod" value="#{chartPage.movAvgPeriod}" title="Moving Average period">
+						<f:selectItems value="#{chartPage.movAvgPeriods}"/>
+					</h:selectOneMenu>
+				</td>
+				<td class="toolbar">
+					<h:commandButton id="showChart" type="submit" value="Show Chart" action="#{chartPage.showChart}" onclick="showChart()" title="Show Chart"/>
+				</td>
+			</tr></table></td>
 		</tr><tr>
 			<td>
-				<h:outputLabel for="currency" value="Currency: "/>
-				<h:selectOneMenu id="currency" value="#{chartPage.currency}" title="Currency">
-					<f:selectItems value="#{chartPage.currencies}" />
-				</h:selectOneMenu>
+				<h:messages showDetail="true" style="color: red;"/>
+				<h:commandButton id="zoomChart" type="submit" value="Zoom Chart" action="#{chartPage.zoomChart}" onclick="showChart()" title="Zoom Chart" style="position: absolute; display: none; z-index: 2000;"/>
+				<h:inputHidden id="dateRange" name="dateRange" value="#{chartPage.dateRange}"/>
+				<h:inputHidden id="zoomx1" name="zoomx1" value="#{chartPage.zoomx1}"/>
+				<h:inputHidden id="zoomx2" name="zoomx2" value="#{chartPage.zoomx2}"/>
 			</td>
+		</tr><tr>
 			<td>
-				<h:outputLabel for="period" value="Period: "/>
-				<h:selectOneMenu id="period" value="#{chartPage.period}" title="Chart period">
-					<f:selectItems value="#{chartPage.periods}"/>
-				</h:selectOneMenu>
+				<c:if test="#{!empty chartPage.chartFileName}">
+					<table id="chartTable" cellspacing="0" cellpadding="0" style="text-align: center">
+						<tr>
+							<td>
+								<img id="chartImage" src="chart?filename=#{chartPage.chartFileName}" width="#{chartPage.chartWidth}" height="#{chartPage.chartHeight}" alt="Currency Chart for #{chartPage.currencyFullName}"/>
+							</td>
+						</tr>
+						<tr>
+							<td><h:outputText value="#{chartPage.currencyFullName}, period: #{chartPage.period.label()}"/></td>
+						</tr>
+						<tr>
+							<td>
+								<h:outputText value="${chartPage.currentRate.date}"><f:convertDateTime timeZone="CET" pattern="dd-MM-yyyy"/></h:outputText> -
+								Bid: <h:outputText value="${chartPage.currentRate.rate.bid}"><f:convertNumber maxFractionDigits="2"/></h:outputText>,
+								Middle: <span style="color: ${chartPage.currentRate.color};font-weight: bold;"><h:outputText value="${chartPage.currentRate.rate.middle}"><f:convertNumber maxFractionDigits="2"/></h:outputText></span>,
+								Ask: <h:outputText value="${chartPage.currentRate.rate.ask}"><f:convertNumber maxFractionDigits="2"/></h:outputText>
+							</td>
+						</tr>
+					</table>
+				</c:if>
+				<table id="loadingTable" cellspacing="0" cellpadding="0" style="text-align: center; display: none;">
+					<tr><td>&#160;</td></tr>
+					<tr><td><img src="../resources/images/loading.gif" width="66" height="66" alt="Loading..."/></td></tr>
+				</table>
 			</td>
-			<td>
-				<h:outputLabel for="quality" value="Quality: "/>
-				<h:selectOneMenu id="quality" value="#{chartPage.quality}" title="Series quality">
-					<f:selectItems value="#{chartPage.qualities}"/>
-				</h:selectOneMenu>
-			</td>
-			<td>
-				<h:selectBooleanCheckbox id="showBidAsk" value="#{chartPage.showBidAsk}" title="Show Bid and Ask"/>
-				<h:outputLabel for="showBidAsk" value="Bid/Ask"/>
-			</td>
-			<td>
-				<h:selectBooleanCheckbox id="showMovAvg" value="#{chartPage.showMovAvg}" title="Show Moving Average" onclick="setMovAvgPeriodEnabled()"/>
-				<h:outputLabel for="showMovAvg" value="Mov. Avg."/>
-			</td>
-			<td>
-				<h:selectBooleanCheckbox id="showBollBands" value="#{chartPage.showBollBands}" title="Show Bollinger Bands" onclick="setMovAvgPeriodEnabled()"/>
-				<h:outputLabel for="showBollBands" value="Boll. Bands"/>
-			</td>
-			<td>
-				<h:selectOneMenu id="movAvgPeriod" value="#{chartPage.movAvgPeriod}" title="Moving Average period">
-					<f:selectItems value="#{chartPage.movAvgPeriods}"/>
-				</h:selectOneMenu>
-			</td>
-			<td>
-				<h:commandButton id="showChart" type="submit" value="Show Chart" action="#{chartPage.showChart}" onclick="showChart()" title="Show Chart"/>
+		</tr><tr>
+			<td>&#160;</td>
+		</tr><tr>
+			<td class="small">
+				<a href="https://github.com/mcekovic/currency-watch/downloads">Download Currency Watch desktop application</a>,&#160;
+				<a href="https://github.com/mcekovic/currency-watch">Currency Watch on GitHub</a>,&#160;
+				<a href="../api/application.wadl">Currency Watch REST API</a>
 			</td>
 		</tr></table>
-		<h:messages showDetail="true" style="color: red;"/>
-		<h:commandButton id="zoomChart" type="submit" value="Zoom Chart" action="#{chartPage.zoomChart}" onclick="showChart()" title="Zoom Chart" style="position: absolute; display: none; z-index: 2000;"/>
-		<h:inputHidden id="dateRange" name="dateRange" value="#{chartPage.dateRange}"/>
-		<h:inputHidden id="zoomx1" name="zoomx1" value="#{chartPage.zoomx1}"/>
-		<h:inputHidden id="zoomx2" name="zoomx2" value="#{chartPage.zoomx2}"/>
-		<c:if test="#{!empty chartPage.chartFileName}">
-			<table id="chartTable" cellspacing="0" cellpadding="0">
-				<tr>
-					<td>
-						<img id="chartImage" src="chart?filename=#{chartPage.chartFileName}" width="#{chartPage.chartWidth}" height="#{chartPage.chartHeight}" alt="Currency Chart for #{chartPage.currencyFullName}"/>
-					</td>
-				</tr>
-				<tr style="text-align: center">
-					<td><h:outputLabel value="#{chartPage.currencyFullName}, period: #{chartPage.period.label()}"/></td>
-				</tr>
-				<tr style="text-align: center">
-					<td>
-						<h:outputText value="${chartPage.currentRate.date}"><f:convertDateTime pattern="dd-MM-yyyy"/></h:outputText> -
-						Bid: <h:outputText value="${chartPage.currentRate.rate.bid}"><f:convertNumber maxFractionDigits="2"/></h:outputText>,
-						Middle: <span style="color: ${chartPage.currentRate.color};font-weight: bold;"><h:outputText value="${chartPage.currentRate.rate.middle}"><f:convertNumber maxFractionDigits="2"/></h:outputText></span>,
-						Ask: <h:outputText value="${chartPage.currentRate.rate.ask}"><f:convertNumber maxFractionDigits="2"/></h:outputText>
-					</td>
-				</tr>
-			</table>
-		</c:if>
-		<div id="loadingDiv" style="display: none; width: #{chartPage.chartWidth}; height: #{chartPage.chartHeight};">
-			<div style="width: 50%; margin: 0 auto;">
-				<h:graphicImage url="../resources/images/loading.gif" width="66" height="66" alt="Loading..."/>
-			</div>
-		</div>
 	</h:form>
-	<br/>
-	<div class="small" style="width: #{chartPage.chartWidth}; height: #{chartPage.chartHeight}; text-align: center;">
-		<a href="https://github.com/mcekovic/currency-watch/downloads">Download Currency Watch desktop application</a>,&#160;
-		<a href="https://github.com/mcekovic/currency-watch">Currency Watch on GitHub</a>,&#160;
-		<a href="../api/application.wadl">Currency Watch REST API</a>
-	</div>
 	</f:view>
 </h:body>
 </html>

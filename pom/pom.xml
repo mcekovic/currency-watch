@@ -24,8 +24,8 @@
 	<properties>
 		<spring.version>3.1.2.RELEASE</spring.version>
 		<jaxrs.version>1.13</jaxrs.version>
-		<maven-surefire-plugin.version>2.12.2</maven-surefire-plugin.version>
-		<maven-failsafe-plugin.version>2.12.2</maven-failsafe-plugin.version>
+		<maven-surefire-plugin.version>2.12.3</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>2.12.3</maven-failsafe-plugin.version>
 		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
 		<jacoco-maven-plugin.version>0.5.9.201207300726</jacoco-maven-plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -162,6 +162,7 @@
 									<version>1.7</version>
 								</requireJavaVersion>
 								<DependencyConvergence />
+								<requirePluginVersions/>
 							</rules>
 						</configuration>
 					</execution>
