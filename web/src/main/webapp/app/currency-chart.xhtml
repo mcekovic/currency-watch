@@ -7,6 +7,11 @@
 	<script src="../resources/js/jquery.min.js"></script>
 	<script src="../resources/js/jquery.Jcrop.min.js"></script>
 	<script type="text/javascript">
+		var IE = {
+			version: function() {
+				return navigator.appVersion.indexOf("MSIE") != -1 ? parseFloat(navigator.appVersion.split("MSIE")[1]) : null;
+			}
+		};
 		function setMovAvgPeriodEnabled() {
 			var showMovAvg = document.getElementById("chartForm-showMovAvg");
 			var showBollBands = document.getElementById("chartForm-showBollBands");
@@ -23,18 +28,27 @@
 			if (chartTable)
 				chartTable.style.display = "none";
 			loadingTable.style.display = "inline";
+			if (IE.version() != null) // Workaround for IE issue with animated GIFs
+				setTimeout('document.getElementById("loadingImage").src = "../resources/images/loading.gif"', 100);
 			return true;
 		}
-		$(function() {
-			$('#chartImage').Jcrop({
-				onSelect: showZoomButton,
-				onRelease: hideZoomButton
+		function doJCrop() {
+			$(function () {
+				$('#chartImage').Jcrop({
+					onSelect:showZoomButton,
+					onChange:moveZoomButton,
+					onRelease:hideZoomButton
+				});
 			});
-		});
+		}
 		function showZoomButton(c) {
-			var chartTable = document.getElementById("chartTable");
 			var zoomChart = document.getElementById("chartForm-zoomChart");
 			zoomChart.style.display = "block";
+			moveZoomButton(c);
+		}
+		function moveZoomButton(c) {
+			var chartTable = document.getElementById("chartTable");
+			var zoomChart = document.getElementById("chartForm-zoomChart");
 			zoomChart.style.left = findLeft(chartTable) + c.x + (c.w - zoomChart.offsetWidth)/2;
 			zoomChart.style.top = findTop(chartTable) + c.y + (c.h - zoomChart.offsetHeight)/2;
 			document.getElementById("chartForm-zoomx1").value = c.x;
@@ -71,6 +85,11 @@
 				top += obj.y;
 			return top;
 		}
+
+		if (IE.version() != 9)
+			doJCrop();
+		else
+			setTimeout("doJCrop()", 100); // Workaround for IE9 issue with JCrop
 	</script>
 	<h:outputStylesheet name="currency-watch.css" library="css"/>
 	<link rel="stylesheet" type="text/css" href="../resources/css/jquery.Jcrop.min.css"/>
@@ -153,7 +172,9 @@
 				</c:if>
 				<table id="loadingTable" cellspacing="0" cellpadding="0" style="text-align: center; display: none;">
 					<tr><td>&#160;</td></tr>
-					<tr><td><img src="../resources/images/loading.gif" width="66" height="66" alt="Loading..."/></td></tr>
+					<tr><td><img id="loadingImage" src="../resources/images/loading.gif" width="66" height="66" alt="Loading..."/></td></tr>
+					<tr><td>&#160;</td></tr>
+					<tr><td class="loading">Loading...</td></tr>
 				</table>
 			</td>
 		</tr><tr>
