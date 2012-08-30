@@ -26,7 +26,7 @@
 
 	<logger name="org.strangeforest.currencywatch.web.provider" level="TRACE"/>
 
-	<root level="WARN">
+	<root level="INFO">
 		<appender-ref ref="STDOUT"/>
 		<appender-ref ref="FILE"/>
 	</root>

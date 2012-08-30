@@ -158,7 +158,15 @@
 							</td>
 						</tr>
 						<tr>
-							<td><h:outputText value="#{chartPage.currencyFullName}, period: #{chartPage.period.label()}"/></td>
+							<td>
+								<h:outputText value="${chartPage.currencyFullName}, period: ${!chartPage.zoomed ? chartPage.period.label() : ''}"/>
+								[<h:outputText value="${chartPage.dateFrom}">
+									<f:convertDateTime timeZone="CET" pattern="dd-MM-yyyy"/>
+								</h:outputText>,
+								<h:outputText value="${chartPage.dateTo}">
+									<f:convertDateTime timeZone="CET" pattern="dd-MM-yyyy"/>
+								</h:outputText>]
+							</td>
 						</tr>
 						<tr>
 							<td>

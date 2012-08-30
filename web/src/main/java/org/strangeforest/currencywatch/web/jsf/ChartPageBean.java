@@ -41,6 +41,7 @@ public class ChartPageBean {
 
 	private CurrentRate currentRate;
 	private String chartFileName;
+	private boolean zoomed;
 
 	private static final String PAGE_TITLE = "Currency Chart";
 	private static final int CHART_WIDTH  = 1000;
@@ -131,6 +132,14 @@ public class ChartPageBean {
 		this.dateRange = dateRange.length() >= 17 ? new DateRange(DATE_FORMAT.parse(dateRange.substring(0, 8)), DATE_FORMAT.parse(dateRange.substring(9, 17))) : null;
 	}
 
+	public Date getDateFrom() {
+		return dateRange != null ? dateRange.getFrom() : null;
+	}
+
+	public Date getDateTo() {
+		return dateRange != null ? dateRange.getTo() : null;
+	}
+
 	public double getZoomx1() {
 		return zoomx1;
 	}
@@ -161,6 +170,10 @@ public class ChartPageBean {
 
 	public int getChartHeight() {
 		return CHART_HEIGHT;
+	}
+
+	public boolean isZoomed() {
+		return zoomed;
 	}
 
 	public List<SelectItem> getCurrencies() {
@@ -207,8 +220,10 @@ public class ChartPageBean {
 		int size = dateRange.size()-1;
 		Date fromDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x1Pct)*DateUtil.MILLISECONDS_PER_DAY);
 		Date toDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x2Pct)*DateUtil.MILLISECONDS_PER_DAY);
-		if (fromDate.before(toDate))
+		if (fromDate.before(toDate)) {
 			dateRange = new DateRange(fromDate, toDate);
+			zoomed = true;
+		}
 		return doShowChart(dateRange, true);
 	}
 
