@@ -30,7 +30,7 @@
 		<property name="propertyCycle" value="60"/>
 		<property name="maxStatements" value="10"/>
 		<property name="logger">
-			<bean class="org.strangeforest.currencywatch.jdbc.SLF4JConnectionPoolLogger" c:loggerName="org.strangeforest.currencywatch.jdbc"/>
+			<bean class="com.finsoft.db.logging.DBConnectionPoolLogger" c:loggerName="org.strangeforest.currencywatch.jdbc"/>
 		</property>
 		<property name="collectStatementStatistics" value="true"/>
 	</bean>
