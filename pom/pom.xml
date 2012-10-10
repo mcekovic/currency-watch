@@ -27,7 +27,7 @@
 		<maven-surefire-plugin.version>2.12.4</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.12.4</maven-failsafe-plugin.version>
 		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
-		<jacoco-maven-plugin.version>0.5.10.201208310627</jacoco-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.6.0.201210061924</jacoco-maven-plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
@@ -182,7 +182,7 @@
 			<dependency>
 				<groupId>com.finsoft</groupId>
 				<artifactId>fin-db</artifactId>
-				<version>1.0.16</version>
+				<version>1.0.17</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
