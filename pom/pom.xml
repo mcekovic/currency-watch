@@ -179,12 +179,12 @@
 			<dependency>
 				<groupId>com.finsoft</groupId>
 				<artifactId>fin-util</artifactId>
-				<version>1.0.29</version>
+				<version>1.0.30</version>
 			</dependency>
 			<dependency>
 				<groupId>com.finsoft</groupId>
 				<artifactId>fin-db</artifactId>
-				<version>1.0.21</version>
+				<version>1.0.22</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
