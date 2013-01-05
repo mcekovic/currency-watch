@@ -30,7 +30,7 @@ public class CurrencyChart {
 	private static final Color BID_COLOR = new Color(255, 128, 128);
 	private static final Color ASK_COLOR = new Color(255, 128, 128);
 	private static final Color MOV_AVG_COLOR = new Color(0, 0, 255);
-	private static final Color BOLL_BANDS_COLOR = new Color(192, 224, 255, 64);
+	private static final Color BOLL_BANDS_COLOR = new Color(160, 208, 255, 64);
 	private static final Color BOLL_BANDS_2_COLOR = new Color(255, 255, 255, 255);
 
 	private static final BasicStroke BID_ASK_STROKE = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{4.0f, 4.0f}, 0.0f);
