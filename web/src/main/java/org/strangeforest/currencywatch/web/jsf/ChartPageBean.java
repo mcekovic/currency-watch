@@ -209,6 +209,11 @@ public class ChartPageBean {
 		});
 	}
 
+	public void ensureChart() throws IOException {
+		if (chartFileName == null)
+			showChart();
+	}
+
 	public String showChart() throws IOException {
 		DateRange dateRange = UIUtil.toDateRange(period.days());
 		return doShowChart(dateRange, false);

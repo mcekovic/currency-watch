@@ -96,6 +96,9 @@
 </h:head>
 <h:body onload="setMovAvgPeriodEnabled()">
 	<f:view contentType="text/html">
+		<f:metadata>
+			<f:event type="preRenderComponent" listener="#{chartPage.ensureChart}"/>
+		</f:metadata>
 	<h:form id="chartForm">
 		<table style="text-align: center"><tr>
 			<td><h1 style="width: #{chartPage.chartWidth}">Currency Watch</h1></td>
@@ -150,34 +153,32 @@
 			</td>
 		</tr><tr>
 			<td>
-				<c:if test="#{!empty chartPage.chartFileName}">
-					<table id="chartTable" cellspacing="0" cellpadding="0" style="text-align: center">
-						<tr>
-							<td>
-								<img id="chartImage" src="chart?filename=#{chartPage.chartFileName}" width="#{chartPage.chartWidth}" height="#{chartPage.chartHeight}" alt="Currency Chart for #{chartPage.currencyFullName}"/>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<h:outputText value="${chartPage.currencyFullName}, period: ${!chartPage.zoomed ? chartPage.period.label() : ''}"/>
-								[<h:outputText value="${chartPage.dateFrom}">
-									<f:convertDateTime timeZone="CET" pattern="dd-MM-yyyy"/>
-								</h:outputText>,
-								<h:outputText value="${chartPage.dateTo}">
-									<f:convertDateTime timeZone="CET" pattern="dd-MM-yyyy"/>
-								</h:outputText>]
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<h:outputText value="${chartPage.currentRate.date}"><f:convertDateTime timeZone="CET" pattern="dd-MM-yyyy"/></h:outputText> -
-								Bid: <h:outputText value="${chartPage.currentRate.rate.bid}"><f:convertNumber maxFractionDigits="2"/></h:outputText>,
-								Middle: <span style="color: ${chartPage.currentRate.color};font-weight: bold;"><h:outputText value="${chartPage.currentRate.rate.middle}"><f:convertNumber maxFractionDigits="2"/></h:outputText></span>,
-								Ask: <h:outputText value="${chartPage.currentRate.rate.ask}"><f:convertNumber maxFractionDigits="2"/></h:outputText>
-							</td>
-						</tr>
-					</table>
-				</c:if>
+				<table id="chartTable" cellspacing="0" cellpadding="0" style="text-align: center">
+					<tr>
+						<td>
+							<img id="chartImage" src="chart?filename=#{chartPage.chartFileName}" width="#{chartPage.chartWidth}" height="#{chartPage.chartHeight}" alt="Currency Chart for #{chartPage.currencyFullName}"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<h:outputText value="${chartPage.currencyFullName}, period: ${!chartPage.zoomed ? chartPage.period.label() : ''}"/>
+							[<h:outputText value="${chartPage.dateFrom}">
+								<f:convertDateTime timeZone="CET" pattern="dd-MM-yyyy"/>
+							</h:outputText>,
+							<h:outputText value="${chartPage.dateTo}">
+								<f:convertDateTime timeZone="CET" pattern="dd-MM-yyyy"/>
+							</h:outputText>]
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<h:outputText value="${chartPage.currentRate.date}"><f:convertDateTime timeZone="CET" pattern="dd-MM-yyyy"/></h:outputText> -
+							Bid: <h:outputText value="${chartPage.currentRate.rate.bid}"><f:convertNumber maxFractionDigits="2"/></h:outputText>,
+							Middle: <span style="color: ${chartPage.currentRate.color};font-weight: bold;"><h:outputText value="${chartPage.currentRate.rate.middle}"><f:convertNumber maxFractionDigits="2"/></h:outputText></span>,
+							Ask: <h:outputText value="${chartPage.currentRate.rate.ask}"><f:convertNumber maxFractionDigits="2"/></h:outputText>
+						</td>
+					</tr>
+				</table>
 				<table id="loadingTable" cellspacing="0" cellpadding="0" style="text-align: center; display: none;">
 					<tr><td>&#160;</td></tr>
 					<tr><td><img id="loadingImage" src="../resources/images/loading.gif" width="66" height="66" alt="Loading..."/></td></tr>
