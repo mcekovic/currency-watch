@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
-		<groupId>org.strangeforest</groupId>
+		<groupId>org.strangeforest.currencywatch</groupId>
 		<artifactId>currency-watch-parent-pom</artifactId>
 		<version>1.3.0-SNAPSHOT</version>
 		<relativePath>../pom</relativePath>
@@ -11,6 +11,11 @@
 	<artifactId>currency-watch-app</artifactId>
 	<packaging>jar</packaging>
 	<name>Currency Watch Application</name>
+
+	<scm>
+		<developerConnection>${base.scm.url}/app</developerConnection>
+		<url>${base.browse.url}/app</url>
+	</scm>
 
 	<build>
 
@@ -118,7 +123,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.strangeforest</groupId>
+			<groupId>org.strangeforest.currencywatch</groupId>
 			<artifactId>currency-watch-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
