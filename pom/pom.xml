@@ -26,7 +26,7 @@
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
 		<slf4j.version>1.7.2</slf4j.version>
 		<spring.version>3.2.0.RELEASE</spring.version>
-		<jaxrs.version>1.16</jaxrs.version>
+		<jaxrs.version>1.17</jaxrs.version>
 		<jsf-ri.version>2.1.16</jsf-ri.version>
 		<maven-surefire-plugin.version>2.13</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.13</maven-failsafe-plugin.version>
@@ -217,7 +217,7 @@
 			<dependency>
 				<groupId>com.db4o</groupId>
 				<artifactId>db4o-core</artifactId>
-				<version>8.0.184</version>
+				<version>8.0.249</version>
 			</dependency>
 			<dependency>
 				<groupId>com.h2database</groupId>
