@@ -25,7 +25,7 @@
 		<base.scm.url>scm:git:${base.browse.url}.git</base.scm.url>
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
 		<slf4j.version>1.7.2</slf4j.version>
-		<spring.version>3.2.0.RELEASE</spring.version>
+		<spring.version>3.2.1.RELEASE</spring.version>
 		<jaxrs.version>1.17</jaxrs.version>
 		<jsf-ri.version>2.1.16</jsf-ri.version>
 		<maven-surefire-plugin.version>2.13</maven-surefire-plugin.version>
@@ -181,12 +181,12 @@
 			<dependency>
 				<groupId>com.finsoft</groupId>
 				<artifactId>fin-util</artifactId>
-				<version>1.0.30</version>
+				<version>1.0.31</version>
 			</dependency>
 			<dependency>
 				<groupId>com.finsoft</groupId>
 				<artifactId>fin-db</artifactId>
-				<version>1.0.22</version>
+				<version>1.1.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
