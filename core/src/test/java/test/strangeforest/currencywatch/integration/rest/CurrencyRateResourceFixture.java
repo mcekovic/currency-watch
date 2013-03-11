@@ -18,7 +18,7 @@ public class CurrencyRateResourceFixture {
 
 	private HttpServer httpServer;
 
-	private static final int PORT = 8080;
+	private static final int PORT = 8888;
 	private static final String PATH = "/api";
 	public static final java.net.URI URI = java.net.URI.create("http://localhost:" + PORT + PATH);
 
