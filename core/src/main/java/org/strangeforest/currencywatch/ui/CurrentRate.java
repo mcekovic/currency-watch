@@ -4,7 +4,7 @@ import java.util.*;
 
 import org.strangeforest.currencywatch.core.*;
 
-public class CurrentRate {
+public final class CurrentRate {
 
 	private final Date date;
 	private final RateValue rate;
