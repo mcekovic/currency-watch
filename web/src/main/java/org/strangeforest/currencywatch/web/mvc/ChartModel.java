@@ -26,7 +26,6 @@ public class ChartModel {
 	private Integer movAvgPeriod = UIUtil.DEFAULT_MOV_AVG_PERIOD;
 	private DateRange dateRange;
 	private double zoomx1, zoomx2;
-	private String command;
 
 	private CurrentRate currentRate;
 	private String chartFileName;
@@ -131,14 +130,6 @@ public class ChartModel {
 
 	public void setZoomx2(double zoomx2) {
 		this.zoomx2 = zoomx2;
-	}
-
-	public String getCommand() {
-		return command;
-	}
-
-	public void setCommand(String command) {
-		this.command = command;
 	}
 
 	public CurrentRate getCurrentRate() {

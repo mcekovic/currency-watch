@@ -98,8 +98,8 @@
 	<link rel="stylesheet" type="text/css" href="../resources/css/jquery.Jcrop.min.css"/>
 </head>
 <body onload="setMovAvgPeriodEnabled()">
-	<f:form id="chartForm" method="GET" action="currency-chart">
-		<f:hidden id="command" path="command"/>
+	<f:form id="chartForm" method="GET" action="currency-chart" commandName="chart">
+		<input type="hidden" id="command" name="command"/>
 		<table style="text-align: center"><tr>
 			<td><h1 style="width: ${chart.chartWidth}">Currency Watch</h1></td>
 		</tr><tr>
@@ -137,6 +137,7 @@
 			</tr></table></td>
 		</tr><tr>
 			<td>
+				<f:errors style="color: red;"/>
 				<input id="zoomChart" type="submit" value="Zoom Chart" onclick="showChart('zoomChart')" title="Zoom Chart" style="position: absolute; display: none; z-index: 2000;"/>
 				<f:hidden id="dateRange" path="dateRange"/>
 				<f:hidden id="zoomx1" path="zoomx1"/>
