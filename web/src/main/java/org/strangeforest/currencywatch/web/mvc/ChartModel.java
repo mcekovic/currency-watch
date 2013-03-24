@@ -1,13 +1,5 @@
-package org.strangeforest.currencywatch.web.jsf;
+package org.strangeforest.currencywatch.web.mvc;
 
-import java.awt.*;
-import java.io.*;
-import java.text.*;
-import java.util.*;
-import java.util.List;
-import javax.faces.bean.*;
-import javax.faces.context.*;
-import javax.faces.model.*;
 import javax.servlet.http.*;
 
 import org.jfree.chart.*;
@@ -18,16 +10,12 @@ import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
 
 import com.finsoft.util.*;
+import java.awt.*;
+import java.io.*;
+import java.text.*;
+import java.util.*;
 
-import static com.finsoft.util.Algorithms.*;
-import static java.util.Arrays.*;
-
-@ManagedBean(name = "chartPage")
-@RequestScoped
-public class ChartPageBean {
-
-	@ManagedProperty("#{currencyRateProvider}")
-	private CurrencyRateProvider currencyProvider;
+public class ChartModel {
 
 	private CurrencySymbol currency = UIUtil.DEFAULT_CURRENCY;
 	private Period period = UIUtil.DEFAULT_PERIOD;
@@ -38,6 +26,7 @@ public class ChartPageBean {
 	private Integer movAvgPeriod = UIUtil.DEFAULT_MOV_AVG_PERIOD;
 	private DateRange dateRange;
 	private double zoomx1, zoomx2;
+	private String command;
 
 	private CurrentRate currentRate;
 	private String chartFileName;
@@ -50,15 +39,7 @@ public class ChartPageBean {
 	private static final int OFFSET_X2 =  8;
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("ddMMyyyy");
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ChartPageBean.class);
-
-	public CurrencyRateProvider getCurrencyProvider() {
-		return currencyProvider;
-	}
-
-	public void setCurrencyProvider(CurrencyRateProvider currencyProvider) {
-		this.currencyProvider = currencyProvider;
-	}
+	private static final Logger LOGGER = LoggerFactory.getLogger(ChartModel.class);
 
 	public CurrencySymbol getCurrency() {
 		return currency;
@@ -117,7 +98,7 @@ public class ChartPageBean {
 	}
 
 	public void setMovAvgPeriod(Integer movAvgPeriod) {
-		this.movAvgPeriod = movAvgPeriod != null ? movAvgPeriod : UIUtil.DEFAULT_MOV_AVG_PERIOD;
+		this.movAvgPeriod = movAvgPeriod;
 	}
 
 	public String getDateRange() {
@@ -152,6 +133,14 @@ public class ChartPageBean {
 		this.zoomx2 = zoomx2;
 	}
 
+	public String getCommand() {
+		return command;
+	}
+
+	public void setCommand(String command) {
+		this.command = command;
+	}
+
 	public CurrentRate getCurrentRate() {
 		return currentRate;
 	}
@@ -176,64 +165,42 @@ public class ChartPageBean {
 		return zoomed;
 	}
 
-	public List<SelectItem> getCurrencies() {
-		return transform(asList(CurrencySymbol.values()), new Transformer<CurrencySymbol, SelectItem>() {
-			@Override public SelectItem transform(CurrencySymbol currency) {
-				String symbol = currency.toString();
-				return new SelectItem(symbol, symbol, currency.description());
-			}
-		});
+
+	public CurrencySymbol[] getCurrencies() {
+		return CurrencySymbol.values();
 	}
 
-	public List<SelectItem> getPeriods() {
-		return transform(asList(Period.values()), new Transformer<Period, SelectItem>() {
-			@Override public SelectItem transform(Period period) {
-				return new SelectItem(period, period.label());
-			}
-		});
+	public Period[] getPeriods() {
+		return Period.values();
 	}
 
-	public List<SelectItem> getQualities() {
-		return transform(asList(SeriesQuality.values()), new Transformer<SeriesQuality, SelectItem>() {
-			@Override public SelectItem transform(SeriesQuality quality) {
-				return new SelectItem(quality, quality.label());
-			}
-		});
+	public SeriesQuality[] getQualities() {
+		return SeriesQuality.values();
 	}
 
-	public List<SelectItem> getMovAvgPeriods() {
-		return transform(asList(UIUtil.MOV_AVG_PERIODS), new Transformer<Integer, SelectItem>() {
-			@Override public SelectItem transform(Integer movAvgPeriod) {
-				return new SelectItem(movAvgPeriod, String.valueOf(movAvgPeriod));
-			}
-		});
+	public Integer[] getMovAvgPeriods() {
+		return UIUtil.MOV_AVG_PERIODS;
 	}
 
-	public void ensureChart() throws IOException {
-		if (chartFileName == null)
-			showChart();
-	}
-
-	public String showChart() throws IOException {
+	public void showChart(CurrencyRateProvider currencyProvider, HttpSession session) throws IOException {
 		DateRange dateRange = UIUtil.toDateRange(period.days());
-		return doShowChart(dateRange, false);
+		doShowChart(currencyProvider, dateRange, false, session);
 	}
 
-	public String zoomChart() throws IOException {
+	public void zoomChart(CurrencyRateProvider currencyProvider, HttpSession session) throws IOException {
 		double x1Pct = Math.max(0.0, (zoomx1-OFFSET_X1)/(CHART_WIDTH-OFFSET_X1-OFFSET_X2));
 		double x2Pct = Math.min(1.0, (zoomx2-OFFSET_X1)/(CHART_WIDTH-OFFSET_X1-OFFSET_X2));
 		int size = dateRange.size()-1;
-		Date fromDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x1Pct)*DateUtil.MILLISECONDS_PER_DAY);
+		Date fromDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x1Pct)* DateUtil.MILLISECONDS_PER_DAY);
 		Date toDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x2Pct)*DateUtil.MILLISECONDS_PER_DAY);
 		if (fromDate.before(toDate)) {
 			dateRange = new DateRange(fromDate, toDate);
 			zoomed = true;
 		}
-		return doShowChart(dateRange, true);
+		doShowChart(currencyProvider, dateRange, true, session);
 	}
 
-	private String doShowChart(DateRange dateRange, boolean autoRangeRangeAxis) throws IOException {
-		HttpSession session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+	private void doShowChart(CurrencyRateProvider currencyProvider, DateRange dateRange, boolean autoRangeRangeAxis, HttpSession session) throws IOException {
 		CurrencyChart chart = new CurrencyChart();
 		chart.createSeries(currency, showBidAsk, showMovAvg, showBollBands);
 
@@ -261,7 +228,5 @@ public class ChartPageBean {
 		JFreeChart jFreeChart = chart.getChart();
 		jFreeChart.setBackgroundPaint(Color.WHITE);
 		chartFileName = ServletUtilities.saveChartAsPNG(jFreeChart, CHART_WIDTH, CHART_HEIGHT, session);
-
-		return "app/currency-chart.xhtml";
 	}
 }
