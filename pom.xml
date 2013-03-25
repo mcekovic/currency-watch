@@ -63,6 +63,7 @@
 											<fileset dir="${project.basedir}">
 												<include name="core/target/*.exec" />
 												<include name="app/target/*.exec" />
+												<include name="web/target/*.exec" />
 												<exclude name="**/jacoco-all.exec" />
 											</fileset>
 										</jacoco:merge>
@@ -78,6 +79,18 @@
 								<configuration>
 									<target>
 										<copy file="${project.basedir}/app/target/jacoco.exec" tofile="${project.basedir}/app/target/jacoco-all.exec" />
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>merge-web-jacoco-coverage</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<copy file="${project.basedir}/web/target/jacoco-it.exec" tofile="${project.basedir}/web/target/jacoco-all.exec" />
 									</target>
 								</configuration>
 							</execution>
