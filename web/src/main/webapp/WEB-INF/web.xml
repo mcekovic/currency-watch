@@ -30,6 +30,10 @@
 		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>SpringMVC</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>DisplayChart</servlet-name>
 		<servlet-class>org.jfree.chart.servlet.DisplayChart</servlet-class>
 	</servlet>
@@ -52,8 +56,12 @@
 		<url-pattern>*.jsf</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
+		<servlet-name>SpringMVC</servlet-name>
+		<url-pattern>/mvc/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>DisplayChart</servlet-name>
-		<url-pattern>/app/chart</url-pattern>
+		<url-pattern>/chart</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>H2Console</servlet-name>

@@ -1,7 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:c="http://java.sun.com/jsp/jstl/core">
+      xmlns:f="http://java.sun.com/jsf/core">
 <h:head>
 	<title>${chartPage.title}</title>
 	<script src="../resources/js/jquery.min.js"></script>
@@ -156,7 +155,7 @@
 				<table id="chartTable" cellspacing="0" cellpadding="0" style="text-align: center">
 					<tr>
 						<td>
-							<img id="chartImage" src="chart?filename=#{chartPage.chartFileName}" width="#{chartPage.chartWidth}" height="#{chartPage.chartHeight}" alt="Currency Chart for #{chartPage.currencyFullName}"/>
+							<img id="chartImage" src="../chart?filename=#{chartPage.chartFileName}" width="#{chartPage.chartWidth}" height="#{chartPage.chartHeight}" alt="Currency Chart for #{chartPage.currencyFullName}"/>
 						</td>
 					</tr>
 					<tr>
