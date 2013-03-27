@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>org.strangeforest.currencywatch</groupId>
@@ -16,8 +16,7 @@
 		<connection>${base.scm.url}/app</connection>
 		<developerConnection>${base.scm.url}/app</developerConnection>
 		<url>${base.browse.url}/app</url>
-	  <tag>HEAD</tag>
-  </scm>
+   </scm>
 
 	<build>
 
