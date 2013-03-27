@@ -17,6 +17,9 @@ import java.util.*;
 
 public class ChartModel {
 
+	private CurrencyRateProvider currencyProvider;
+	private HttpSession session;
+
 	private CurrencySymbol currency = UIUtil.DEFAULT_CURRENCY;
 	private Period period = UIUtil.DEFAULT_PERIOD;
 	private SeriesQuality quality = UIUtil.DEFAULT_QUALITY;
@@ -39,6 +42,14 @@ public class ChartModel {
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("ddMMyyyy");
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartModel.class);
+
+	public void setCurrencyProvider(CurrencyRateProvider currencyProvider) {
+		this.currencyProvider = currencyProvider;
+	}
+
+	public void setSession(HttpSession session) {
+		this.session = session;
+	}
 
 	public CurrencySymbol getCurrency() {
 		return currency;
@@ -173,25 +184,25 @@ public class ChartModel {
 		return UIUtil.MOV_AVG_PERIODS;
 	}
 
-	public void showChart(CurrencyRateProvider currencyProvider, HttpSession session) throws IOException {
+	public void showChart() throws IOException {
 		DateRange dateRange = UIUtil.toDateRange(period.days());
-		doShowChart(currencyProvider, dateRange, false, session);
+		doShowChart(dateRange, false);
 	}
 
-	public void zoomChart(CurrencyRateProvider currencyProvider, HttpSession session) throws IOException {
+	public void zoomChart() throws IOException {
 		double x1Pct = Math.max(0.0, (zoomx1-OFFSET_X1)/(CHART_WIDTH-OFFSET_X1-OFFSET_X2));
 		double x2Pct = Math.min(1.0, (zoomx2-OFFSET_X1)/(CHART_WIDTH-OFFSET_X1-OFFSET_X2));
 		int size = dateRange.size()-1;
-		Date fromDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x1Pct)* DateUtil.MILLISECONDS_PER_DAY);
+		Date fromDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x1Pct)*DateUtil.MILLISECONDS_PER_DAY);
 		Date toDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x2Pct)*DateUtil.MILLISECONDS_PER_DAY);
 		if (fromDate.before(toDate)) {
 			dateRange = new DateRange(fromDate, toDate);
 			zoomed = true;
 		}
-		doShowChart(currencyProvider, dateRange, true, session);
+		doShowChart(dateRange, true);
 	}
 
-	private void doShowChart(CurrencyRateProvider currencyProvider, DateRange dateRange, boolean autoRangeRangeAxis, HttpSession session) throws IOException {
+	private void doShowChart(DateRange dateRange, boolean autoRangeRangeAxis) throws IOException {
 		CurrencyChart chart = new CurrencyChart();
 		chart.createSeries(currency, showBidAsk, showMovAvg, showBollBands);
 

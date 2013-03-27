@@ -5,7 +5,7 @@
 	<groupId>org.strangeforest.currencywatch</groupId>
 	<artifactId>currency-watch-parent-pom</artifactId>
 	<packaging>pom</packaging>
-	<version>1.3.0-SNAPSHOT</version>
+	<version>1.3.1-SNAPSHOT</version>
 	<name>Currency Watch Parent POM</name>
 	<url>${base.browse.url}</url>
 	<organization>
@@ -134,6 +134,14 @@
 					<version>3.2</version>
 				</plugin>
 				<plugin>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>2.2.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.9</version>
+				</plugin>
+				<plugin>
 					<artifactId>maven-antrun-plugin</artifactId>
 					<version>${maven-antrun-plugin.version}</version>
 				</plugin>
@@ -168,7 +176,7 @@
 									<version>1.7</version>
 								</requireJavaVersion>
 								<DependencyConvergence />
-								<requirePluginVersions/>
+								<requirePluginVersions />
 							</rules>
 						</configuration>
 					</execution>
