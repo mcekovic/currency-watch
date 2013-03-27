@@ -2,4 +2,5 @@ target
 /.idea
 *.iml
 data
+logs
 /app/bin
