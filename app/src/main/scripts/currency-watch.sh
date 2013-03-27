@@ -1,2 +1,2 @@
 #!/bin/sh
-javaw -jar lib/currency-watch-app-${project.version}.jar $@
+java -jar lib/currency-watch-app-${project.version}.jar $@ &
