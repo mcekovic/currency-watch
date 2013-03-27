@@ -24,7 +24,7 @@
 	<properties>
 		<base.scm.url>scm:git:${base.browse.url}.git</base.scm.url>
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
-		<slf4j.version>1.7.4</slf4j.version>
+		<slf4j.version>1.7.5</slf4j.version>
 		<spring.version>3.2.2.RELEASE</spring.version>
 		<jaxrs.version>1.17.1</jaxrs.version>
 		<jsf-ri.version>2.1.19</jsf-ri.version>
@@ -122,7 +122,7 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>2.4</version>
+					<version>2.4.1</version>
 					<configuration>
 						<tagBase>${base.browse.url}.git/releases</tagBase>
 					</configuration>
@@ -201,7 +201,7 @@
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
-				<version>1.0.10</version>
+				<version>1.0.11</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
