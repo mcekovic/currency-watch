@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.strangeforest.currencywatch</groupId>
 		<artifactId>currency-watch-parent-pom</artifactId>
-		<version>1.3.1</version>
+		<version>1.3.2-SNAPSHOT</version>
 		<relativePath>pom</relativePath>
 	</parent>
 
@@ -17,7 +17,7 @@
 		<connection>${base.scm.url}</connection>
 		<developerConnection>${base.scm.url}</developerConnection>
 		<url>${base.browse.url}</url>
-	  <tag>currency-watch-1.3.1</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<modules>
