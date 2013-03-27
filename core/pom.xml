@@ -13,6 +13,7 @@
 	<name>Currency Watch Core</name>
 
 	<scm>
+		<connection>${base.scm.url}/core</connection>
 		<developerConnection>${base.scm.url}/core</developerConnection>
 		<url>${base.browse.url}/core</url>
 	</scm>

@@ -15,6 +15,7 @@
 	<url>${base.browse.url}</url>
 
 	<scm>
+		<connection>${base.scm.url}</connection>
 		<developerConnection>${base.scm.url}</developerConnection>
 		<url>${base.browse.url}</url>
 	</scm>
