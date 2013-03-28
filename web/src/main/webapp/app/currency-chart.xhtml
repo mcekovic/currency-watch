@@ -89,6 +89,10 @@
 			doJCrop();
 		else
 			setTimeout("doJCrop()", 100); // Workaround for IE9 issue with JCrop
+
+		window.onbeforeunload = function() {
+			window.name = "reloader";
+		}
 	</script>
 	<h:outputStylesheet name="currency-watch.css" library="css"/>
 	<link rel="stylesheet" type="text/css" href="../resources/css/jquery.Jcrop.min.css"/>

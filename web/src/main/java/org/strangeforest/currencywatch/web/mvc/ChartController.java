@@ -18,10 +18,12 @@ public class ChartController {
 
 	@RequestMapping("/currency-chart")
 	public ModelAndView chart(@ModelAttribute("chart") ChartModel chart, @RequestParam(required = false) String command, HttpSession session) throws IOException {
+		chart.setCurrencyProvider(currencyProvider);
+		chart.setSession(session);
 		if ("zoomChart".equals(command))
-			chart.zoomChart(currencyProvider, session);
+			chart.zoomChart();
 		else
-			chart.showChart(currencyProvider, session);
+			chart.showChart();
 		return new ModelAndView("currency-chart", "chart", chart);
 	}
 }
