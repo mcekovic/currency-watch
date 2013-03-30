@@ -17,13 +17,6 @@
 			<outputDirectory>/</outputDirectory>
 			<filtered>true</filtered>
 		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}</directory>
-			<outputDirectory>/data</outputDirectory>
-			<excludes>
-				<exclude>**/*</exclude>
-			</excludes>
-		</fileSet>
 	</fileSets>
 	<dependencySets>
 		<dependencySet>

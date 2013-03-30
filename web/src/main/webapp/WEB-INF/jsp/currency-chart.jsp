@@ -2,8 +2,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="f" uri="http://www.springframework.org/tags/form" %>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+	<link rel="shortcut icon" type="image/x-icon" href="../resources/images/favicon.ico"/>
 	<title>${chart.title}</title>
 	<script src="../resources/js/jquery.min.js"></script>
 	<script src="../resources/js/jquery.Jcrop.min.js"></script>
