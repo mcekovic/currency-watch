@@ -12,26 +12,23 @@ import static java.math.BigDecimal.*;
 //TODO: Use https://webservices.nbs.rs/CommunicationOfficeService1_0/ExchangeRateXmlService.asmx?WSDL
 public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider {
 
+	private Format format = FORMAT;
+
 	private volatile String sessionId;
 	private volatile String viewId;
 
 	private static final String NBS_URL = "http://www.nbs.rs/kursnaListaModul/naZeljeniDan.faces";
 	private static final Format FORMAT = Format.CSV;
-	private Format format = FORMAT;
-
-	public Format getFormat() {
-		return format;
-	}
-
-	public void setFormat(Format format) {
-		this.format = format;
-	}
 
 	public NBSCurrencyRateProvider() {}
 
 	public NBSCurrencyRateProvider(CurrencyRateListener listener) {
 		super();
 		addListener(listener);
+	}
+
+	public void setFormat(Format format) {
+		this.format = format;
 	}
 
 	@Override public void init() {
