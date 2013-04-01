@@ -16,7 +16,6 @@
 		<connection>${base.scm.url}/web</connection>
 		<developerConnection>${base.scm.url}/web</developerConnection>
 		<url>${base.browse.url}/web</url>
-     <tag>HEAD</tag>
   </scm>
 
 	<build>
