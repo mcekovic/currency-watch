@@ -40,7 +40,7 @@
 		<connection>${base.scm.url}/pom</connection>
 		<developerConnection>${base.scm.url}/pom</developerConnection>
 		<url>${base.browse.url}/pom</url>
-  </scm>
+	</scm>
 
 	<build>
 

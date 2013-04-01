@@ -17,7 +17,7 @@
 		<connection>${base.scm.url}</connection>
 		<developerConnection>${base.scm.url}</developerConnection>
 		<url>${base.browse.url}</url>
-  </scm>
+	</scm>
 
 	<modules>
 		<module>pom</module>
