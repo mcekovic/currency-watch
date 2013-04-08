@@ -27,7 +27,7 @@
 		<slf4j.version>1.7.5</slf4j.version>
 		<spring.version>3.2.2.RELEASE</spring.version>
 		<jaxrs.version>1.17.1</jaxrs.version>
-		<jsf-ri.version>2.1.19</jsf-ri.version>
+		<jsf-ri.version>2.1.20</jsf-ri.version>
 		<maven-surefire-plugin.version>2.14</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.14</maven-failsafe-plugin.version>
 		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
@@ -56,7 +56,7 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.0</version>
+					<version>3.1</version>
 					<configuration>
 						<source>1.7</source>
 						<target>1.7</target>
@@ -369,7 +369,7 @@
 			<dependency>
 				<groupId>org.testng</groupId>
 				<artifactId>testng</artifactId>
-				<version>6.8</version>
+				<version>6.8.1</version>
 				<scope>test</scope>
 				<exclusions>
 					<exclusion>
