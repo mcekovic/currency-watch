@@ -28,8 +28,8 @@
 		<spring.version>3.2.2.RELEASE</spring.version>
 		<jaxrs.version>1.17.1</jaxrs.version>
 		<jsf-ri.version>2.1.20</jsf-ri.version>
-		<maven-surefire-plugin.version>2.14</maven-surefire-plugin.version>
-		<maven-failsafe-plugin.version>2.14</maven-failsafe-plugin.version>
+		<maven-surefire-plugin.version>2.14.1</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>2.14.1</maven-failsafe-plugin.version>
 		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
 		<jacoco-maven-plugin.version>0.6.2.201302030002</jacoco-maven-plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
