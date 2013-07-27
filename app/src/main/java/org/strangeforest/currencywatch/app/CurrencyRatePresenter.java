@@ -18,6 +18,7 @@ import com.finsoft.util.*;
 public class CurrencyRatePresenter implements AutoCloseable {
 
 	private final CurrencyRateProvider provider;
+	private final CurrencyEventSource eventSource;
 	private final CurrencyChart chart;
 	private final Collection<CurrencyRatePresenterListener> listeners = new CopyOnWriteArrayList<>();
 	private ObservableCurrencyRateProvider remoteProvider;
@@ -42,6 +43,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	public CurrencyRatePresenter(CurrencyRateProvider provider) {
 		super();
 		this.provider = provider;
+		eventSource = new DefaultCurrencyEventSource();
 		chart = new CurrencyChart();
 		axisChangeListener = new AxisChangeListener() {
 			@Override public void axisChanged(AxisChangeEvent event) {
@@ -121,6 +123,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override public void run() {
 						chart.updateBaseSeries(rateEvent);
+						addAnnotation(rateEvent.getDate());
 						currItems++;
 						updateProgress();
 						setLoadingStatus();
@@ -131,8 +134,10 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			@Override public void newRates(final CurrencyRateEvent[] rateEvents) {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override public void run() {
-						for (CurrencyRateEvent rateEvent : rateEvents)
+						for (CurrencyRateEvent rateEvent : rateEvents) {
 							chart.updateBaseSeries(rateEvent);
+							addAnnotation(rateEvent.getDate());
+						}
 						currItems += rateEvents.length;
 						updateProgress();
 						setLoadingStatus();
@@ -173,6 +178,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 					}
 					finally {
 						loading = false;
+						addAnnotations(dateRange);
 						notifyStatusChanged(StringUtil.EMPTY, false);
 						stopSpeedUpdate();
 						updateSpeed();
@@ -188,6 +194,27 @@ public class CurrencyRatePresenter implements AutoCloseable {
 
 	public void waitForData() throws InterruptedException {
 		dataThread.join();
+	}
+
+	private void addAnnotation(Date date) {
+		addAnnotation(currencyRate.getBaseCurrency(), date);
+		addAnnotation(currencyRate.getCurrency(), date);
+	}
+
+	private void addAnnotation(String currency, Date date) {
+		CurrencyEvent event = eventSource.getEvent(currency, date);
+		if (event != null)
+			chart.addAnnotation(event);
+	}
+
+	private void addAnnotations(DateRange dateRange) {
+		addAnnotations(currencyRate.getBaseCurrency(), dateRange);
+		addAnnotations(currencyRate.getCurrency(), dateRange);
+	}
+
+	private void addAnnotations(String currency, DateRange dateRange) {
+		for (CurrencyEvent event : eventSource.getEvents(currency, dateRange.getFrom(), dateRange.getTo()))
+			chart.addAnnotation(event);
 	}
 
 	private void updateProgress() {

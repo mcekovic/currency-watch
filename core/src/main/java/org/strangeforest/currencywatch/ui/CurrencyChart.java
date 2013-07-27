@@ -5,6 +5,7 @@ import java.text.*;
 import java.util.*;
 
 import org.jfree.chart.*;
+import org.jfree.chart.annotations.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.event.*;
 import org.jfree.chart.labels.*;
@@ -189,5 +190,15 @@ public class CurrencyChart {
 			new MovingAveragePoints(movAvgPeriod).applyToSeries(middleSeries, movAvgSeries);
 		if (bollBandsSeries != null)
 			new BollingerBandsPoints(movAvgPeriod, BOLLINGER_BANDS_FACTOR).applyToSeries(middleSeries, bollBandsSeries);
+	}
+
+	public void addAnnotation(CurrencyEvent event) {
+		TimeSeriesDataItem dataItem = middleSeries.getDataItem(new Day(event.getDate()));
+		XYPointerAnnotation point = new XYPointerAnnotation(event.getTitle(), event.getDate().getTime(), dataItem.getValue().doubleValue(), -Math.PI/2);
+		point.setLabelOffset(8);
+		point.setBaseRadius(24);
+		point.setTipRadius(2);
+		point.setToolTipText(event.getDescription());
+		chart.getXYPlot().addAnnotation(point);
 	}
 }

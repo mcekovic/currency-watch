@@ -13,6 +13,14 @@ public abstract class BaseCurrencyRate {
 		this.currency = currency;
 	}
 
+	public String getBaseCurrency() {
+		return baseCurrency;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
 	public abstract RateValue getRate(Date date);
 	public abstract Map<Date, RateValue> getRates();
 
