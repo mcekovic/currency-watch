@@ -10,7 +10,7 @@ public enum Period {
 	YEAR("Year", 365),
 	TWO_YEARS("2 Years", 730),
 	FIVE_YEARS("5 Years", 1826),
-// TEN_YEARS("10 Years", 3652),
+	TEN_YEARS("10 Years", 3652),
 	MAXIMUM("Maximum");
 
 	private final String label;
