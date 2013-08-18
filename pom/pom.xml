@@ -18,18 +18,18 @@
 	</issueManagement>
 
 	<prerequisites>
-		<maven>3.0.4</maven>
+		<maven>3.1.0</maven>
 	</prerequisites>
 
 	<properties>
 		<base.scm.url>scm:git:https://mcekovic@github.com/mcekovic/currency-watch.git</base.scm.url>
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
 		<slf4j.version>1.7.5</slf4j.version>
-		<spring.version>3.2.3.RELEASE</spring.version>
+		<spring.version>3.2.4.RELEASE</spring.version>
 		<jaxrs.version>2.2</jaxrs.version>
-		<jsf-ri.version>2.1.23</jsf-ri.version>
-		<maven-surefire-plugin.version>2.15</maven-surefire-plugin.version>
-		<maven-failsafe-plugin.version>2.15</maven-failsafe-plugin.version>
+		<jsf-ri.version>2.2.2</jsf-ri.version>
+		<maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>2.16</maven-failsafe-plugin.version>
 		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
 		<jacoco-maven-plugin.version>0.6.3.201306030806</jacoco-maven-plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -170,7 +170,7 @@
 						<configuration>
 							<rules>
 								<requireMavenVersion>
-									<version>3.0.5</version>
+									<version>3.1.0</version>
 								</requireMavenVersion>
 								<requireJavaVersion>
 									<version>1.7</version>
@@ -191,7 +191,7 @@
 			<dependency>
 				<groupId>com.finsoft</groupId>
 				<artifactId>fin-util</artifactId>
-				<version>1.0.32</version>
+				<version>1.0.33</version>
 			</dependency>
 			<dependency>
 				<groupId>com.finsoft</groupId>
@@ -281,7 +281,7 @@
 			<dependency>
 				<groupId>javax.servlet</groupId>
 				<artifactId>javax.servlet-api</artifactId>
-				<version>3.0.1</version>
+				<version>3.1.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.containers</groupId>
@@ -404,14 +404,6 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-
 	<profiles>
 		<profile>
 			<id>finsoft</id>
@@ -435,6 +427,16 @@
 					<url>${nexus.base.url}/groups/public</url>
 				</pluginRepository>
 			</pluginRepositories>
+		</profile>
+		<profile>
+			<id>sonar</id>
+			<properties>
+				<sonar.jdbc.url>jdbc:mysql://ubuntu.beg.finsoft.com:3306/sonar?useUnicode=true&amp;characterEncoding=utf8&amp;rewriteBatchedStatements=true</sonar.jdbc.url>
+				<sonar.jdbc.driver>com.mysql.jdbc.Driver</sonar.jdbc.driver>
+				<sonar.jdbc.username>sonar</sonar.jdbc.username>
+				<sonar.jdbc.password>sonar</sonar.jdbc.password>
+				<sonar.host.url>http://ubuntu.beg.finsoft.com:9000</sonar.host.url>
+			</properties>
 		</profile>
 	</profiles>
 
