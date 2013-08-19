@@ -26,7 +26,7 @@
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
 		<slf4j.version>1.7.5</slf4j.version>
 		<spring.version>3.2.3.RELEASE</spring.version>
-		<jaxrs.version>1.17.1</jaxrs.version>
+		<jaxrs.version>2.2</jaxrs.version>
 		<jsf-ri.version>2.1.23</jsf-ri.version>
 		<maven-surefire-plugin.version>2.15</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.15</maven-failsafe-plugin.version>
@@ -215,6 +215,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
 				<artifactId>spring-webmvc</artifactId>
 				<version>${spring.version}</version>
 				<exclusions>
@@ -279,49 +284,51 @@
 				<version>3.0.1</version>
 			</dependency>
 			<dependency>
-				<groupId>com.sun.jersey.contribs</groupId>
-				<artifactId>jersey-spring</artifactId>
+				<groupId>org.glassfish.jersey.containers</groupId>
+				<artifactId>jersey-container-servlet</artifactId>
 				<version>${jaxrs.version}</version>
 				<exclusions>
 					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-beans</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-aop</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-context</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-web</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>asm</groupId>
-						<artifactId>asm</artifactId>
+						<groupId>org.glassfish.hk2</groupId>
+						<artifactId>osgi-resource-locator</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-server</artifactId>
-				<version>${jaxrs.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey.contribs</groupId>
-				<artifactId>jersey-apache-client</artifactId>
+				<groupId>org.glassfish.jersey.core</groupId>
+				<artifactId>jersey-client</artifactId>
 				<version>${jaxrs.version}</version>
 				<exclusions>
 					<exclusion>
-						<artifactId>commons-logging</artifactId>
-						<groupId>commons-logging</groupId>
+						<groupId>org.glassfish.hk2</groupId>
+						<artifactId>hk2-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.glassfish.hk2</groupId>
+						<artifactId>hk2-locator</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.glassfish.hk2</groupId>
+						<artifactId>osgi-resource-locator</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.glassfish.hk2.external</groupId>
+						<artifactId>javax.inject</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.google.guava</groupId>
+						<artifactId>guava</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.glassfish.jersey.ext</groupId>
+				<artifactId>jersey-spring3</artifactId>
+				<version>${jaxrs.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>hk2</artifactId>
+						<groupId>org.glassfish.hk2</groupId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -386,6 +393,12 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-test</artifactId>
 				<version>${spring.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.glassfish.jersey.containers</groupId>
+				<artifactId>jersey-container-jdk-http</artifactId>
+				<version>${jaxrs.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>

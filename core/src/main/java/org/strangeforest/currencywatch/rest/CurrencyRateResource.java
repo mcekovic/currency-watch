@@ -6,6 +6,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
 import org.slf4j.*;
+import org.springframework.stereotype.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 
@@ -14,6 +15,7 @@ import com.finsoft.util.*;
 import static javax.ws.rs.core.MediaType.*;
 import static javax.ws.rs.core.Response.Status.*;
 
+@Component
 @Path("/")
 public class CurrencyRateResource {
 

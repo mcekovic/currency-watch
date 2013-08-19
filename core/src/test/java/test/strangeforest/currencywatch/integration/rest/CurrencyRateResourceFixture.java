@@ -4,12 +4,11 @@ import java.io.*;
 import java.net.*;
 import java.util.concurrent.*;
 
+import org.glassfish.jersey.server.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.rest.*;
 import org.testng.annotations.*;
 
-import com.sun.jersey.api.container.*;
-import com.sun.jersey.api.core.*;
 import com.sun.net.httpserver.*;
 
 import static test.strangeforest.currencywatch.TestData.*;
@@ -43,8 +42,8 @@ public class CurrencyRateResourceFixture {
 	}
 
 	private static void registerResource(HttpServer httpServer, CurrencyRateResource resource) {
-		DefaultResourceConfig resourceConfig = new DefaultResourceConfig();
-		resourceConfig.getSingletons().add(resource);
+		ResourceConfig resourceConfig = new ResourceConfig();
+		resourceConfig.register(resource);
 		httpServer.createContext(PATH, ContainerFactory.createContainer(HttpHandler.class, resourceConfig));
 	}
 
