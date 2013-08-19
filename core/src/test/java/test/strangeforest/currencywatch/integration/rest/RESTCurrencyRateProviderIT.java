@@ -10,16 +10,15 @@ import org.testng.annotations.*;
 import static org.testng.Assert.*;
 import static test.strangeforest.currencywatch.TestData.*;
 
-public class RESTCurrencyRateProviderIT {
+public class RESTCurrencyRateProviderIT extends CurrencyRateResourceFixture{
 
 	private RESTCurrencyRateProvider provider;
 
 	@BeforeClass
 	public void setUp() throws IOException {
-		provider = new RESTCurrencyRateProvider(CurrencyRateResourceFixture.URI);
+		provider = new RESTCurrencyRateProvider(URI);
 		provider.init();
 	}
-
 
 	@AfterClass
 	public void cleanUp() {

@@ -29,7 +29,7 @@
 		<jaxrs.version>2.2</jaxrs.version>
 		<jsf-ri.version>2.2.2</jsf-ri.version>
 		<maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
-		<maven-failsafe-plugin.version>2.15</maven-failsafe-plugin.version>
+		<maven-failsafe-plugin.version>2.16</maven-failsafe-plugin.version>
 		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
 		<jacoco-maven-plugin.version>0.6.3.201306030806</jacoco-maven-plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
