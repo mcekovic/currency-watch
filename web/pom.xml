@@ -20,26 +20,13 @@
 	</scm>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.tomcat.maven</groupId>
-				<artifactId>tomcat7-maven-plugin</artifactId>
-				<configuration>
-					<url>http://ubuntu.beg.finsoft.com:8080/manager/html</url>
-					<server>tomcat</server>
-					<update>true</update>
-					<path>/currency-watch</path>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>deploy-only</goal>
-						</goals>
-						<phase>deploy</phase>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+		<extensions>
+			<extension>
+				<groupId>com.github.shyiko.servers-maven-extension</groupId>
+				<artifactId>servers-maven-extension</artifactId>
+				<version>1.1.0</version>
+			</extension>
+		</extensions>
 	</build>
 
 	<dependencies>
@@ -171,6 +158,67 @@
 									<dataFile>${project.build.directory}/jacoco-it.exec</dataFile>
 									<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
 								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>tomcat</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.tomcat.maven</groupId>
+						<artifactId>tomcat7-maven-plugin</artifactId>
+						<configuration>
+							<url>http://ubuntu.beg.finsoft.com:8080/manager/html</url>
+							<server>tomcat</server>
+							<update>true</update>
+							<path>/currency-watch</path>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>deploy-only</goal>
+								</goals>
+								<phase>deploy</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>jetty</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<configuration>
+							<target>
+								<scp localFile="${project.build.finalName}"
+								     remoteTofile="${settings.servers.jetty.username}:${settings.servers.jetty.password}@ubuntu.beg.finsoft.com:/usr/java/jetty-distribution-9.0.5/webapps/currency-watch.war"
+								     trust="true"/>
+							</target>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>org.apache.ant</groupId>
+								<artifactId>ant-jsch</artifactId>
+							</dependency>
+							<dependency>
+								<groupId>com.jcraft</groupId>
+								<artifactId>jsch</artifactId>
+							</dependency>
+						</dependencies>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<phase>deploy</phase>
 							</execution>
 						</executions>
 					</plugin>
