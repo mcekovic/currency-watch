@@ -144,6 +144,18 @@
 				<plugin>
 					<artifactId>maven-antrun-plugin</artifactId>
 					<version>${maven-antrun-plugin.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.apache.ant</groupId>
+							<artifactId>ant-jsch</artifactId>
+							<version>1.9.2</version>
+						</dependency>
+						<dependency>
+							<groupId>com.jcraft</groupId>
+							<artifactId>jsch</artifactId>
+							<version>0.1.50</version>
+						</dependency>
+					</dependencies>
 				</plugin>
 				<plugin>
 					<groupId>com.github.github</groupId>
@@ -175,8 +187,8 @@
 								<requireJavaVersion>
 									<version>1.7</version>
 								</requireJavaVersion>
-								<DependencyConvergence />
-								<requirePluginVersions />
+								<DependencyConvergence/>
+								<requirePluginVersions/>
 							</rules>
 						</configuration>
 					</execution>
@@ -400,18 +412,6 @@
 				<artifactId>jersey-container-jdk-http</artifactId>
 				<version>${jaxrs.version}</version>
 				<scope>test</scope>
-			</dependency>
-
-			<!-- Build -->
-			<dependency>
-				<groupId>org.apache.ant</groupId>
-				<artifactId>ant-jsch</artifactId>
-				<version>1.9.2</version>
-			</dependency>
-			<dependency>
-				<groupId>com.jcraft</groupId>
-				<artifactId>jsch</artifactId>
-				<version>0.1.50</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

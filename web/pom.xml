@@ -197,21 +197,13 @@
 						<artifactId>maven-antrun-plugin</artifactId>
 						<configuration>
 							<target>
-								<scp localFile="${project.build.finalName}"
-								     remoteTofile="${settings.servers.jetty.username}:${settings.servers.jetty.password}@ubuntu.beg.finsoft.com:/usr/java/jetty-distribution-9.0.5/webapps/currency-watch.war"
-								     trust="true"/>
+								<property name="username" value="${settings.servers.jetty.username}"/>
+								<property name="password" value="${settings.servers.jetty.password}"/>
+								<property name="local-war" value="${project.build.directory}/${project.build.finalName}.${project.packaging}"/>
+								<property name="remote-war" value="${username}:${password}@ubuntu.beg.finsoft.com:/usr/java/jetty/webapps/currency-watch.war"/>
+								<scp localFile="${local-war}" remoteTofile="${remote-war}" trust="true"/>
 							</target>
 						</configuration>
-						<dependencies>
-							<dependency>
-								<groupId>org.apache.ant</groupId>
-								<artifactId>ant-jsch</artifactId>
-							</dependency>
-							<dependency>
-								<groupId>com.jcraft</groupId>
-								<artifactId>jsch</artifactId>
-							</dependency>
-						</dependencies>
 						<executions>
 							<execution>
 								<id>deploy</id>
