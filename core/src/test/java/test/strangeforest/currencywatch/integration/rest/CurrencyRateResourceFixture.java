@@ -19,13 +19,18 @@ public class CurrencyRateResourceFixture {
 
 	private static final int PORT = 8888;
 	private static final String PATH = "/api";
-	public static final java.net.URI URI = java.net.URI.create("http://localhost:" + PORT + PATH);
+	public static final URI URI = java.net.URI.create("http://localhost:" + PORT + PATH);
 
 	@BeforeSuite
 	public void start() throws IOException {
 		httpServer = createHTTPServer();
 		registerResource(httpServer, createResource());
 		httpServer.start();
+	}
+
+	@AfterSuite
+	public void stop() {
+		httpServer.stop(0);
 	}
 
 	private static HttpServer createHTTPServer() throws IOException {
@@ -45,10 +50,5 @@ public class CurrencyRateResourceFixture {
 		ResourceConfig resourceConfig = new ResourceConfig();
 		resourceConfig.register(resource);
 		httpServer.createContext(PATH, ContainerFactory.createContainer(HttpHandler.class, resourceConfig));
-	}
-
-	@AfterSuite
-	public void stop() {
-		httpServer.stop(0);
 	}
 }
