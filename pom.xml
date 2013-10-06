@@ -9,10 +9,6 @@
 	<name>Currency Watch</name>
 	<url>${base.browse.url}</url>
 
-	<prerequisites>
-		<maven>3.1.0</maven>
-	</prerequisites>
-
 	<organization>
 		<name>Strange Forest</name>
 		<url>https://github.com/mcekovic</url>
@@ -28,12 +24,9 @@
 		<url>${base.browse.url}</url>
 	</scm>
 
-	<modules>
-		<module>core</module>
-		<module>app</module>
-		<module>web</module>
-		<module>it-reports</module>
-	</modules>
+	<prerequisites>
+		<maven>3.1.0</maven>
+	</prerequisites>
 
 	<properties>
 		<base.scm.url>scm:git:https://mcekovic@github.com/mcekovic/currency-watch.git</base.scm.url>
@@ -49,6 +42,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
+
+	<modules>
+		<module>core</module>
+		<module>app</module>
+		<module>web</module>
+		<module>it-reports</module>
+	</modules>
 
 	<build>
 
