@@ -7,8 +7,7 @@ import javax.ws.rs.core.*;
 
 import org.slf4j.*;
 import org.strangeforest.currencywatch.core.*;
-
-import com.finsoft.util.*;
+import org.strangeforest.util.*;
 
 import static javax.ws.rs.core.MediaType.*;
 import static javax.ws.rs.core.Response.Status.*;

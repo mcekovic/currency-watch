@@ -35,8 +35,8 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.finsoft</groupId>
-			<artifactId>fin-db</artifactId>
+			<groupId>org.strangeforest.libs</groupId>
+			<artifactId>sf-db</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

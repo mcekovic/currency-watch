@@ -5,8 +5,6 @@ import java.util.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 
-import com.finsoft.util.*;
-
 public abstract class UIUtil {
 
 	public static final Integer[] MOV_AVG_PERIODS = {10, 20, 50, 100, 200, 500};
@@ -17,7 +15,7 @@ public abstract class UIUtil {
    public static final int DEFAULT_MOV_AVG_PERIOD = 20;
 
 	public static int daysFromStart() {
-		return DateUtil.dayDifference(Util.START_DATE.getTime(), Util.getLastDate().getTime());
+		return Util.dayDifference(Util.START_DATE.getTime(), Util.getLastDate().getTime());
 	}
 
 	public static DateRange toDateRange(int days) {

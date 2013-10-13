@@ -14,8 +14,7 @@ import org.mockito.stubbing.*;
 import org.strangeforest.currencywatch.app.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
-
-import com.finsoft.util.*;
+import org.strangeforest.util.*;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
@@ -30,8 +29,8 @@ public class CurrencyRatePresenterTest {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
 		when(provider.getRates(eq(BASE_CURRENCY), eq(CurrencySymbol.EUR.name()), anyCollectionOf(Date.class))).thenAnswer(new Answer<Map<Date, RateValue>>() {
 			@Override public Map<Date, RateValue> answer(InvocationOnMock invocation) throws Throwable {
-				return Algorithms.transformToMap((Collection<Date>)(invocation.getArguments()[2]), new Transformer<Date, RateValue>() {
-					@Override public RateValue transform(Date date) {
+				return Algorithms.transformToMap((Collection<Date>)(invocation.getArguments()[2]), new Function<Date, RateValue>() {
+					@Override public RateValue apply(Date date) {
 						return new RateValue(BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN);
 					}
 				});

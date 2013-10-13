@@ -2,7 +2,7 @@ package org.strangeforest.currencywatch.core;
 
 import java.math.*;
 
-import static com.finsoft.util.ObjectUtil.*;
+import static org.strangeforest.util.ObjectUtil.*;
 
 public class RateValue {
 

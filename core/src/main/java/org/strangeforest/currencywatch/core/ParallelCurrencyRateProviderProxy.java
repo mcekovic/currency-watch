@@ -5,9 +5,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
 import org.slf4j.*;
-
-import com.finsoft.concurrent.*;
-import com.finsoft.util.*;
+import org.strangeforest.concurrent.*;
+import org.strangeforest.util.*;
 
 public class ParallelCurrencyRateProviderProxy extends ObservableCurrencyRateProviderProxy {
 

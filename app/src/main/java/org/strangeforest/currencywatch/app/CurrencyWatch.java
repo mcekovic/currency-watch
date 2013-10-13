@@ -10,10 +10,9 @@ import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.db4o.*;
 import org.strangeforest.currencywatch.nbs.*;
 import org.strangeforest.currencywatch.rest.*;
+import org.strangeforest.util.*;
 
 import com.beust.jcommander.*;
-
-import com.finsoft.util.*;
 
 public class CurrencyWatch {
 

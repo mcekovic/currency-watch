@@ -4,13 +4,12 @@ import java.util.*;
 
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.jdbc.*;
+import org.strangeforest.db.*;
+import org.strangeforest.db.logging.*;
+import org.strangeforest.util.*;
 import org.testng.annotations.*;
 
 import test.strangeforest.currencywatch.integration.*;
-
-import com.finsoft.db.*;
-import com.finsoft.db.logging.*;
-import com.finsoft.util.*;
 
 import static org.testng.Assert.*;
 import static test.strangeforest.currencywatch.TestData.*;
@@ -63,8 +62,8 @@ public class JDBCCurrencyRateProviderIT {
 	@Test(dependsOnMethods = "setRates")
 	public void getRates() {
 		final Map<Date, RateValue> fetchedRates = currencyRateProvider.getRates(BASE_CURRENCY, CURRENCY, DATES);
-		assertEquals(Algorithms.transformToMap(fetchedRates.keySet(), new Transformer<Date, RateValue>() {
-			@Override public RateValue transform(Date date) {
+		assertEquals(Algorithms.transformToMap(fetchedRates.keySet(), new Function<Date, RateValue>() {
+			@Override public RateValue apply(Date date) {
 				return fetchedRates.get(date).setScale(1);
 			}
 		}), RATES);

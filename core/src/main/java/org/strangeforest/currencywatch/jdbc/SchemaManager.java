@@ -4,12 +4,11 @@ import java.sql.*;
 import javax.sql.*;
 
 import org.slf4j.*;
+import org.strangeforest.db.*;
+import org.strangeforest.db.gateway.*;
+import org.strangeforest.xml.helpers.*;
 
-import com.finsoft.db.*;
-import com.finsoft.db.gateway.*;
-import com.finsoft.xml.helpers.*;
-
-import static com.finsoft.db.gateway.DataHelper.*;
+import static org.strangeforest.db.gateway.DataHelper.*;
 
 public class SchemaManager {
 

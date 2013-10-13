@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sqls xmlns="http://www.finsoft.com/schema/db">
+<sqls xmlns="http://www.strangeforest.org/schema/db">
 
 	<sql-group name="SchemaManager">
 

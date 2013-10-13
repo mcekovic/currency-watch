@@ -129,8 +129,8 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.finsoft</groupId>
-			<artifactId>fin-util</artifactId>
+			<groupId>org.strangeforest.libs</groupId>
+			<artifactId>sf-util</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

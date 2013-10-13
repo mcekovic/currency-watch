@@ -69,13 +69,17 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.finsoft</groupId>
-			<artifactId>fin-util</artifactId>
+			<groupId>org.strangeforest.libs</groupId>
+			<artifactId>sf-util</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.finsoft</groupId>
-			<artifactId>fin-db</artifactId>
+			<groupId>org.strangeforest.libs</groupId>
+			<artifactId>sf-db</artifactId>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

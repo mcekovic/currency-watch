@@ -209,19 +209,24 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>com.finsoft</groupId>
-				<artifactId>fin-util</artifactId>
-				<version>1.0.33</version>
+				<groupId>org.strangeforest.libs</groupId>
+				<artifactId>sf-util</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>com.finsoft</groupId>
-				<artifactId>fin-db</artifactId>
-				<version>1.1.1</version>
+				<groupId>org.strangeforest.libs</groupId>
+				<artifactId>sf-db</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>2.3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -419,29 +424,6 @@
 	</dependencyManagement>
 
 	<profiles>
-		<profile>
-			<id>finsoft</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<nexus.base.url>http://sysintts.beg.finsoft.com:8081/nexus/content</nexus.base.url>
-			</properties>
-			<repositories>
-				<repository>
-					<id>finsoft-public</id>
-					<name>Finsoft Public Repository</name>
-					<url>${nexus.base.url}/groups/public</url>
-				</repository>
-			</repositories>
-			<pluginRepositories>
-				<pluginRepository>
-					<id>finsoft-public</id>
-					<name>Finsoft Public Repository</name>
-					<url>${nexus.base.url}/groups/public</url>
-				</pluginRepository>
-			</pluginRepositories>
-		</profile>
 		<profile>
 			<id>sonar</id>
 			<properties>

@@ -9,8 +9,7 @@ import org.slf4j.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
-
-import com.finsoft.util.*;
+import org.strangeforest.util.*;
 
 import static javax.ws.rs.core.MediaType.*;
 import static javax.ws.rs.core.Response.Status.*;
@@ -87,8 +86,8 @@ public class CurrencyRateResource {
 				dateColl = Util.trimDateRange(new DateRange(from, to)).dates();
 			}
 			Map<Date, RateValue> rates = provider.getRates(baseCurrency, currency, dateColl);
-			return new RatesType(Algorithms.transform(rates.entrySet(), new Transformer<Map.Entry<Date, RateValue>, RateType>() {
-				@Override public RateType transform(Map.Entry<Date, RateValue> rate) {
+			return new RatesType(Algorithms.transform(rates.entrySet(), new Function<Map.Entry<Date, RateValue>, RateType>() {
+				@Override public RateType apply(Map.Entry<Date, RateValue> rate) {
 					return new RateType(rate.getKey(), rate.getValue());
 				}
 			}));

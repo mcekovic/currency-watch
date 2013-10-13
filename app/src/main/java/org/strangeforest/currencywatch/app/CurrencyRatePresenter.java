@@ -12,8 +12,7 @@ import org.slf4j.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
-
-import com.finsoft.util.*;
+import org.strangeforest.util.*;
 
 public class CurrencyRatePresenter implements AutoCloseable {
 
