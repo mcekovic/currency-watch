@@ -18,6 +18,10 @@
 		<url>${base.browse.url}/web</url>
 	</scm>
 
+	<properties>
+		<deploy.server>ubuntu.beg.finsoft.com</deploy.server>
+	</properties>
+
 	<build>
 		<extensions>
 			<extension>
@@ -171,7 +175,7 @@
 						<groupId>org.apache.tomcat.maven</groupId>
 						<artifactId>tomcat7-maven-plugin</artifactId>
 						<configuration>
-							<url>http://ubuntu.beg.finsoft.com:8080/manager/html</url>
+							<url>http://${deploy.server}:8080/manager/html</url>
 							<server>tomcat</server>
 							<update>true</update>
 							<path>/currency-watch</path>
@@ -199,7 +203,7 @@
 								<property name="username" value="${settings.servers.jetty.username}"/>
 								<property name="password" value="${settings.servers.jetty.password}"/>
 								<property name="local-war" value="${project.build.directory}/${project.build.finalName}.${project.packaging}"/>
-								<property name="remote-war" value="${username}:${password}@ubuntu.beg.finsoft.com:/usr/java/jetty/webapps/currency-watch.war"/>
+								<property name="remote-war" value="${username}:${password}@${deploy.server}:/usr/java/jetty/webapps/currency-watch.war"/>
 								<scp localFile="${local-war}" remoteTofile="${remote-war}" trust="true"/>
 							</target>
 						</configuration>
