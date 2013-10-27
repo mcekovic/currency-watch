@@ -1,7 +1,6 @@
 package org.strangeforest.currencywatch.ui;
 
-import java.util.*;
-
+import org.joda.time.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 
@@ -15,14 +14,12 @@ public abstract class UIUtil {
    public static final int DEFAULT_MOV_AVG_PERIOD = 20;
 
 	public static int daysFromStart() {
-		return Util.dayDifference(Util.START_DATE.getTime(), Util.getLastDate().getTime());
+		return Util.dayDifference(Util.START_DATE.toDate(), Util.getLastDate().toDate());
 	}
 
 	public static DateRange toDateRange(int days) {
-		Calendar cal = Util.getLastDate();
-		Date toDate = cal.getTime();
-		cal.add(Calendar.DATE, -days);
-		Date fromDate = cal.getTime();
-		return new DateRange(fromDate, toDate);
+		LocalDate lastDate = Util.getLastDate();
+		LocalDate firstDate = lastDate.minusDays(days);
+		return new DateRange(firstDate.toDate(), lastDate.toDate());
 	}
 }

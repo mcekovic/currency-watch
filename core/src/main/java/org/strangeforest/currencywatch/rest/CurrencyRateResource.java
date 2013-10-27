@@ -49,7 +49,7 @@ public class CurrencyRateResource {
 		try {
 			Date aDate = parseDate(date);
 			if (aDate == null)
-				aDate = Util.getLastDate().getTime();
+				aDate = Util.getLastDate().toDate();
 			RateValue rate = provider.getRate(baseCurrency, currency, aDate);
 			return rate != null ? new RateType(aDate, rate) : null;
 		}
@@ -80,7 +80,7 @@ public class CurrencyRateResource {
 				Date from = parseDate(fromDate);
 				Date to = parseDate(toDate);
 				if (to == null)
-					to = Util.getLastDate().getTime();
+					to = Util.getLastDate().toDate();
 				if (from == null)
 					from = to;
 				dateColl = Util.trimDateRange(new DateRange(from, to)).dates();

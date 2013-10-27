@@ -4,6 +4,7 @@ import java.math.*;
 import java.util.*;
 import java.util.concurrent.*;
 
+import org.joda.time.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.testng.*;
@@ -24,7 +25,7 @@ public class CurrencyRateCacheIT {
 	public void setUp() {
 		cache = new CurrencyRateCache();
 		rnd = new Random();
-		dates = new ArrayList<>(new DateRange(Util.START_DATE.getTime(), Util.getLastDate().getTime()).dates());
+		dates = new ArrayList<>(new DateRange(Util.START_DATE.toDate(), Util.getLastDate().toDate()).dates());
 	}
 
 	@Test
@@ -59,10 +60,9 @@ public class CurrencyRateCacheIT {
 	}
 
 	private RateValue rateFromDate(Date date) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		BigDecimal middle = new BigDecimal(100).add(new BigDecimal(cal.get(Calendar.DAY_OF_MONTH)));
-		BigDecimal spread = new BigDecimal(cal.get(Calendar.DAY_OF_WEEK)).divide(BigDecimal.TEN).add(BigDecimal.ONE);
+		LocalDate lDate = new LocalDate(date);
+		BigDecimal middle = new BigDecimal(100).add(new BigDecimal(lDate.getDayOfMonth()));
+		BigDecimal spread = new BigDecimal(lDate.getDayOfWeek()).divide(BigDecimal.TEN).add(BigDecimal.ONE);
 		return new RateValue(middle.subtract(spread), middle.add(spread), middle);
 	}
 }

@@ -2,6 +2,7 @@ package org.strangeforest.currencywatch.core;
 
 import java.util.*;
 
+import org.joda.time.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.util.*;
 
@@ -81,10 +82,7 @@ public class DateRange extends Range<Date> implements Iterable<Date> {
 		}
 
 		private Date incDate(Date date, int days) {
-			Calendar cal = new GregorianCalendar();
-			cal.setTime(date);
-			cal.add(Calendar.DATE, days);
-			return cal.getTime();
+			return new LocalDate(date).plusDays(days).toDate();
 		}
 	}
 }
