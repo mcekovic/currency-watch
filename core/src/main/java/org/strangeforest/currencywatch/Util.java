@@ -12,7 +12,7 @@ public abstract class Util {
 
 	public static final LocalDate START_DATE = new LocalDate(2002, 5, 15);
 
-	public static final long MILLISECONDS_PER_DAY = new Period(1, PeriodType.days()).getMillis();
+	public static final long MILLISECONDS_PER_DAY = Period.days(1).getMillis();
 
 	public static LocalDate getLastDate() {
 		LocalDate lastDate = new LocalDate();
