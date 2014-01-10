@@ -28,6 +28,8 @@ public class ChartPageBean {
 	@ManagedProperty("#{currencyRateProvider}")
 	private CurrencyRateProvider currencyProvider;
 
+	private final CurrencyEventSource eventSource = new DefaultCurrencyEventSource();
+
 	private CurrencySymbol currency = UIUtil.DEFAULT_CURRENCY;
 	private Period period = UIUtil.DEFAULT_PERIOD;
 	private SeriesQuality quality = UIUtil.DEFAULT_QUALITY;
@@ -257,6 +259,8 @@ public class ChartPageBean {
 
 		chart.updateBaseSeries(rates);
 		chart.updateDerivedSeries(movAvgPeriod);
+		chart.addAnnotations(eventSource, asList(currencyRate.getBaseCurrency(), currencyRate.getCurrency()), dateRange);
+
 		JFreeChart jFreeChart = chart.getChart();
 		jFreeChart.setBackgroundPaint(Color.WHITE);
 		chartFileName = ServletUtilities.saveChartAsPNG(jFreeChart, CHART_WIDTH, CHART_HEIGHT, session);

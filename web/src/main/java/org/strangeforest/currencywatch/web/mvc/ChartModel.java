@@ -13,9 +13,12 @@ import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
 
+import static java.util.Arrays.*;
+
 public class ChartModel {
 
 	private CurrencyRateProvider currencyProvider;
+	private CurrencyEventSource eventSource;
 	private HttpSession session;
 
 	private CurrencySymbol currency = UIUtil.DEFAULT_CURRENCY;
@@ -43,6 +46,10 @@ public class ChartModel {
 
 	public void setCurrencyProvider(CurrencyRateProvider currencyProvider) {
 		this.currencyProvider = currencyProvider;
+	}
+
+	public void setEventSource(CurrencyEventSource eventSource) {
+		this.eventSource = eventSource;
 	}
 
 	public void setSession(HttpSession session) {
@@ -225,6 +232,8 @@ public class ChartModel {
 
 		chart.updateBaseSeries(rates);
 		chart.updateDerivedSeries(movAvgPeriod);
+		chart.addAnnotations(eventSource, asList(currencyRate.getBaseCurrency(), currencyRate.getCurrency()), dateRange);
+
 		JFreeChart jFreeChart = chart.getChart();
 		jFreeChart.setBackgroundPaint(Color.WHITE);
 		chartFileName = ServletUtilities.saveChartAsPNG(jFreeChart, CHART_WIDTH, CHART_HEIGHT, session);

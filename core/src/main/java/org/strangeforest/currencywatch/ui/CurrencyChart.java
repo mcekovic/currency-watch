@@ -3,6 +3,7 @@ package org.strangeforest.currencywatch.ui;
 import java.awt.*;
 import java.text.*;
 import java.util.*;
+import java.util.List;
 
 import org.jfree.chart.*;
 import org.jfree.chart.annotations.*;
@@ -193,21 +194,46 @@ public class CurrencyChart {
 
 	// Annotations
 
+	public void addAnnotations(CurrencyEventSource eventSource, List<String> currencies, DateRange dateRange) {
+		addAnnotations(eventSource, currencies, dateRange, false);
+	}
+
+	public void addAnnotationsForMissingDates(CurrencyEventSource eventSource, List<String> currencies, DateRange dateRange) {
+		addAnnotations(eventSource, currencies, dateRange, true);
+	}
+
+	private void addAnnotations(CurrencyEventSource eventSource, List<String> currencies, DateRange dateRange, boolean onlyForMissingDates) {
+		for (String currency : currencies)
+			addAnnotations(eventSource, currency, dateRange, onlyForMissingDates);
+	}
+
+	private void addAnnotations(CurrencyEventSource eventSource, String currency, DateRange dateRange, boolean onlyForMissingDates) {
+		for (CurrencyEvent event : eventSource.getEvents(currency, dateRange.getFrom(), dateRange.getTo())) {
+			if (onlyForMissingDates)
+				addAnnotationIfDateDoesNotExist(event);
+			else
+				addAnnotation(event);
+		}
+	}
+
 	public void addAnnotation(CurrencyEvent event) {
+		TimeSeriesDataItem dataItem = middleSeries.getDataItem(toDay(event));
+		if (dataItem != null)
+			addAnnotationToItem(event, dataItem.getValue().doubleValue());
+		else
+			addAnnotationBetweenNearestItems(event);
+	}
+
+	public void addAnnotationIfDateExists(CurrencyEvent event) {
 		TimeSeriesDataItem dataItem = middleSeries.getDataItem(toDay(event));
 		if (dataItem != null)
 			addAnnotationToItem(event, dataItem.getValue().doubleValue());
 	}
 
-	public void addAnnotationIfNotExists(CurrencyEvent event) {
-		Day day = toDay(event);
-		TimeSeriesDataItem dataItem = middleSeries.getDataItem(day);
-		if (dataItem == null) {
-			DataItemWithOffset next = findNextDataItem(day, true);
-			DataItemWithOffset prev = findNextDataItem(day, false);
-			double atValue = weightedAverage(next.dataItem.getValue().doubleValue(), prev.dataItem.getValue().doubleValue(), prev.dayOffset, next.dayOffset);
-			addAnnotationToItem(event, atValue);
-		}
+	private void addAnnotationIfDateDoesNotExist(CurrencyEvent event) {
+		TimeSeriesDataItem dataItem = middleSeries.getDataItem(toDay(event));
+		if (dataItem == null)
+			addAnnotationBetweenNearestItems(event);
 	}
 
 	public void clearAnnotations() {
@@ -225,6 +251,14 @@ public class CurrencyChart {
 		point.setTipRadius(2);
 		point.setToolTipText(event.getDescription());
 		chart.getXYPlot().addAnnotation(point);
+	}
+
+	private void addAnnotationBetweenNearestItems(CurrencyEvent event) {
+		Day day = toDay(event);
+		DataItemWithOffset next = findNextDataItem(day, true);
+		DataItemWithOffset prev = findNextDataItem(day, false);
+		double atValue = weightedAverage(next.dataItem.getValue().doubleValue(), prev.dataItem.getValue().doubleValue(), prev.dayOffset, next.dayOffset);
+		addAnnotationToItem(event, atValue);
 	}
 
 	private DataItemWithOffset findNextDataItem(RegularTimePeriod day, boolean forward) {

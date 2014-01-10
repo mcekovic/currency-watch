@@ -14,6 +14,8 @@ import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
 import org.strangeforest.util.*;
 
+import static java.util.Arrays.*;
+
 public class CurrencyRatePresenter implements AutoCloseable {
 
 	private final CurrencyRateProvider provider;
@@ -180,7 +182,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 						loading = false;
 						SwingUtilities.invokeAndWait(new Runnable() {
 							@Override public void run() {
-								addAnnotations(dateRange);
+								addAnnotationsForMissingDates(dateRange);
 								notifyStatusChanged(StringUtil.EMPTY, false);
 								stopSpeedUpdate();
 								updateSpeed();
@@ -208,17 +210,11 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	private void addAnnotation(String currency, Date date) {
 		CurrencyEvent event = eventSource.getEvent(currency, date);
 		if (event != null)
-			chart.addAnnotation(event);
+			chart.addAnnotationIfDateExists(event);
 	}
 
-	private void addAnnotations(DateRange dateRange) {
-		addAnnotations(currencyRate.getBaseCurrency(), dateRange);
-		addAnnotations(currencyRate.getCurrency(), dateRange);
-	}
-
-	private void addAnnotations(String currency, DateRange dateRange) {
-		for (CurrencyEvent event : eventSource.getEvents(currency, dateRange.getFrom(), dateRange.getTo()))
-			chart.addAnnotationIfNotExists(event);
+	private void addAnnotationsForMissingDates(DateRange dateRange) {
+		chart.addAnnotationsForMissingDates(eventSource, asList(currencyRate.getBaseCurrency(), currencyRate.getCurrency()), dateRange);
 	}
 
 	private void updateProgress() {

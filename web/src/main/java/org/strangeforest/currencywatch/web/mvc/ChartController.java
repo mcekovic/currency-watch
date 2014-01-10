@@ -19,6 +19,7 @@ public class ChartController {
 	@RequestMapping("/currency-chart")
 	public ModelAndView chart(@ModelAttribute("chart") ChartModel chart, @RequestParam(required = false) String command, HttpSession session) throws IOException {
 		chart.setCurrencyProvider(currencyProvider);
+		chart.setEventSource(new DefaultCurrencyEventSource());
 		chart.setSession(session);
 		if ("zoomChart".equals(command))
 			chart.zoomChart();

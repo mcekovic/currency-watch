@@ -3,6 +3,7 @@ package test.strangeforest.currencywatch.unit.ui;
 import org.jfree.chart.*;
 import org.jfree.data.xy.*;
 import org.junit.*;
+import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
 
@@ -36,6 +37,8 @@ public class CurrencyChartTest {
 		currencyChart.setDateRange(new DateRange(DATE1, DATE5));
 		currencyChart.updateBaseSeries(RATES);
 		currencyChart.updateDerivedSeries(2);
+		CurrencyEvent event = new CurrencyEvent(Util.BASE_CURRENCY, DATE2, "A title", "A description");
+		currencyChart.addAnnotation(event);
 
 		JFreeChart chart = currencyChart.getChart();
 		assertEquals(2, chart.getXYPlot().getDatasetCount());
@@ -51,5 +54,7 @@ public class CurrencyChartTest {
 		assertEquals(2, bbDataSet.getSeriesCount());
 		assertEquals(RATES.size(), bbDataSet.getItemCount(0));
 		assertEquals(RATES.size(), bbDataSet.getItemCount(1));
+
+		assertEquals(1, chart.getXYPlot().getAnnotations().size());
 	}
 }
