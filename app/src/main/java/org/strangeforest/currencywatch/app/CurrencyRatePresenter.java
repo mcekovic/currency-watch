@@ -100,6 +100,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		chart.removeDomainAxisChangeListener(axisChangeListener);
 		if (currencyRate != null)
 			currencyRate.close();
+		chart.clearAnnotations();
 		this.currency = currency;
 		if (period != this.period) {
 			this.period = period;
@@ -172,15 +173,19 @@ public class CurrencyRatePresenter implements AutoCloseable {
 				try {
 					loading = true;
 					try {
-						notifyCurrentRate(rate.getRates(dateRange.dates(step*10))); // Fetch outline first
-						notifyCurrentRate(rate.getRates(dates));
+						notifyForRates(rate.getRates(dateRange.dates(step*10))); // Fetch outline first
+						notifyForRates(rate.getRates(dates));
 					}
 					finally {
 						loading = false;
-						addAnnotations(dateRange);
-						notifyStatusChanged(StringUtil.EMPTY, false);
-						stopSpeedUpdate();
-						updateSpeed();
+						SwingUtilities.invokeAndWait(new Runnable() {
+							@Override public void run() {
+								addAnnotations(dateRange);
+								notifyStatusChanged(StringUtil.EMPTY, false);
+								stopSpeedUpdate();
+								updateSpeed();
+							}
+						});
 					}
 				}
 				catch (Throwable th) {
@@ -213,7 +218,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 
 	private void addAnnotations(String currency, DateRange dateRange) {
 		for (CurrencyEvent event : eventSource.getEvents(currency, dateRange.getFrom(), dateRange.getTo()))
-			chart.addAnnotation(event);
+			chart.addAnnotationIfNotExists(event);
 	}
 
 	private void updateProgress() {
@@ -243,12 +248,20 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			notifyStatusChanged("Loading...", false);
 	}
 
-	private void notifyCurrentRate(Map<Date, RateValue> rates) {
-		CurrentRate currentRate = CurrentRate.forRates(rates);
+	private void notifyForRates(Map<Date, RateValue> rates) {
+		final CurrentRate currentRate = CurrentRate.forRates(rates);
 		if (currentRate != null) {
-			for (CurrencyRatePresenterListener listener : listeners)
-				listener.currentRate(currentRate);
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override public void run() {
+					notifyCurrencyRate(currentRate);
+				}
+			});
 		}
+	}
+
+	private void notifyCurrencyRate(final CurrentRate currentRate) {
+		for (CurrencyRatePresenterListener listener : listeners)
+			listener.currentRate(currentRate);
 	}
 
 	private void notifyStatusChanged(String status, boolean isError) {

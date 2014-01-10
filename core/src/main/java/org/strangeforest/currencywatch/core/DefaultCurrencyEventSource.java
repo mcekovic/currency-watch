@@ -2,12 +2,13 @@ package org.strangeforest.currencywatch.core;
 
 import java.util.*;
 
+import org.joda.time.*;
 import org.strangeforest.util.*;
 
 public class DefaultCurrencyEventSource implements CurrencyEventSource {
 
 	private final List<CurrencyEvent> EVENTS = Arrays.asList(
-		new CurrencyEvent("RSD", new GregorianCalendar(2012, 5, 6).getTime(), "Elections in Serbia", "SNS won elections in Serbia.")
+		new CurrencyEvent("RSD", new LocalDate(2012, 5, 6).toDate(), "Elections in Serbia", "SNS won elections in Serbia.")
 	);
 
 	@Override public CurrencyEvent getEvent(final String currency, final Date date) {

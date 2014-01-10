@@ -190,13 +190,63 @@ public class CurrencyChart {
 			new BollingerBandsPoints(movAvgPeriod, BOLLINGER_BANDS_FACTOR).applyToSeries(middleSeries, bollBandsSeries);
 	}
 
+
+	// Annotations
+
 	public void addAnnotation(CurrencyEvent event) {
-		TimeSeriesDataItem dataItem = middleSeries.getDataItem(new Day(event.getDate()));
-		XYPointerAnnotation point = new XYPointerAnnotation(event.getTitle(), event.getDate().getTime(), dataItem.getValue().doubleValue(), -Math.PI/2);
+		TimeSeriesDataItem dataItem = middleSeries.getDataItem(toDay(event));
+		if (dataItem != null)
+			addAnnotationToItem(event, dataItem.getValue().doubleValue());
+	}
+
+	public void addAnnotationIfNotExists(CurrencyEvent event) {
+		Day day = toDay(event);
+		TimeSeriesDataItem dataItem = middleSeries.getDataItem(day);
+		if (dataItem == null) {
+			DataItemWithOffset next = findNextDataItem(day, true);
+			DataItemWithOffset prev = findNextDataItem(day, false);
+			double atValue = weightedAverage(next.dataItem.getValue().doubleValue(), prev.dataItem.getValue().doubleValue(), prev.dayOffset, next.dayOffset);
+			addAnnotationToItem(event, atValue);
+		}
+	}
+
+	public void clearAnnotations() {
+		chart.getXYPlot().clearAnnotations();
+	}
+
+	private Day toDay(CurrencyEvent event) {
+		return new Day(event.getDate());
+	}
+
+	private void addAnnotationToItem(CurrencyEvent event, double atValue) {
+		XYPointerAnnotation point = new XYPointerAnnotation(event.getTitle(), event.getDate().getTime(), atValue, -Math.PI/2);
 		point.setLabelOffset(8);
 		point.setBaseRadius(24);
 		point.setTipRadius(2);
 		point.setToolTipText(event.getDescription());
 		chart.getXYPlot().addAnnotation(point);
+	}
+
+	private DataItemWithOffset findNextDataItem(RegularTimePeriod day, boolean forward) {
+		for (int i = 1;; i++) {
+			day = forward ? day.next() : day.previous();
+			TimeSeriesDataItem dataItem = middleSeries.getDataItem(day);
+			if (dataItem != null)
+				return new DataItemWithOffset(dataItem, i);
+		}
+	}
+
+	private double weightedAverage(double x, double y, double xWeight, double yWeight) {
+		return (x*xWeight + y*yWeight)/(xWeight + yWeight);
+	}
+
+	private static class DataItemWithOffset {
+		private TimeSeriesDataItem dataItem;
+		private int dayOffset;
+
+		private DataItemWithOffset(TimeSeriesDataItem dataItem, int dayOffset) {
+			this.dataItem = dataItem;
+			this.dayOffset = dayOffset;
+		}
 	}
 }
