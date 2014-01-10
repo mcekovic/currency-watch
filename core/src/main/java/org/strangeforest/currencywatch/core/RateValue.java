@@ -1,8 +1,7 @@
 package org.strangeforest.currencywatch.core;
 
 import java.math.*;
-
-import static org.strangeforest.util.ObjectUtil.*;
+import java.util.*;
 
 public class RateValue {
 
@@ -44,13 +43,11 @@ public class RateValue {
 		if (this == o) return true;
 		if (!(o instanceof RateValue)) return false;
 		RateValue rateValue = (RateValue)o;
-		return equal(bid, rateValue.bid) && equal(ask, rateValue.ask) && equal(middle, rateValue.middle);
+		return Objects.equals(bid, rateValue.bid) && Objects.equals(ask, rateValue.ask) && Objects.equals(middle, rateValue.middle);
 	}
 
 	@Override public int hashCode() {
-		int result = bid != null ? bid.hashCode() : 0;
-		result = 31 * result + (ask != null ? ask.hashCode() : 0);
-		return 31 * result + (middle != null ? middle.hashCode() : 0);
+		return 31 * (31 * Objects.hashCode(bid) + Objects.hashCode(ask)) + Objects.hashCode(middle);
 	}
 
 	@Override public String toString() {

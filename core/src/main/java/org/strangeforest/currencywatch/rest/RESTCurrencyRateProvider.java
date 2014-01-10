@@ -7,7 +7,6 @@ import javax.ws.rs.core.*;
 
 import org.slf4j.*;
 import org.strangeforest.currencywatch.core.*;
-import org.strangeforest.util.*;
 
 import static javax.ws.rs.core.MediaType.*;
 import static javax.ws.rs.core.Response.Status.*;
@@ -38,7 +37,7 @@ public class RESTCurrencyRateProvider extends BaseCurrencyRateProvider {
 
 	public boolean ping() {
 		try {
-			return ObjectUtil.equal(target.request(TEXT_PLAIN).get(String.class), INFO_MESSAGE);
+			return Objects.equals(target.request(TEXT_PLAIN).get(String.class), INFO_MESSAGE);
 		}
 		catch (Exception ex) {
 			LOGGER.debug("Error pinging REST Currency Watch API.", ex);
