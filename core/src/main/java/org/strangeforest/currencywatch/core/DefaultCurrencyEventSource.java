@@ -2,7 +2,7 @@ package org.strangeforest.currencywatch.core;
 
 import java.util.*;
 
-import com.finsoft.util.*;
+import org.strangeforest.util.*;
 
 public class DefaultCurrencyEventSource implements CurrencyEventSource {
 
@@ -12,16 +12,16 @@ public class DefaultCurrencyEventSource implements CurrencyEventSource {
 
 	@Override public CurrencyEvent getEvent(final String currency, final Date date) {
 		return Algorithms.find(EVENTS, new Predicate<CurrencyEvent>() {
-			@Override public boolean evaluate(CurrencyEvent event) {
-				return ObjectUtil.equal(event.getCurrency(), currency) && ObjectUtil.equal(event.getDate(), date);
+			@Override public boolean test(CurrencyEvent event) {
+				return Objects.equals(event.getCurrency(), currency) && Objects.equals(event.getDate(), date);
 			}
 		});
 	}
 
 	public Iterable<CurrencyEvent> getEvents(final String currency, final Date fromDate, final Date toDate) {
 		return Algorithms.select(EVENTS, new Predicate<CurrencyEvent>() {
-			@Override public boolean evaluate(CurrencyEvent event) {
-				return ObjectUtil.equal(event.getCurrency(), currency) && new DateRange(fromDate, toDate).contains(event.getDate());
+			@Override public boolean test(CurrencyEvent event) {
+				return Objects.equals(event.getCurrency(), currency) && new DateRange(fromDate, toDate).contains(event.getDate());
 			}
 		});
 	}
