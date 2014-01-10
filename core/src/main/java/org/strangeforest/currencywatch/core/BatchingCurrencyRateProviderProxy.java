@@ -4,8 +4,7 @@ import java.util.*;
 import java.util.concurrent.atomic.*;
 
 import org.slf4j.*;
-
-import com.finsoft.util.*;
+import org.strangeforest.util.*;
 
 public class BatchingCurrencyRateProviderProxy extends ObservableCurrencyRateProviderProxy {
 

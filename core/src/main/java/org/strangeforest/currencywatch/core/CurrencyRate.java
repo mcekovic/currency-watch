@@ -3,7 +3,7 @@ package org.strangeforest.currencywatch.core;
 import java.util.*;
 import java.util.concurrent.*;
 
-import com.finsoft.concurrent.*;
+import org.strangeforest.concurrent.*;
 
 public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 

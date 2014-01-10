@@ -2,14 +2,11 @@ package org.strangeforest.currencywatch.rest;
 
 import java.net.*;
 import java.util.*;
+import javax.ws.rs.client.*;
+import javax.ws.rs.core.*;
 
 import org.slf4j.*;
 import org.strangeforest.currencywatch.core.*;
-
-import com.sun.jersey.api.client.*;
-import com.sun.jersey.client.apache.*;
-
-import com.finsoft.util.*;
 
 import static javax.ws.rs.core.MediaType.*;
 import static javax.ws.rs.core.Response.Status.*;
@@ -19,7 +16,7 @@ public class RESTCurrencyRateProvider extends BaseCurrencyRateProvider {
 
 	private final URI uri;
 	private Client client;
-	private WebResource resource;
+	private WebTarget target;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RESTCurrencyRateProvider.class);
 
@@ -29,34 +26,34 @@ public class RESTCurrencyRateProvider extends BaseCurrencyRateProvider {
 	}
 
 	@Override public void init() {
-		client = ApacheHttpClient.create();
-		resource = client.resource(uri);
+		client = ClientBuilder.newClient();
+		target = client.target(uri);
 	}
 
 	@Override public void close() {
 		if (client != null)
-			client.destroy();
+			client.close();
 	}
 
 	public boolean ping() {
 		try {
-			return ObjectUtil.equal(resource.accept(TEXT_PLAIN).get(String.class), INFO_MESSAGE);
+			return Objects.equals(target.request(TEXT_PLAIN).get(String.class), INFO_MESSAGE);
 		}
-		catch (UniformInterfaceException | ClientHandlerException ex) {
-			LOGGER.debug("Error pinging REST Currency Watch API.");
+		catch (Exception ex) {
+			LOGGER.debug("Error pinging REST Currency Watch API.", ex);
 			return false;
 		}
 	}
 
 	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
-		ClientResponse response = resource.path("rate/" + currency).queryParam("date", formatDate(date))
-			.accept(TEXT_XML).get(ClientResponse.class);
-		return response.getStatus() != NO_CONTENT.getStatusCode() ? toRateValue(response.getEntity(RateType.class)) : null;
+		Response response = target.path("rate/" + currency).queryParam("date", formatDate(date))
+			.request(TEXT_XML).get(Response.class);
+		return response.getStatus() != NO_CONTENT.getStatusCode() ? toRateValue(response.readEntity(RateType.class)) : null;
 	}
 
 	@Override public Map<Date, RateValue> getRates(String baseCurrency, String currency, Collection<Date> dates) {
-		return toRateValuesMap(resource.path("rates/" + currency).queryParam("dates", formatDates(dates))
-			.accept(TEXT_XML).get(RatesType.class));
+		return toRateValuesMap(target.path("rates/" + currency).queryParam("dates", formatDates(dates))
+			.request(TEXT_XML).get(RatesType.class));
 	}
 
 	private String formatDate(Date date) {

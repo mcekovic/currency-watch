@@ -6,14 +6,15 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
 import org.slf4j.*;
+import org.springframework.stereotype.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
-
-import com.finsoft.util.*;
+import org.strangeforest.util.*;
 
 import static javax.ws.rs.core.MediaType.*;
 import static javax.ws.rs.core.Response.Status.*;
 
+@Component
 @Path("/")
 public class CurrencyRateResource {
 
@@ -48,7 +49,7 @@ public class CurrencyRateResource {
 		try {
 			Date aDate = parseDate(date);
 			if (aDate == null)
-				aDate = Util.getLastDate().getTime();
+				aDate = Util.getLastDate().toDate();
 			RateValue rate = provider.getRate(baseCurrency, currency, aDate);
 			return rate != null ? new RateType(aDate, rate) : null;
 		}
@@ -79,14 +80,14 @@ public class CurrencyRateResource {
 				Date from = parseDate(fromDate);
 				Date to = parseDate(toDate);
 				if (to == null)
-					to = Util.getLastDate().getTime();
+					to = Util.getLastDate().toDate();
 				if (from == null)
 					from = to;
 				dateColl = Util.trimDateRange(new DateRange(from, to)).dates();
 			}
 			Map<Date, RateValue> rates = provider.getRates(baseCurrency, currency, dateColl);
-			return new RatesType(Algorithms.transform(rates.entrySet(), new Transformer<Map.Entry<Date, RateValue>, RateType>() {
-				@Override public RateType transform(Map.Entry<Date, RateValue> rate) {
+			return new RatesType(Algorithms.transform(rates.entrySet(), new Function<Map.Entry<Date, RateValue>, RateType>() {
+				@Override public RateType apply(Map.Entry<Date, RateValue> rate) {
 					return new RateType(rate.getKey(), rate.getValue());
 				}
 			}));

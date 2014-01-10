@@ -7,8 +7,7 @@ import javax.swing.*;
 import org.jfree.chart.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
-
-import com.finsoft.util.*;
+import org.strangeforest.util.*;
 
 import static org.strangeforest.currencywatch.ui.UIUtil.*;
 

@@ -21,10 +21,10 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	private String currency = UIUtil.DEFAULT_CURRENCY.toString();
 
 	@Parameter(names = "-from", description = "Date to fetch currency rates from in format dd-mm-yyyy.", converter = DateConverter.class)
-	private Date from = Util.START_DATE.getTime();
+	private Date from = Util.START_DATE.toDate();
 
 	@Parameter(names = "-to", description = "Date to fetch currency rates to in format dd-mm-yyyy.", converter = DateConverter.class)
-	private Date to = Util.getLastDate().getTime();
+	private Date to = Util.getLastDate().toDate();
 
 	@Parameter(names = {"-t", "-threads"}, description = "Number of threads to use for fetching.")
 	private int threadCount = THREAD_COUNT;

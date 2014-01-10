@@ -6,11 +6,10 @@ import java.util.*;
 import javax.sql.*;
 
 import org.strangeforest.currencywatch.core.*;
+import org.strangeforest.db.*;
+import org.strangeforest.db.gateway.*;
 
-import com.finsoft.db.*;
-import com.finsoft.db.gateway.*;
-
-import static com.finsoft.db.gateway.DataHelper.*;
+import static org.strangeforest.db.gateway.DataHelper.*;
 
 public class JDBCCurrencyRateProvider extends BaseCurrencyRateProvider implements UpdatableCurrencyRateProvider {
 

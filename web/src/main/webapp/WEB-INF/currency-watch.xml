@@ -15,7 +15,7 @@
 		</property>
 	</bean>
 
-	<bean id="dataSource" abstract="true" class="com.finsoft.db.ConnectionPoolDataSource" init-method="init" destroy-method="close">
+	<bean id="dataSource" abstract="true" class="org.strangeforest.db.ConnectionPoolDataSource" init-method="init" destroy-method="close">
 		<constructor-arg index="0" name="driverClass" value="${dataSource.driverClass}"/>
 		<property name="initialPoolSize" value="0"/>
 		<property name="minPoolSize" value="0"/>
@@ -23,15 +23,15 @@
 		<property name="minIdleCount" value="1"/>
 		<property name="maxPendingCount" value="5"/>
 		<property name="checkQuery" value="SELECT 1"/>
-		<property name="checkTime" value="60"/>
+		<property name="checkTime" value="60000"/>
 		<property name="maxWaitTime" value="0"/>
-		<property name="maxIdleTime" value="300"/>
-		<property name="maxBusyTime" value="600"/>
-		<property name="maxLiveTime" value="3600"/>
-		<property name="propertyCycle" value="60"/>
+		<property name="maxIdleTime" value="300000"/>
+		<property name="maxBusyTime" value="600000"/>
+		<property name="maxLiveTime" value="3600000"/>
+		<property name="propertyCycle" value="60000"/>
 		<property name="maxStatements" value="10"/>
 		<property name="logger">
-			<bean class="com.finsoft.db.logging.DBConnectionPoolLogger" c:loggerName="org.strangeforest.currencywatch.jdbc"/>
+			<bean class="org.strangeforest.db.logging.DBConnectionPoolLogger" c:loggerName="org.strangeforest.currencywatch.jdbc"/>
 		</property>
 		<property name="collectStatementStatistics" value="true"/>
 	</bean>

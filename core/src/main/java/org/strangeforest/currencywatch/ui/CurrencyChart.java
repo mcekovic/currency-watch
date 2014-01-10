@@ -16,8 +16,6 @@ import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.core.DateRange;
 
-import com.finsoft.util.*;
-
 public class CurrencyChart {
 
 	private final JFreeChart chart;
@@ -139,8 +137,8 @@ public class CurrencyChart {
 
 	public DateRange getDateRange() {
 		DateAxis domainAxis = (DateAxis)chart.getXYPlot().getDomainAxis();
-		Date fromDate = DateUtil.extractDate(new Date(domainAxis.getMinimumDate().getTime() + DateUtil.MILLISECONDS_PER_DAY / 2));
-		Date toDate = DateUtil.extractDate(new Date(domainAxis.getMaximumDate().getTime() - DateUtil.MILLISECONDS_PER_DAY / 2));
+		Date fromDate = Util.extractDate(new Date(domainAxis.getMinimumDate().getTime() + Util.MILLISECONDS_PER_DAY / 2));
+		Date toDate = Util.extractDate(new Date(domainAxis.getMaximumDate().getTime() - Util.MILLISECONDS_PER_DAY / 2));
 		return Util.trimDateRange(new DateRange(fromDate, toDate));
 	}
 

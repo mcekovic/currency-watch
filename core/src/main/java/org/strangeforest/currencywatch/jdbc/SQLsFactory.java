@@ -2,7 +2,7 @@ package org.strangeforest.currencywatch.jdbc;
 
 import java.io.*;
 
-import com.finsoft.db.gateway.*;
+import org.strangeforest.db.gateway.*;
 
 public abstract class SQLsFactory {
 

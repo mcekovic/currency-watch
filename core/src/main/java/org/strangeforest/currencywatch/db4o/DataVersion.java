@@ -1,6 +1,6 @@
 package org.strangeforest.currencywatch.db4o;
 
-import com.finsoft.util.*;
+import org.strangeforest.util.*;
 
 public class DataVersion implements Comparable<DataVersion> {
 

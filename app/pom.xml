@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.strangeforest.currencywatch</groupId>
-		<artifactId>currency-watch-parent-pom</artifactId>
+		<artifactId>currency-watch</artifactId>
 		<version>1.3.2-SNAPSHOT</version>
-		<relativePath>../pom</relativePath>
 	</parent>
+	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>currency-watch-app</artifactId>
 	<packaging>jar</packaging>
@@ -99,7 +98,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
+			<!--<plugin>
 				<groupId>com.github.github</groupId>
 				<artifactId>downloads-maven-plugin</artifactId>
 				<configuration>
@@ -118,7 +117,7 @@
 						<phase>deploy</phase>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin>-->
 		</plugins>
 
 	</build>
@@ -130,8 +129,8 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.finsoft</groupId>
-			<artifactId>fin-util</artifactId>
+			<groupId>org.strangeforest.libs</groupId>
+			<artifactId>sf-util</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -152,13 +151,13 @@
 
 		<!-- Test -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-library</artifactId>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>org.strangeforest.currencywatch</groupId>
+		<artifactId>currency-watch</artifactId>
+		<version>1.3.2-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>currency-watch-it-reports</artifactId>
+	<packaging>pom</packaging>
+	<name>Currency Watch IT Reports</name>
+
+	<scm>
+		<connection>${base.scm.url}/it-reports</connection>
+		<developerConnection>${base.scm.url}/it-reports</developerConnection>
+		<url>${base.browse.url}/it-reports</url>
+	</scm>
+
+	<profiles>
+		<profile>
+			<id>integration-tests</id>
+			<properties>
+				<project.parent.basedir>${project.basedir}/..</project.parent.basedir>
+			</properties>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<artifactId>maven-antrun-plugin</artifactId>
+							<dependencies>
+								<dependency>
+									<groupId>org.jacoco</groupId>
+									<artifactId>org.jacoco.ant</artifactId>
+									<version>${jacoco-maven-plugin.version}</version>
+								</dependency>
+							</dependencies>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>merge-core-jacoco-coverage</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target xmlns:jacoco="antlib:org.jacoco.ant">
+										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" />
+										<jacoco:merge destfile="${project.parent.basedir}/core/target/jacoco-all.exec">
+											<fileset dir="${project.parent.basedir}">
+												<include name="core/target/*.exec" />
+												<include name="app/target/*.exec" />
+												<include name="web/target/*.exec" />
+												<exclude name="**/jacoco-all.exec" />
+											</fileset>
+										</jacoco:merge>
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>merge-app-jacoco-coverage</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<copy file="${project.parent.basedir}/app/target/jacoco.exec" tofile="${project.parent.basedir}/app/target/jacoco-all.exec" />
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>merge-web-jacoco-coverage</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<copy file="${project.parent.basedir}/web/target/jacoco-it.exec" tofile="${project.parent.basedir}/web/target/jacoco-all.exec" />
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>report-core-jacoco-coverage</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target xmlns:jacoco="antlib:org.jacoco.ant">
+										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" />
+										<jacoco:report>
+											<executiondata>
+												<file file="${project.parent.basedir}/core/target/jacoco-all.exec" />
+											</executiondata>
+											<structure name="Currency Watch Core">
+												<classfiles>
+													<fileset dir="${project.parent.basedir}/core/target/classes" />
+												</classfiles>
+												<sourcefiles encoding="UTF-8">
+													<fileset dir="${project.parent.basedir}/core/src/main/java" />
+												</sourcefiles>
+											</structure>
+											<html destdir="${project.parent.basedir}/core/target/site/jacoco-all" />
+										</jacoco:report>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>

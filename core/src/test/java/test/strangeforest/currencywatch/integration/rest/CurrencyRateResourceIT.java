@@ -1,59 +1,59 @@
 package test.strangeforest.currencywatch.integration.rest;
 
 import java.io.*;
+import javax.ws.rs.client.*;
+import javax.ws.rs.core.*;
 
 import org.strangeforest.currencywatch.rest.*;
 import org.testng.annotations.*;
 
-import com.sun.jersey.api.client.*;
-import com.sun.jersey.client.apache.*;
-
 import static javax.ws.rs.core.MediaType.*;
 import static javax.ws.rs.core.Response.Status.*;
-import static org.strangeforest.currencywatch.rest.CurrencyRateResource.DATE_FORMAT;
+import static org.strangeforest.currencywatch.rest.CurrencyRateResource.*;
 import static org.testng.Assert.*;
 import static test.strangeforest.currencywatch.TestData.*;
 
 public class CurrencyRateResourceIT extends CurrencyRateResourceFixture {
 
-	private ApacheHttpClient httpClient;
-	private WebResource resource;
+	private Client client;
+	private WebTarget target;
 
 	@BeforeClass
 	public void setUp() throws IOException {
-		httpClient = ApacheHttpClient.create();
-		resource = httpClient.resource(URI);
+		client = ClientBuilder.newClient();
+		target = client.target(URI);
 	}
 
 	@AfterClass
 	public void cleanUp() {
-		httpClient.destroy();
+		if (client != null)
+			client.close();
 	}
 
 	@Test
 	public void getLastRate() {
-		ClientResponse response = resource.path("rate/" + CURRENCY).accept(TEXT_XML).get(ClientResponse.class);
+		Response response = target.path("rate/" + CURRENCY).request(TEXT_XML).get();
 		assertEquals(response.getStatus(), NO_CONTENT.getStatusCode());
 	}
 
 	@Test
 	public void getLastRates() {
-		RatesType ratesType = resource.path("rates/" + CURRENCY).accept(TEXT_XML).get(RatesType.class);
+		RatesType ratesType = target.path("rates/" + CURRENCY).request(TEXT_XML).get(RatesType.class);
 		assertNull(ratesType.getRates());
 	}
 
 	@Test
 	public void getRatesForDateRange() {
-		RatesType ratesType = resource.path("rates/" + CURRENCY).queryParam("fromDate", DATE_FORMAT.format(DATE2)).queryParam("toDate", DATE_FORMAT.format(DATE4))
-			.accept(TEXT_XML).get(RatesType.class);
+		RatesType ratesType = target.path("rates/" + CURRENCY).queryParam("fromDate", DATE_FORMAT.format(DATE2)).queryParam("toDate", DATE_FORMAT.format(DATE4))
+			.request(TEXT_XML).get(RatesType.class);
 		assertEquals(ratesType.getRates().size(), 3);
 	}
 
 	@Test
 	public void wrongDateFormat() {
-		ClientResponse response = resource.path("rate/" + CURRENCY).queryParam("date", "bad-date").accept(TEXT_XML).get(ClientResponse.class);
+		Response response = target.path("rate/" + CURRENCY).queryParam("date", "bad-date").request(TEXT_XML).get();
 		assertEquals(response.getStatus(), BAD_REQUEST.getStatusCode());
-		ClientResponse response2 = resource.path("rates/" + CURRENCY).queryParam("fromDate", "bad-date").accept(TEXT_XML).get(ClientResponse.class);
+		Response response2 = target.path("rates/" + CURRENCY).queryParam("fromDate", "bad-date").request(TEXT_XML).get();
 		assertEquals(response2.getStatus(), BAD_REQUEST.getStatusCode());
 	}
 }

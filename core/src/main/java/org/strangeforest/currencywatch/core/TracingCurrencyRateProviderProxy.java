@@ -3,8 +3,7 @@ package org.strangeforest.currencywatch.core;
 import java.util.*;
 
 import org.slf4j.*;
-
-import com.finsoft.util.*;
+import org.strangeforest.util.*;
 
 import static java.lang.String.*;
 

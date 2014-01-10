@@ -1,11 +1,10 @@
 package test.strangeforest.currencywatch.integration.jdbc;
 
 import org.strangeforest.currencywatch.jdbc.*;
+import org.strangeforest.db.*;
 import org.testng.annotations.*;
 
 import test.strangeforest.currencywatch.integration.*;
-
-import com.finsoft.db.*;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;

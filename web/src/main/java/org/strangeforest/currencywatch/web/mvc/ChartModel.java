@@ -1,5 +1,9 @@
 package org.strangeforest.currencywatch.web.mvc;
 
+import java.awt.*;
+import java.io.*;
+import java.text.*;
+import java.util.*;
 import javax.servlet.http.*;
 
 import org.jfree.chart.*;
@@ -8,12 +12,6 @@ import org.slf4j.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
-
-import com.finsoft.util.*;
-import java.awt.*;
-import java.io.*;
-import java.text.*;
-import java.util.*;
 
 public class ChartModel {
 
@@ -193,8 +191,8 @@ public class ChartModel {
 		double x1Pct = Math.max(0.0, (zoomx1-OFFSET_X1)/(CHART_WIDTH-OFFSET_X1-OFFSET_X2));
 		double x2Pct = Math.min(1.0, (zoomx2-OFFSET_X1)/(CHART_WIDTH-OFFSET_X1-OFFSET_X2));
 		int size = dateRange.size()-1;
-		Date fromDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x1Pct)*DateUtil.MILLISECONDS_PER_DAY);
-		Date toDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x2Pct)*DateUtil.MILLISECONDS_PER_DAY);
+		Date fromDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x1Pct)*Util.MILLISECONDS_PER_DAY);
+		Date toDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x2Pct)*Util.MILLISECONDS_PER_DAY);
 		if (fromDate.before(toDate)) {
 			dateRange = new DateRange(fromDate, toDate);
 			zoomed = true;

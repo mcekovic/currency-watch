@@ -16,11 +16,10 @@ import org.slf4j.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
+import org.strangeforest.util.*;
 
-import com.finsoft.util.*;
-
-import static com.finsoft.util.Algorithms.*;
 import static java.util.Arrays.*;
+import static org.strangeforest.util.Algorithms.*;
 
 @ManagedBean(name = "chartPage")
 @RequestScoped
@@ -177,8 +176,8 @@ public class ChartPageBean {
 	}
 
 	public List<SelectItem> getCurrencies() {
-		return transform(asList(CurrencySymbol.values()), new Transformer<CurrencySymbol, SelectItem>() {
-			@Override public SelectItem transform(CurrencySymbol currency) {
+		return transform(asList(CurrencySymbol.values()), new Function<CurrencySymbol, SelectItem>() {
+			@Override public SelectItem apply(CurrencySymbol currency) {
 				String symbol = currency.toString();
 				return new SelectItem(symbol, symbol, currency.description());
 			}
@@ -186,24 +185,24 @@ public class ChartPageBean {
 	}
 
 	public List<SelectItem> getPeriods() {
-		return transform(asList(Period.values()), new Transformer<Period, SelectItem>() {
-			@Override public SelectItem transform(Period period) {
+		return transform(asList(Period.values()), new Function<Period, SelectItem>() {
+			@Override public SelectItem apply(Period period) {
 				return new SelectItem(period, period.label());
 			}
 		});
 	}
 
 	public List<SelectItem> getQualities() {
-		return transform(asList(SeriesQuality.values()), new Transformer<SeriesQuality, SelectItem>() {
-			@Override public SelectItem transform(SeriesQuality quality) {
+		return transform(asList(SeriesQuality.values()), new Function<SeriesQuality, SelectItem>() {
+			@Override public SelectItem apply(SeriesQuality quality) {
 				return new SelectItem(quality, quality.label());
 			}
 		});
 	}
 
 	public List<SelectItem> getMovAvgPeriods() {
-		return transform(asList(UIUtil.MOV_AVG_PERIODS), new Transformer<Integer, SelectItem>() {
-			@Override public SelectItem transform(Integer movAvgPeriod) {
+		return transform(asList(UIUtil.MOV_AVG_PERIODS), new Function<Integer, SelectItem>() {
+			@Override public SelectItem apply(Integer movAvgPeriod) {
 				return new SelectItem(movAvgPeriod, String.valueOf(movAvgPeriod));
 			}
 		});
@@ -223,8 +222,8 @@ public class ChartPageBean {
 		double x1Pct = Math.max(0.0, (zoomx1-OFFSET_X1)/(CHART_WIDTH-OFFSET_X1-OFFSET_X2));
 		double x2Pct = Math.min(1.0, (zoomx2-OFFSET_X1)/(CHART_WIDTH-OFFSET_X1-OFFSET_X2));
 		int size = dateRange.size()-1;
-		Date fromDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x1Pct)*DateUtil.MILLISECONDS_PER_DAY);
-		Date toDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x2Pct)*DateUtil.MILLISECONDS_PER_DAY);
+		Date fromDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x1Pct)*Util.MILLISECONDS_PER_DAY);
+		Date toDate = new Date(dateRange.getFrom().getTime() + Math.round(size*x2Pct)*Util.MILLISECONDS_PER_DAY);
 		if (fromDate.before(toDate)) {
 			dateRange = new DateRange(fromDate, toDate);
 			zoomed = true;

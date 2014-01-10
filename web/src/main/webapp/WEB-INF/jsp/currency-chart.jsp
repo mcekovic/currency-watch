@@ -173,7 +173,7 @@
 				</table>
 				<table id="loadingTable" cellspacing="0" cellpadding="0" style="text-align: center; display: none;">
 					<tr><td>&#160;</td></tr>
-					<tr><td><img id="loadingImage" src="../resources/images/loading.gif" width="66" height="66" alt="Loading..."/></td></tr>
+					<tr><td><img id="loadingImage" src="../resources/images/loading.gif" width="128" height="128" alt="Loading..."/></td></tr>
 					<tr><td>&#160;</td></tr>
 					<tr><td class="loading">Loading...</td></tr>
 				</table>
