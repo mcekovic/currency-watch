@@ -175,7 +175,7 @@
 						<groupId>org.apache.tomcat.maven</groupId>
 						<artifactId>tomcat7-maven-plugin</artifactId>
 						<configuration>
-							<url>http://${deploy.server}:8080/manager/html</url>
+							<url>http://${deploy.server}:8080/manager/text</url>
 							<server>tomcat</server>
 							<update>true</update>
 							<path>/currency-watch</path>
