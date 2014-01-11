@@ -32,9 +32,11 @@ public class CurrencyChart {
 	private static final Color MOV_AVG_COLOR = new Color(0, 0, 255);
 	private static final Color BOLL_BANDS_COLOR = new Color(160, 208, 255, 64);
 	private static final Color BOLL_BANDS_2_COLOR = new Color(255, 255, 255, 255);
+	private static final Color ANNOTATION_COLOR = new Color(32, 32, 64);
 
-	private static final BasicStroke BID_ASK_STROKE = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{4.0f, 4.0f}, 0.0f);
-	private static final BasicStroke MOV_AVG_STOKE = new BasicStroke(2);
+	private static final Stroke BID_ASK_STROKE = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, new float[]{4f, 4f}, 0f);
+	private static final Stroke MOV_AVG_STOKE = new BasicStroke(2f);
+	private static final Stroke ANNOTATION_STOKE = new BasicStroke(0.5f);
 
 	private static final double BOLLINGER_BANDS_FACTOR = 2.0;
 
@@ -249,6 +251,9 @@ public class CurrencyChart {
 		point.setLabelOffset(8);
 		point.setBaseRadius(24);
 		point.setTipRadius(2);
+		point.setPaint(ANNOTATION_COLOR);
+		point.setArrowPaint(ANNOTATION_COLOR);
+		point.setArrowStroke(ANNOTATION_STOKE);
 		point.setToolTipText(event.getDescription());
 		chart.getXYPlot().addAnnotation(point);
 	}

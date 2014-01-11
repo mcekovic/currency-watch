@@ -102,7 +102,6 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		chart.removeDomainAxisChangeListener(axisChangeListener);
 		if (currencyRate != null)
 			currencyRate.close();
-		chart.clearAnnotations();
 		this.currency = currency;
 		if (period != this.period) {
 			this.period = period;
@@ -167,6 +166,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		currItems = 0;
 		currRemoteItems = 0;
 		startTime = System.currentTimeMillis();
+		chart.clearAnnotations();
 		updateProgress();
 		updateSpeed();
 		startSpeedUpdate();
