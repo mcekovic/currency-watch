@@ -91,6 +91,8 @@
 		<constructor-arg index="1" name="loggerName" value="org.strangeforest.currencywatch.web.provider"/>
 	</bean>
 
+	<bean id="currencyEventSource" class="org.strangeforest.currencywatch.core.DefaultCurrencyEventSource"/>
+
 	<bean id="currencyRateResource" class="org.strangeforest.currencywatch.rest.CurrencyRateResource">
 		<constructor-arg index="0" name="provider" ref="currencyRateProvider"/>
 	</bean>

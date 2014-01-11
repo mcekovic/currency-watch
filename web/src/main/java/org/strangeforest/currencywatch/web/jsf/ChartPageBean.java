@@ -28,7 +28,8 @@ public class ChartPageBean {
 	@ManagedProperty("#{currencyRateProvider}")
 	private CurrencyRateProvider currencyProvider;
 
-	private final CurrencyEventSource eventSource = new DefaultCurrencyEventSource();
+	@ManagedProperty("#{currencyEventSource}")
+	private CurrencyEventSource eventSource;
 
 	private CurrencySymbol currency = UIUtil.DEFAULT_CURRENCY;
 	private Period period = UIUtil.DEFAULT_PERIOD;
@@ -59,6 +60,14 @@ public class ChartPageBean {
 
 	public void setCurrencyProvider(CurrencyRateProvider currencyProvider) {
 		this.currencyProvider = currencyProvider;
+	}
+
+	public CurrencyEventSource getEventSource() {
+		return eventSource;
+	}
+
+	public void setEventSource(CurrencyEventSource eventSource) {
+		this.eventSource = eventSource;
 	}
 
 	public CurrencySymbol getCurrency() {
