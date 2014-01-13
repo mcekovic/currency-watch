@@ -50,6 +50,17 @@
 		<module>it-reports</module>
 	</modules>
 
+	<repositories>
+		<repository>
+			<id>sf-libs-mvn-repo</id>
+			<url>https://raw.github.com/mcekovic/sf-libs/mvn-repo/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<build>
 
 		<pluginManagement>
