@@ -314,23 +314,11 @@
 				<groupId>org.glassfish.jersey.containers</groupId>
 				<artifactId>jersey-container-servlet</artifactId>
 				<version>${jaxrs.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.glassfish.hk2</groupId>
-						<artifactId>osgi-resource-locator</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.core</groupId>
 				<artifactId>jersey-client</artifactId>
 				<version>${jaxrs.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.glassfish.hk2</groupId>
-						<artifactId>osgi-resource-locator</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.ext</groupId>
@@ -338,24 +326,20 @@
 				<version>${jaxrs.version}</version>
 				<exclusions>
 					<exclusion>
+						<groupId>org.springframework</groupId>
 						<artifactId>spring-core</artifactId>
-						<groupId>org.springframework</groupId>
 					</exclusion>
 					<exclusion>
+						<groupId>org.springframework</groupId>
 						<artifactId>spring-beans</artifactId>
-						<groupId>org.springframework</groupId>
 					</exclusion>
 					<exclusion>
-						<artifactId>spring-context</artifactId>
 						<groupId>org.springframework</groupId>
-					</exclusion>
-					<exclusion>
 						<artifactId>spring-web</artifactId>
-						<groupId>org.springframework</groupId>
 					</exclusion>
 					<exclusion>
-						<artifactId>hk2</artifactId>
 						<groupId>org.glassfish.hk2</groupId>
+						<artifactId>hk2</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
