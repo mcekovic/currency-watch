@@ -33,6 +33,10 @@ public class CurrencyEvent {
 		return description;
 	}
 
+	public boolean isForCurrency(String currency) {
+		return this.currency == null || this.currency.equals(currency);
+	}
+
 	@Override public String toString() {
 		return String.format("CurrencyEvent{currency=%1$s, date=%2$td-%2$tm-%2$tY, title=%3$s}", currency, date, title);
 	}
