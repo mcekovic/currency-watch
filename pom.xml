@@ -29,7 +29,7 @@
 	</prerequisites>
 
 	<properties>
-		<base.scm.url>scm:git:https://mcekovic@github.com/mcekovic/currency-watch.git</base.scm.url>
+		<base.scm.url>scm:git:git@github.com:mcekovic/currency-watch.git</base.scm.url>
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
 		<slf4j.version>1.7.5</slf4j.version>
 		<spring.version>4.0.0.RELEASE</spring.version>
@@ -145,6 +145,7 @@
 					<configuration>
 						<tagBase>${base.browse.url}.git/releases</tagBase>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<allowTimestampedSnapshots>true</allowTimestampedSnapshots>
 					</configuration>
 				</plugin>
 				<plugin>

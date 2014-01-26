@@ -12,12 +12,6 @@
 	<packaging>pom</packaging>
 	<name>Currency Watch IT Reports</name>
 
-	<scm>
-		<connection>${base.scm.url}/it-reports</connection>
-		<developerConnection>${base.scm.url}/it-reports</developerConnection>
-		<url>${base.browse.url}/it-reports</url>
-	</scm>
-
 	<profiles>
 		<profile>
 			<id>integration-tests</id>

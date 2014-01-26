@@ -12,12 +12,6 @@
 	<packaging>war</packaging>
 	<name>Currency Watch Web Application</name>
 
-	<scm>
-		<connection>${base.scm.url}/web</connection>
-		<developerConnection>${base.scm.url}/web</developerConnection>
-		<url>${base.browse.url}/web</url>
-	</scm>
-
 	<properties>
 		<deploy.server>ubuntu.beg.finsoft.com</deploy.server>
 	</properties>
