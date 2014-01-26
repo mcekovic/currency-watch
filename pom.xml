@@ -5,7 +5,7 @@
 	<groupId>org.strangeforest.currencywatch</groupId>
 	<artifactId>currency-watch</artifactId>
 	<packaging>pom</packaging>
-	<version>1.3.2-SNAPSHOT</version>
+	<version>1.3.3-SNAPSHOT</version>
 	<name>Currency Watch</name>
 	<url>${base.browse.url}</url>
 
@@ -22,6 +22,7 @@
 		<connection>${base.scm.url}</connection>
 		<developerConnection>${base.scm.url}</developerConnection>
 		<url>${base.browse.url}</url>
+		<tag>HEAD</tag>
 	</scm>
 
 	<prerequisites>
@@ -206,8 +207,8 @@
 								<requireJavaVersion>
 									<version>1.7</version>
 								</requireJavaVersion>
-								<DependencyConvergence/>
-								<requirePluginVersions/>
+								<DependencyConvergence />
+								<requirePluginVersions />
 							</rules>
 						</configuration>
 					</execution>
