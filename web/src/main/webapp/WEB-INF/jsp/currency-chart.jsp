@@ -182,7 +182,7 @@
 			<td>&#160;</td>
 		</tr><tr>
 			<td class="small">
-				<a href="https://github.com/mcekovic/currency-watch/downloads">Download Currency Watch desktop application</a>,&#160;
+				<a href="https://github.com/mcekovic/currency-watch/releases">Download Currency Watch desktop application</a>,&#160;
 				<a href="https://github.com/mcekovic/currency-watch">Currency Watch on GitHub</a>,&#160;
 				<a href="../api/application.wadl">Currency Watch REST API</a>
 			</td>
