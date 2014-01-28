@@ -8,15 +8,11 @@ import javax.xml.bind.annotation.*;
 @XmlType(name = "rates", propOrder = {"rates"})
 public class RatesType {
 
-	@XmlElement(name = "rate", required=true) private List<RateType> rates;
+	@XmlElement(name = "rate", required=true) public List<RateType> rates;
 
 	public RatesType() {}
 
 	public RatesType(List<RateType> rates) {
 		this.rates = rates;
-	}
-
-	public List<RateType> getRates() {
-		return rates;
 	}
 }

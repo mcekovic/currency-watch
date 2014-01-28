@@ -74,15 +74,15 @@ public class RESTCurrencyRateProvider extends BaseCurrencyRateProvider {
 	}
 
 	private RateValue toRateValue(RateType rate) {
-		return new RateValue(rate.getBid(), rate.getAsk(), rate.getMiddle());
+		return new RateValue(rate.bid, rate.ask, rate.middle);
 	}
 
 	private Map<Date, RateValue> toRateValuesMap(RatesType rates) {
 		Map<Date, RateValue> rateValueMap = new HashMap<>();
-		List<RateType> rateTypes = rates.getRates();
+		List<RateType> rateTypes = rates.rates;
 		if (rateTypes != null) {
 			for (RateType rate : rateTypes)
-				rateValueMap.put(rate.getDate(), toRateValue(rate));
+				rateValueMap.put(rate.date, toRateValue(rate));
 		}
 		return rateValueMap;
 	}

@@ -11,10 +11,10 @@ import org.strangeforest.currencywatch.core.*;
 @XmlType(name = "rate", propOrder = {"date", "bid", "ask", "middle"})
 public class RateType {
 
-	@XmlAttribute(required=true) private Date date;
-	@XmlAttribute(required=true) private BigDecimal bid;
-	@XmlAttribute(required=true) private BigDecimal ask;
-	@XmlAttribute(required=true) private BigDecimal middle;
+	@XmlAttribute(required=true) public Date date;
+	@XmlAttribute(required=true) public BigDecimal bid;
+	@XmlAttribute(required=true) public BigDecimal ask;
+	@XmlAttribute(required=true) public BigDecimal middle;
 
 	public RateType() {}
 
@@ -23,21 +23,5 @@ public class RateType {
 		this.bid = rate.getBid();
 		this.ask = rate.getAsk();
 		this.middle = rate.getMiddle();
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public BigDecimal getBid() {
-		return bid;
-	}
-
-	public BigDecimal getAsk() {
-		return ask;
-	}
-
-	public BigDecimal getMiddle() {
-		return middle;
 	}
 }

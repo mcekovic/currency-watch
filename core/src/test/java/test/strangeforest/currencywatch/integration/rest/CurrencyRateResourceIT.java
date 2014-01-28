@@ -39,14 +39,14 @@ public class CurrencyRateResourceIT extends CurrencyRateResourceFixture {
 	@Test
 	public void getLastRates() {
 		RatesType ratesType = target.path("rates/" + CURRENCY).request(TEXT_XML).get(RatesType.class);
-		assertNull(ratesType.getRates());
+		assertNull(ratesType.rates);
 	}
 
 	@Test
 	public void getRatesForDateRange() {
 		RatesType ratesType = target.path("rates/" + CURRENCY).queryParam("fromDate", DATE_FORMAT.format(DATE2)).queryParam("toDate", DATE_FORMAT.format(DATE4))
 			.request(TEXT_XML).get(RatesType.class);
-		assertEquals(ratesType.getRates().size(), 3);
+		assertEquals(ratesType.rates.size(), 3);
 	}
 
 	@Test
