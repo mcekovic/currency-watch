@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.*;
 
 @XmlRootElement(name = "rates")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "rates", propOrder = {"rates"}, namespace = "http://currencywatch.strangeforest.org")
+@XmlType(name = "rates", propOrder = {"rates"})
 public class RatesType {
 
 	@XmlElement(name = "rate", required=true) private List<RateType> rates;

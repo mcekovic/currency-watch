@@ -8,7 +8,7 @@ import org.strangeforest.currencywatch.core.*;
 
 @XmlRootElement(name = "rate")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "rate", propOrder = {"date", "bid", "ask", "middle"}, namespace = "http://currencywatch.strangeforest.org")
+@XmlType(name = "rate", propOrder = {"date", "bid", "ask", "middle"})
 public class RateType {
 
 	@XmlAttribute(required=true) private Date date;
