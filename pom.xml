@@ -32,9 +32,9 @@
 	<properties>
 		<base.scm.url>scm:git:git@github.com:mcekovic/currency-watch.git</base.scm.url>
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
-		<slf4j.version>1.7.5</slf4j.version>
-		<spring.version>4.0.1.RELEASE</spring.version>
-		<jaxrs.version>2.5.1</jaxrs.version>
+		<slf4j.version>1.7.6</slf4j.version>
+		<spring.version>4.0.2.RELEASE</spring.version>
+		<jaxrs.version>2.6</jaxrs.version>
 		<jsf-ri.version>2.2.5</jsf-ri.version>
 		<maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.16</maven-failsafe-plugin.version>
@@ -248,7 +248,7 @@
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
-				<version>1.1.0</version>
+				<version>1.1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -281,7 +281,7 @@
 			<dependency>
 				<groupId>org.jfree</groupId>
 				<artifactId>jfreechart</artifactId>
-				<version>1.0.15</version>
+				<version>1.0.17</version>
 				<exclusions>
 					<exclusion>
 						<groupId>xml-apis</groupId>
