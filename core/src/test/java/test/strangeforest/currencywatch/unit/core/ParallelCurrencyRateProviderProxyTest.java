@@ -4,8 +4,6 @@ import java.util.*;
 
 import org.junit.*;
 import org.mockito.*;
-import org.mockito.invocation.*;
-import org.mockito.stubbing.*;
 import org.strangeforest.currencywatch.core.*;
 
 import static org.junit.Assert.*;
@@ -31,11 +29,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 	@Test
 	public void getRates() {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
-		when(provider.getRate(eq(BASE_CURRENCY), eq(CURRENCY), any(Date.class))).thenAnswer(new Answer<RateValue>() {
-			@Override public RateValue answer(InvocationOnMock invocation) throws Throwable {
-				return RATES.get(invocation.getArguments()[2]);
-			}
-		});
+		when(provider.getRate(eq(BASE_CURRENCY), eq(CURRENCY), any(Date.class))).thenAnswer(invocation -> RATES.get(invocation.getArguments()[2]));
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
 		try (CurrencyRateProvider parallelProvider = createParallelProvider(provider, listener, 2)) {

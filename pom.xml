@@ -34,11 +34,11 @@
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
 		<slf4j.version>1.7.6</slf4j.version>
 		<spring.version>4.0.2.RELEASE</spring.version>
-		<jaxrs.version>2.6</jaxrs.version>
-		<jsf-ri.version>2.2.5</jsf-ri.version>
+		<jaxrs.version>2.7</jaxrs.version>
+		<jsf-ri.version>2.2.6</jsf-ri.version>
 		<maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.16</maven-failsafe-plugin.version>
-		<jacoco-maven-plugin.version>0.6.4.201312101107</jacoco-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.6.5.201403032054</jacoco-maven-plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
@@ -77,8 +77,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.1</version>
 					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
+						<source>1.8</source>
+						<target>1.8</target>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -296,7 +296,7 @@
 			<dependency>
 				<groupId>com.beust</groupId>
 				<artifactId>jcommander</artifactId>
-				<version>1.32</version>
+				<version>1.35</version>
 			</dependency>
 			<dependency>
 				<groupId>com.intellij</groupId>
@@ -393,7 +393,7 @@
 			<dependency>
 				<groupId>org.testng</groupId>
 				<artifactId>testng</artifactId>
-				<version>6.8.7</version>
+				<version>6.8.8</version>
 				<scope>test</scope>
 				<exclusions>
 					<exclusion>

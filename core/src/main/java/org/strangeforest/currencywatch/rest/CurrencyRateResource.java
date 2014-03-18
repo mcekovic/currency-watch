@@ -2,6 +2,7 @@ package org.strangeforest.currencywatch.rest;
 
 import java.text.*;
 import java.util.*;
+import java.util.stream.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
@@ -11,6 +12,7 @@ import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.util.*;
 
+import static java.util.stream.Collectors.*;
 import static javax.ws.rs.core.MediaType.*;
 import static javax.ws.rs.core.Response.Status.*;
 
@@ -86,11 +88,7 @@ public class CurrencyRateResource {
 				dateColl = Util.trimDateRange(new DateRange(from, to)).dates();
 			}
 			Map<Date, RateValue> rates = provider.getRates(baseCurrency, currency, dateColl);
-			return new RatesType(Algorithms.transform(rates.entrySet(), new Function<Map.Entry<Date, RateValue>, RateType>() {
-				@Override public RateType apply(Map.Entry<Date, RateValue> rate) {
-					return new RateType(rate.getKey(), rate.getValue());
-				}
-			}));
+			return new RatesType(rates.entrySet().stream().map(rate -> new RateType(rate.getKey(), rate.getValue())).collect(toList()));
 		}
 		catch (ParseException ex) {
 			throw new WebApplicationException(Response.status(BAD_REQUEST).entity(ex.getMessage()).type(TEXT_PLAIN).build());

@@ -1,12 +1,10 @@
 package org.strangeforest.currencywatch.jdbc;
 
-import java.sql.*;
 import javax.sql.*;
 
 import org.slf4j.*;
 import org.strangeforest.db.*;
 import org.strangeforest.db.gateway.*;
-import org.strangeforest.xml.helpers.*;
 
 import static org.strangeforest.db.gateway.DataHelper.*;
 
@@ -68,16 +66,8 @@ public class SchemaManager {
 
 	public void createSchema() {
 		LOGGER.info("Creating database schema...");
-		SQLTransformer usernameTransformer = new SQLTransformer() {
-			@Override public void transform(ElementHelper sql) {
-				sql.replaceElement("username", username);
-			}
-		};
-		db.executeDDL("CreateUser", usernameTransformer, new StatementPreparer() {
-			@Override public void prepare(PreparedStatementHelper st) throws SQLException {
-				setString(st, "password", password);
-			}
-		});
+		SQLTransformer usernameTransformer = sql -> sql.replaceElement("username", username);
+		db.executeDDL("CreateUser", usernameTransformer, st -> setString(st, "password", password));
 		db.executeDDL("CreateSchema", usernameTransformer);
 		db.executeDDL("CreateSchemaVersionTable");
 		createCurrencyRateTable();
@@ -99,12 +89,10 @@ public class SchemaManager {
 		db.executeDDL("CreateCurrencyRateDateIndex");
 	}
 
-	private void updateSchemaVersion(final int version, final boolean upgrade) {
-		db.executeUpdate("SetSchemaVersion", new StatementPreparer() {
-			@Override public void prepare(PreparedStatementHelper st) throws SQLException {
-				setInt(st, "version", version);
-				setBoolean(st, "upgrade", upgrade);
-			}
+	private void updateSchemaVersion(int version, boolean upgrade) {
+		db.executeUpdate("SetSchemaVersion", (PreparedStatementHelper st) -> {
+			setInt(st, "version", version);
+			setBoolean(st, "upgrade", upgrade);
 		});
 	}
 }

@@ -5,17 +5,16 @@ import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.*;
 import javax.swing.*;
 
 import org.junit.*;
 import org.mockito.*;
-import org.mockito.invocation.*;
-import org.mockito.stubbing.*;
 import org.strangeforest.currencywatch.app.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
-import org.strangeforest.util.*;
 
+import static java.util.function.Function.*;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyCollectionOf;
@@ -27,15 +26,10 @@ public class CurrencyRatePresenterTest {
 	@Test
 	public void currencyRatesArePresented() throws InterruptedException, InvocationTargetException {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
-		when(provider.getRates(eq(BASE_CURRENCY), eq(CurrencySymbol.EUR.name()), anyCollectionOf(Date.class))).thenAnswer(new Answer<Map<Date, RateValue>>() {
-			@Override public Map<Date, RateValue> answer(InvocationOnMock invocation) throws Throwable {
-				return Algorithms.transformToMap((Collection<Date>)(invocation.getArguments()[2]), new Function<Date, RateValue>() {
-					@Override public RateValue apply(Date date) {
-						return new RateValue(BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN);
-					}
-				});
-			}
-		});
+		when(provider.getRates(eq(BASE_CURRENCY), eq(CurrencySymbol.EUR.name()), anyCollectionOf(Date.class))).thenAnswer(invocation -> {
+         Collection<Date> dates = (Collection<Date>)invocation.getArguments()[2];
+         return dates.stream().collect(Collectors.toMap(identity(), date -> new RateValue(BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN)));
+      });
 		CurrencyRatePresenterListener listener = mock(CurrencyRatePresenterListener.class);
 
 		CurrencyRatePresenter presenter = new CurrencyRatePresenter(provider);

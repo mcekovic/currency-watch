@@ -210,12 +210,12 @@ public class CurrencyChart {
 	}
 
 	private void addAnnotations(CurrencyEventSource eventSource, String currency, DateRange dateRange, boolean onlyForMissingDates) {
-		for (CurrencyEvent event : eventSource.getEvents(currency, dateRange.getFrom(), dateRange.getTo())) {
+		eventSource.getEvents(currency, dateRange.getFrom(), dateRange.getTo()).forEach(event -> {
 			if (onlyForMissingDates)
 				addAnnotationIfDateDoesNotExist(event);
 			else
 				addAnnotation(event);
-		}
+		});
 	}
 
 	public void addAnnotation(CurrencyEvent event) {

@@ -1,9 +1,10 @@
 package org.strangeforest.currencywatch.core;
 
 import java.util.*;
+import java.util.stream.*;
 
 public interface CurrencyEventSource {
 
-	CurrencyEvent getEvent(String currency, Date date);
-	Iterable<CurrencyEvent> getEvents(String currency, Date fromDate, Date toDate);
+	Optional<CurrencyEvent> getEvent(String currency, Date date);
+	Stream<CurrencyEvent> getEvents(String currency, Date fromDate, Date toDate);
 }

@@ -66,11 +66,7 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	}
 
 	private void init() {
-		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider(new CurrencyRateAdapter() {
-			@Override public void newRate(CurrencyRateEvent rateEvent) {
-				incFetchedAndPrintProgress();
-			}
-		});
+		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider(rateEvent -> incFetchedAndPrintProgress());
 		provider = new ChainedCurrencyRateProvider(
 			new Db4oCurrencyRateProvider(dbFileName),
 			new ParallelCurrencyRateProviderProxy(remoteProvider, threadCount)

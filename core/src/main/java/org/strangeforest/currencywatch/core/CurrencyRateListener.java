@@ -5,6 +5,11 @@ import java.util.*;
 public interface CurrencyRateListener extends EventListener {
 
 	void newRate(CurrencyRateEvent rateEvent);
-	void newRates(CurrencyRateEvent[] rateEvents);
-	void error(String message);
+
+	default void newRates(CurrencyRateEvent[] rateEvents) {
+		for (CurrencyRateEvent rateEvent : rateEvents)
+			newRate(rateEvent);
+	}
+
+	default void error(String message) {}
 }

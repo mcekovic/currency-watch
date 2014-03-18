@@ -1,6 +1,5 @@
 package org.strangeforest.currencywatch.app;
 
-import java.awt.event.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javax.swing.*;
@@ -46,13 +45,11 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		this.provider = provider;
 		eventSource = new DefaultCurrencyEventSource();
 		chart = new CurrencyChart();
-		axisChangeListener = new AxisChangeListener() {
-			@Override public void axisChanged(AxisChangeEvent event) {
-				if (currencyRate != null)
-					currencyRate.close();
-				currencyRate = getCurrencyRate(currency.toString(), movAvgPeriod);
-				applyPeriod(currencyRate, chart.getDateRange(), quality.points());
-			}
+		axisChangeListener = event -> {
+			if (currencyRate != null)
+				currencyRate.close();
+			currencyRate = getCurrencyRate(currency.toString(), movAvgPeriod);
+			applyPeriod(currencyRate, chart.getDateRange(), quality.points());
 		};
 		setUpSpeedMeasuring();
 	}
@@ -64,17 +61,9 @@ public class CurrencyRatePresenter implements AutoCloseable {
 				remoteProvider = (ObservableCurrencyRateProvider)aRemoteProvider;
 		}
 		if (remoteProvider != null) {
-			remoteProviderListener = new CurrencyRateAdapter() {
-				@Override public void newRate(CurrencyRateEvent rateEvent) {
-					currRemoteItems++;
-				}
-			};
+			remoteProviderListener = rateEvent -> currRemoteItems++;
 			remoteProvider.addListener(remoteProviderListener);
-			speedTimer = new Timer(1000, new ActionListener() {
-				@Override public void actionPerformed(ActionEvent e) {
-					updateSpeed();
-				}
-			});
+			speedTimer = new Timer(1000, event -> updateSpeed());
 		}
 		else
 			LOGGER.warn("Data provider is not chained or remote provider is not observable: data fetching speed will not be available.");
@@ -117,47 +106,39 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		chart.addDomainAxisChangeListener(axisChangeListener);
 	}
 
-	private CurrencyRate getCurrencyRate(String currency, final int movAvgPeriod) {
+	private CurrencyRate getCurrencyRate(String currency, int movAvgPeriod) {
 		CurrencyRate rate = new CurrencyRate(Util.BASE_CURRENCY, currency, provider);
 		rate.addListener(new CurrencyRateListener() {
 			@Override public void newRate(final CurrencyRateEvent rateEvent) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override public void run() {
+				SwingUtilities.invokeLater(() -> {
+					chart.updateBaseSeries(rateEvent);
+					addAnnotation(rateEvent.getDate());
+					currItems++;
+					updateProgress();
+					setLoadingStatus();
+					chart.updateDerivedSeries(movAvgPeriod);
+				});
+			}
+			@Override public void newRates(CurrencyRateEvent[] rateEvents) {
+				SwingUtilities.invokeLater(() -> {
+					for (CurrencyRateEvent rateEvent : rateEvents) {
 						chart.updateBaseSeries(rateEvent);
 						addAnnotation(rateEvent.getDate());
-						currItems++;
-						updateProgress();
-						setLoadingStatus();
-						chart.updateDerivedSeries(movAvgPeriod);
 					}
+					currItems += rateEvents.length;
+					updateProgress();
+					setLoadingStatus();
+					chart.updateDerivedSeries(movAvgPeriod);
 				});
 			}
-			@Override public void newRates(final CurrencyRateEvent[] rateEvents) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override public void run() {
-						for (CurrencyRateEvent rateEvent : rateEvents) {
-							chart.updateBaseSeries(rateEvent);
-							addAnnotation(rateEvent.getDate());
-						}
-						currItems += rateEvents.length;
-						updateProgress();
-						setLoadingStatus();
-						chart.updateDerivedSeries(movAvgPeriod);
-					}
-				});
-			}
-			@Override public void error(final String message) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override public void run() {
-						notifyStatusChanged(message, true);
-					}
-				});
+			@Override public void error(String message) {
+				SwingUtilities.invokeLater(() -> notifyStatusChanged(message, true));
 			}
 		});
 		return rate;
 	}
 
-	private void applyPeriod(final CurrencyRate rate, final DateRange dateRange, int maxPoints) {
+	private void applyPeriod(CurrencyRate rate, DateRange dateRange, int maxPoints) {
 		if (dataThread != null)
 			dataThread.interrupt();
 		final int step = 1 + dateRange.size()/maxPoints;
@@ -170,29 +151,25 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		updateProgress();
 		updateSpeed();
 		startSpeedUpdate();
-		dataThread = new Thread(new Runnable() {
-			@Override public void run() {
+		dataThread = new Thread(() -> {
+			try {
+				loading = true;
 				try {
-					loading = true;
-					try {
-						notifyForRates(rate.getRates(dateRange.dates(step*10))); // Fetch outline first
-						notifyForRates(rate.getRates(dates));
-					}
-					finally {
-						loading = false;
-						SwingUtilities.invokeAndWait(new Runnable() {
-							@Override public void run() {
-								addAnnotationsForMissingDates(dateRange);
-								notifyStatusChanged(StringUtil.EMPTY, false);
-								stopSpeedUpdate();
-								updateSpeed();
-							}
-						});
-					}
+					notifyForRates(rate.getRates(dateRange.dates(step*10))); // Fetch outline first
+					notifyForRates(rate.getRates(dates));
 				}
-				catch (Throwable th) {
-					LOGGER.error("Error fetching data.", th);
+				finally {
+					loading = false;
+					SwingUtilities.invokeAndWait(() -> {
+						addAnnotationsForMissingDates(dateRange);
+						notifyStatusChanged(StringUtil.EMPTY, false);
+						stopSpeedUpdate();
+						updateSpeed();
+					});
 				}
+			}
+			catch (Throwable th) {
+				LOGGER.error("Error fetching data.", th);
 			}
 		}, "Currency Data Fetcher");
 		dataThread.start();
@@ -208,9 +185,9 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	}
 
 	private void addAnnotation(String currency, Date date) {
-		CurrencyEvent event = eventSource.getEvent(currency, date);
-		if (event != null)
-			chart.addAnnotationIfDateExists(event);
+		Optional<CurrencyEvent> event = eventSource.getEvent(currency, date);
+		if (event.isPresent())
+			chart.addAnnotationIfDateExists(event.get());
 	}
 
 	private void addAnnotationsForMissingDates(DateRange dateRange) {
@@ -246,16 +223,11 @@ public class CurrencyRatePresenter implements AutoCloseable {
 
 	private void notifyForRates(Map<Date, RateValue> rates) {
 		final CurrentRate currentRate = CurrentRate.forRates(rates);
-		if (currentRate != null) {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override public void run() {
-					notifyCurrencyRate(currentRate);
-				}
-			});
-		}
+		if (currentRate != null)
+			SwingUtilities.invokeLater(() -> notifyCurrencyRate(currentRate));
 	}
 
-	private void notifyCurrencyRate(final CurrentRate currentRate) {
+	private void notifyCurrencyRate(CurrentRate currentRate) {
 		for (CurrencyRatePresenterListener listener : listeners)
 			listener.currentRate(currentRate);
 	}

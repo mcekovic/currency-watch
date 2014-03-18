@@ -4,7 +4,7 @@ import java.util.*;
 
 import org.slf4j.*;
 
-public class CurrencyRateTracer extends CurrencyRateAdapter {
+public class CurrencyRateTracer implements CurrencyRateListener {
 
 	private final Logger logger;
 

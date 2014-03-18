@@ -5,6 +5,7 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.*;
 import javax.faces.bean.*;
 import javax.faces.context.*;
 import javax.faces.model.*;
@@ -16,10 +17,9 @@ import org.slf4j.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
-import org.strangeforest.util.*;
 
 import static java.util.Arrays.*;
-import static org.strangeforest.util.Algorithms.*;
+import static java.util.stream.Collectors.*;
 
 @ManagedBean(name = "chartPage")
 @RequestScoped
@@ -187,36 +187,22 @@ public class ChartPageBean {
 	}
 
 	public List<SelectItem> getCurrencies() {
-		return transform(asList(CurrencySymbol.values()), new Function<CurrencySymbol, SelectItem>() {
-			@Override public SelectItem apply(CurrencySymbol currency) {
-				String symbol = currency.toString();
-				return new SelectItem(symbol, symbol, currency.description());
-			}
-		});
+		return Stream.of(CurrencySymbol.values()).map(currency -> {
+			String symbol = currency.toString();
+			return new SelectItem(symbol, symbol, currency.description());
+		}).collect(toList());
 	}
 
 	public List<SelectItem> getPeriods() {
-		return transform(asList(Period.values()), new Function<Period, SelectItem>() {
-			@Override public SelectItem apply(Period period) {
-				return new SelectItem(period, period.label());
-			}
-		});
+		return Stream.of(Period.values()).map(period -> new SelectItem(period, period.label())).collect(toList());
 	}
 
 	public List<SelectItem> getQualities() {
-		return transform(asList(SeriesQuality.values()), new Function<SeriesQuality, SelectItem>() {
-			@Override public SelectItem apply(SeriesQuality quality) {
-				return new SelectItem(quality, quality.label());
-			}
-		});
+		return Stream.of(SeriesQuality.values()).map(quality -> new SelectItem(quality, quality.label())).collect(toList());
 	}
 
 	public List<SelectItem> getMovAvgPeriods() {
-		return transform(asList(UIUtil.MOV_AVG_PERIODS), new Function<Integer, SelectItem>() {
-			@Override public SelectItem apply(Integer movAvgPeriod) {
-				return new SelectItem(movAvgPeriod, String.valueOf(movAvgPeriod));
-			}
-		});
+		return Stream.of(UIUtil.MOV_AVG_PERIODS).map(movAvgPeriod -> new SelectItem(movAvgPeriod, String.valueOf(movAvgPeriod))).collect(toList());
 	}
 
 	public void ensureChart() throws IOException {

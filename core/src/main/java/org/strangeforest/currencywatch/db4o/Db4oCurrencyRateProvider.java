@@ -65,11 +65,7 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 	}
 
 	private void setDataVersion(final DataVersion newVersion) {
-		doInDb4o(new Db4oCallback() {
-			@Override public void doInDb4o(ObjectContainer db) {
-				db.store(newVersion);
-			}
-		});
+		doInDb4o(db -> db.store(newVersion));
 	}
 
 	@Override public synchronized void close() {
@@ -79,51 +75,43 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		super.close();
 	}
 
-	@Override public RateValue getRate(final String baseCurrency, final String currency, final Date date) {
-		return queryDb4o(new Db4oQueryCallback<RateValue>() {
-			@Override public RateValue queryDb4o(ObjectContainer db) {
-				CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
-				return rate != null ? rate.getRate(date) : null;
-			}
+	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
+		return queryDb4o(db -> {
+			CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
+			return rate != null ? rate.getRate(date) : null;
 		});
 	}
 
-	@Override public Map<Date, RateValue> getRates(final String baseCurrency, final String currency, final Collection<Date> dates) {
-		Map<Date, RateValue> rates = queryDb4o(new Db4oQueryCallback<Map<Date, RateValue>>() {
-			@Override public Map<Date, RateValue> queryDb4o(ObjectContainer db) {
-				Map<Date, RateValue> dateRates = new TreeMap<>();
-				CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
-				if (rate != null) {
-					dateRates.putAll(rate.getRates());
-					dateRates.keySet().retainAll(dates);
-				}
-				return dateRates;
+	@Override public Map<Date, RateValue> getRates(String baseCurrency, String currency, Collection<Date> dates) {
+		Map<Date, RateValue> rates = queryDb4o(db -> {
+			Map<Date, RateValue> dateRates = new TreeMap<>();
+			CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
+			if (rate != null) {
+				dateRates.putAll(rate.getRates());
+				dateRates.keySet().retainAll(dates);
 			}
+			return dateRates;
 		});
 		return rates != null ? rates : Collections.<Date, RateValue>emptyMap();
 	}
 
-	@Override public void setRate(final String baseCurrency, final String currency, final Date date, final RateValue rateValue) {
-		doInDb4o(new Db4oCallback() {
-			@Override public void doInDb4o(ObjectContainer db) {
-				CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
-				if (rate == null)
-					rate = new CurrencyRateObject(baseCurrency, currency);
-				rate.setRate(date, rateValue);
-				db.store(rate);
-			}
+	@Override public void setRate(String baseCurrency, String currency, Date date, RateValue rateValue) {
+		doInDb4o(db -> {
+			CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
+			if (rate == null)
+				rate = new CurrencyRateObject(baseCurrency, currency);
+			rate.setRate(date, rateValue);
+			db.store(rate);
 		});
 	}
 
-	@Override public void setRates(final String baseCurrency, final String currency, final Map<Date, RateValue> dateRates) {
-		doInDb4o(new Db4oCallback() {
-			@Override public void doInDb4o(ObjectContainer db) {
-				CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
-				if (rate == null)
-					rate = new CurrencyRateObject(baseCurrency, currency);
-				rate.setRates(dateRates);
-				db.store(rate);
-			}
+	@Override public void setRates(String baseCurrency, String currency, Map<Date, RateValue> dateRates) {
+		doInDb4o(db -> {
+			CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
+			if (rate == null)
+				rate = new CurrencyRateObject(baseCurrency, currency);
+			rate.setRates(dateRates);
+			db.store(rate);
 		});
 	}
 

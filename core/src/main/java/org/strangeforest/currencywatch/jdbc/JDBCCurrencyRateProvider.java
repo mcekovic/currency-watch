@@ -26,28 +26,24 @@ public class JDBCCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		schemaManager.ensureSchema();
 	}
 
-	@Override public RateValue getRate(final String baseCurrency, final String currency, final Date date) {
-		return db.fetchOne("FetchRate", RATE_VALUE_READER, new StatementPreparer() {
-			@Override public void prepare(PreparedStatementHelper st) throws SQLException {
-				setString(st, "baseCurrency", baseCurrency);
-				setString(st, "currency", currency);
-				setDate(st, "date", date);
-			}
+	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
+		return db.fetchOne("FetchRate", JDBCCurrencyRateProvider::readRateValue, (PreparedStatementHelper st) -> {
+			setString(st, "baseCurrency", baseCurrency);
+			setString(st, "currency", currency);
+			setDate(st, "date", date);
 		});
 	}
 
-	@Override public void setRate(final String baseCurrency, final String currency, final Date date, final RateValue rateValue) {
-		db.executeUpdate("MergeRate", new StatementPreparer() {
-			@Override public void prepare(PreparedStatementHelper st) throws SQLException {
-				setString(st, "baseCurrency", baseCurrency);
-				setString(st, "currency", currency);
-				setDate(st, "date", date);
-				setRateValue(st, rateValue);
-			}
+	@Override public void setRate(String baseCurrency, String currency, Date date, RateValue rateValue) {
+		db.executeUpdate("MergeRate", (PreparedStatementHelper st) -> {
+			setString(st, "baseCurrency", baseCurrency);
+			setString(st, "currency", currency);
+			setDate(st, "date", date);
+			setRateValue(st, rateValue);
 		});
 	}
 
-	@Override public void setRates(final String baseCurrency, final String currency, final Map<Date, RateValue> dateRates) {
+	@Override public void setRates(String baseCurrency, String currency, Map<Date, RateValue> dateRates) {
 		db.executeBatchUpdate("MergeRate", new BatchStatementPreparer() {
 			private final Iterator<Map.Entry<Date, RateValue>> iter = dateRates.entrySet().iterator();
 			@Override public void prepareOnce(PreparedStatementHelper st) throws SQLException {
@@ -65,15 +61,13 @@ public class JDBCCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		});
 	}
 
-	private static final ObjectReader<RateValue> RATE_VALUE_READER = new ObjectReader<RateValue>() {
-		@Override public RateValue read(ResultSet rs) throws SQLException {
-			return new RateValue(
-				getBigDecimal(rs, "BID"),
-				getBigDecimal(rs, "ASK"),
-				getBigDecimal(rs, "MIDDLE")
-			);
-		}
-	};
+	private static RateValue readRateValue(ResultSet rs) throws SQLException {
+		return new RateValue(
+			getBigDecimal(rs, "BID"),
+			getBigDecimal(rs, "ASK"),
+			getBigDecimal(rs, "MIDDLE")
+		);
+	}
 
 	private static void setRateValue(PreparedStatementHelper st, RateValue rateValue) throws SQLException {
 		setDecimal(st, "bid", rateValue.getBid());
