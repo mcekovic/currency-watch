@@ -1,8 +1,8 @@
 package org.strangeforest.currencywatch;
 
+import java.time.*;
 import java.util.*;
 
-import org.joda.time.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.util.*;
 
@@ -10,28 +10,36 @@ public abstract class Util {
 
 	public static final String BASE_CURRENCY = "RSD";
 
-	public static final LocalDate START_DATE = new LocalDate(2002, 5, 15);
+	public static final LocalDate START_DATE = LocalDate.of(2002, 5, 15);
 
-	public static final long MILLISECONDS_PER_DAY = Duration.standardDays(1).getMillis();
+	public static final long MILLISECONDS_PER_DAY = Duration.ofDays(1).toMillis();
 
 	public static LocalDate getLastDate() {
-		LocalDate lastDate = new LocalDate();
-		if (new LocalTime().isBefore(new LocalTime(8, 0)))
+		LocalDate lastDate = LocalDate.now();
+		if (LocalTime.now().isBefore(LocalTime.of(8, 0)))
 			lastDate = lastDate.minusDays(1);
 		return lastDate;
 	}
 
+	public static Date toDate(LocalDate date) {
+		return new Date(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+	}
+
+	public static LocalDate toLocalDate(Date date) {
+		return LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault()).toLocalDate();
+	}
+
 	public static DateRange trimDateRange(DateRange range) {
-		Date minFrom = START_DATE.toDate();
-		Date maxTo = getLastDate().toDate();
+		Date minFrom = toDate(START_DATE);
+		Date maxTo = toDate(getLastDate());
 		return new DateRange(ObjectUtil.max(range.getFrom(), minFrom), ObjectUtil.min(range.getTo(), maxTo));
 	}
 
 	public static int dayDifference(Date fromDate, Date toDate) {
-		return (int)new Duration(new DateTime(fromDate), new DateTime(toDate)).getStandardDays();
+		return (int)Duration.between(Instant.ofEpochMilli(fromDate.getTime()), Instant.ofEpochMilli(toDate.getTime())).toDays();
 	}
 
 	public static Date extractDate(Date date) {
-		return new DateTime(date).toLocalDate().toDateTimeAtStartOfDay().toDate();
+		return toDate(LocalDate.from(Instant.ofEpochMilli(date.getTime())));
 	}
 }

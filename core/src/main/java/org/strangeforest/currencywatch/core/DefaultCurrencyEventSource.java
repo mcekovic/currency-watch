@@ -1,19 +1,20 @@
 package org.strangeforest.currencywatch.core;
 
+import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 
-import org.joda.time.*;
+import static org.strangeforest.currencywatch.Util.*;
 
 public class DefaultCurrencyEventSource implements CurrencyEventSource {
 
 	private final CurrencyEvent[] EVENTS = {
-	   new CurrencyEvent("RSD", new LocalDate(2003, 12, 28).toDate(), "Elections in Serbia", "Coalition of DSS, G17+ and SPO-NS won elections."),
-	   new CurrencyEvent("RSD", new LocalDate(2007, 1, 21).toDate(), "Elections in Serbia", "Coalition of DS, DSS-NS and G17+ won elections."),
-	   new CurrencyEvent("RSD", new LocalDate(2008, 5, 11).toDate(), "Elections in Serbia", "Coalition of DS-G17+ and SPS won elections."),
-	   new CurrencyEvent(null, new LocalDate(2008, 10, 1).toDate(), "2008 Financial crisis", "Global financial crisis in 2008."),
-	   new CurrencyEvent("RSD", new LocalDate(2012, 5, 6).toDate(), "Elections in Serbia", "Coalition of SNS and SPS won elections."),
-	   new CurrencyEvent("RSD", new LocalDate(2014, 3, 16).toDate(), "Elections in Serbia", "SNS won elections.")
+	   new CurrencyEvent("RSD", toDate(LocalDate.of(2003, 12, 28)), "Elections in Serbia", "Coalition of DSS, G17+ and SPO-NS won elections."),
+	   new CurrencyEvent("RSD", toDate(LocalDate.of(2007, 1, 21)), "Elections in Serbia", "Coalition of DS, DSS-NS and G17+ won elections."),
+	   new CurrencyEvent("RSD", toDate(LocalDate.of(2008, 5, 11)), "Elections in Serbia", "Coalition of DS-G17+ and SPS won elections."),
+	   new CurrencyEvent(null,  toDate(LocalDate.of(2008, 10, 1)), "2008 Financial crisis", "Global financial crisis in 2008."),
+	   new CurrencyEvent("RSD", toDate(LocalDate.of(2012, 5, 6)), "Elections in Serbia", "Coalition of SNS and SPS won elections."),
+	   new CurrencyEvent("RSD", toDate(LocalDate.of(2014, 3, 16)), "Elections in Serbia", "SNS won elections.")
 	};
 
 	@Override public Optional<CurrencyEvent> getEvent(final String currency, final Date date) {

@@ -1,10 +1,10 @@
 package test.strangeforest.currencywatch.integration.core;
 
 import java.math.*;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-import org.joda.time.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.testng.*;
@@ -25,7 +25,7 @@ public class CurrencyRateCacheIT {
 	public void setUp() {
 		cache = new CurrencyRateCache();
 		rnd = new Random();
-		dates = new ArrayList<>(new DateRange(Util.START_DATE.toDate(), Util.getLastDate().toDate()).dates());
+		dates = new ArrayList<>(new DateRange(Util.toDate(Util.START_DATE), Util.toDate(Util.getLastDate())).dates());
 	}
 
 	@Test
@@ -33,13 +33,11 @@ public class CurrencyRateCacheIT {
 		ExecutorService executor = Executors.newFixedThreadPool(THREADS);
 		Future[] futures = new Future[COUNT];
 		for (int i = 0; i < COUNT; i++) {
-			futures[i] = executor.submit(new Runnable() {
-				@Override public void run() {
-					try {
-						setAndGetRate();
-					}
-					catch (InterruptedException ignored) {}
+			futures[i] = executor.submit(() -> {
+				try {
+					setAndGetRate();
 				}
+				catch (InterruptedException ignored) {}
 			});
 		}
 		for (Future future : futures)
@@ -60,9 +58,9 @@ public class CurrencyRateCacheIT {
 	}
 
 	private RateValue rateFromDate(Date date) {
-		LocalDate lDate = new LocalDate(date);
+		LocalDate lDate = Util.toLocalDate(date);
 		BigDecimal middle = new BigDecimal(100).add(new BigDecimal(lDate.getDayOfMonth()));
-		BigDecimal spread = new BigDecimal(lDate.getDayOfWeek()).divide(BigDecimal.TEN).add(BigDecimal.ONE);
+		BigDecimal spread = new BigDecimal(lDate.getDayOfWeek().ordinal() + 1).divide(BigDecimal.TEN).add(BigDecimal.ONE);
 		return new RateValue(middle.subtract(spread), middle.add(spread), middle);
 	}
 }

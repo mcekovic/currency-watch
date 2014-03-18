@@ -2,10 +2,11 @@ package org.strangeforest.currencywatch.core;
 
 import java.util.*;
 
-import org.joda.time.*;
-import org.strangeforest.currencywatch.*;
 import org.strangeforest.util.*;
 
+import static org.strangeforest.currencywatch.Util.*;
+
+//TODO Range<LocalDate>
 public class DateRange extends Range<Date> implements Iterable<Date> {
 
 	public DateRange() {
@@ -27,7 +28,7 @@ public class DateRange extends Range<Date> implements Iterable<Date> {
 				return DateRange.this.iterator(step);
 			}
 			@Override public int size() {
-				return 2 + (Util.dayDifference(getFrom(), getTo()) - 1)/step;
+				return 2 + (dayDifference(getFrom(), getTo()) - 1)/step;
 			}
 		};
 	}
@@ -82,7 +83,7 @@ public class DateRange extends Range<Date> implements Iterable<Date> {
 		}
 
 		private Date incDate(Date date, int days) {
-			return new LocalDate(date).plusDays(days).toDate();
+			return (toDate(toLocalDate(date).plusDays(days)));
 		}
 	}
 }
