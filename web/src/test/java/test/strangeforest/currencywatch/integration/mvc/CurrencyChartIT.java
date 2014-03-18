@@ -40,7 +40,7 @@ public class CurrencyChartIT extends AbstractTestNGSpringContextTests {
 	public void zoomCurrencyChart() throws Exception {
 		String dateRange = format("{0,date,ddMMyyyy}-{1,date,ddMMyyyy}", TestData.DATE1, TestData.DATE5);
 		mockMvc.perform(get("/currency-chart").param("command", "zoomChart").param("dateRange", dateRange).accept(MediaType.TEXT_HTML))
-				.andExpect(status().isOk())
-				.andExpect(view().name("currency-chart"));
+			.andExpect(status().isOk())
+			.andExpect(view().name("currency-chart"));
 	}
 }

@@ -11,11 +11,7 @@ public abstract class ITUtil {
 	}
 
 	public static void deleteFiles(String dir, final String pattern) {
-		for (File file : new File(dir).listFiles(new FileFilter() {
-			@Override public boolean accept(File file) {
-				return file.getPath().matches(".*" + pattern);
-			}
-		})) {
+		for (File file : new File(dir).listFiles(f -> f.getPath().matches(".*" + pattern))) {
 			file.delete();
 			file.deleteOnExit();
 		}
