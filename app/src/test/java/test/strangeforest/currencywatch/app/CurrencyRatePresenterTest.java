@@ -8,8 +8,10 @@ import java.util.concurrent.*;
 import java.util.stream.*;
 import javax.swing.*;
 
+import org.hamcrest.*;
 import org.junit.*;
 import org.mockito.*;
+import org.mockito.Matchers;
 import org.strangeforest.currencywatch.app.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
@@ -40,9 +42,8 @@ public class CurrencyRatePresenterTest {
 		presenter.waitForData();
 		waitForEventQueueEmpty();
 
-//		verify(provider).getRates(eq(BASE_CURRENCY), eq(CurrencySymbol.EUR.name()), argThat(matchesSize(2)));
-//		verify(provider).getRates(eq(BASE_CURRENCY), eq(CurrencySymbol.EUR.name()), argThat(matchesSize(7)));
-		verify(provider, times(2)).getRates(eq(BASE_CURRENCY), eq(CurrencySymbol.EUR.name()), any(Collection.class)); // Mockito/Hamcrest 1.3 incompatibility workaround
+		verify(provider).getRates(eq(BASE_CURRENCY), eq(CurrencySymbol.EUR.name()), argThat(matchesSize(2)));
+		verify(provider).getRates(eq(BASE_CURRENCY), eq(CurrencySymbol.EUR.name()), argThat(matchesSize(6)));
 		verifyNoMoreInteractions(provider);
 
 		verify(listener, atLeast(1)).statusChanged(any(String.class), eq(false));
@@ -54,15 +55,13 @@ public class CurrencyRatePresenterTest {
 		presenter.close();
 	}
 
-//	private static Matcher<Collection<Date>> matchesSize(int size) {
-//		return (Matcher)org.hamcrest.Matchers.hasSize(size);
-//	}
-//
+	private static Matcher<Collection<Date>> matchesSize(int size) {
+		return (Matcher)org.hamcrest.Matchers.hasSize(size);
+	}
+
 	private static void waitForEventQueueEmpty() throws InterruptedException, InvocationTargetException {
 		while (Toolkit.getDefaultToolkit().getSystemEventQueue().peekEvent() != null)
 			TimeUnit.MILLISECONDS.sleep(1L);
-		SwingUtilities.invokeAndWait(new Runnable() {
-			@Override public void run() {}
-		});
+		SwingUtilities.invokeAndWait(() -> {});
 	}
 }

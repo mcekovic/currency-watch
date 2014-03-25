@@ -50,11 +50,7 @@ public class CurrencyChartForm {
 		movAvgPeriodComboBox.setModel(new DefaultComboBoxModel<>(MOV_AVG_PERIODS));
 		movAvgPeriodComboBox.setSelectedItem(DEFAULT_MOV_AVG_PERIOD);
 		movAvgPeriodComboBox.addActionListener(new InputDataListener());
-		exitButton.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-			}
-		});
+		exitButton.addActionListener(e -> frame.dispose());
 		formPanel.addComponentListener(new ComponentAdapter() {
 			@Override public void componentResized(ComponentEvent e) {
 				resizeChartPanel();

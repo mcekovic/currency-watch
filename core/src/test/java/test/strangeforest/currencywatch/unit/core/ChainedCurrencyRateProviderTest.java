@@ -68,7 +68,7 @@ public class ChainedCurrencyRateProviderTest {
 	@Test
 	public void getAllRatesFromRemoteProvider() {
 		UpdatableCurrencyRateProvider localProvider = mock(UpdatableCurrencyRateProvider.class);
-		when(localProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet())).thenReturn(new HashMap<Date, RateValue>());
+		when(localProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet())).thenReturn(new HashMap<>());
 		CurrencyRateProvider remoteProvider = mock(CurrencyRateProvider.class);
 		when(remoteProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet())).thenReturn(RATES);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
@@ -99,9 +99,8 @@ public class ChainedCurrencyRateProviderTest {
 			assertEquals(RATES, rates);
 			verify(remoteProvider, never()).getRate(anyString(), anyString(), any(Date.class));
 			InOrder inOrder = inOrder(listener);
-	//		inOrder.verify(listener).newRates(argThat(matchesEventCount(3)));
-	//		inOrder.verify(listener).newRates(argThat(matchesEventCount(2)));
-			inOrder.verify(listener, times(2)).newRates(any(CurrencyRateEvent[].class)); // Mockito/Hamcrest 1.3 incompatibility workaround
+			inOrder.verify(listener).newRates(argThat(matchesEventCount(3)));
+			inOrder.verify(listener).newRates(argThat(matchesEventCount(2)));
 			verifyNoMoreInteractions(listener);
 		}
 	}
