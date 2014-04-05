@@ -32,8 +32,8 @@
 	<properties>
 		<base.scm.url>scm:git:git@github.com:mcekovic/currency-watch.git</base.scm.url>
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
-		<slf4j.version>1.7.6</slf4j.version>
-		<spring.version>4.0.2.RELEASE</spring.version>
+		<slf4j.version>1.7.7</slf4j.version>
+		<spring.version>4.0.3.RELEASE</spring.version>
 		<jaxrs.version>2.7</jaxrs.version>
 		<jsf-ri.version>2.2.6</jsf-ri.version>
 		<maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
@@ -84,11 +84,6 @@
 				<plugin>
 					<artifactId>maven-resources-plugin</artifactId>
 					<version>2.6</version>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>ideauidesigner-maven-plugin</artifactId>
-					<version>1.0-beta-1</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
@@ -248,7 +243,7 @@
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
-				<version>1.1.1</version>
+				<version>1.1.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
