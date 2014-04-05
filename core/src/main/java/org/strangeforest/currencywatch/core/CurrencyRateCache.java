@@ -3,7 +3,7 @@ package org.strangeforest.currencywatch.core;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class CurrencyRateCache extends BaseUpdatableCurrencyRateProvider {
+public class CurrencyRateCache implements UpdatableCurrencyRateProvider {
 
 	private final ConcurrentMap<CurrencyRateKey, CurrencyRate> rateCache;
 

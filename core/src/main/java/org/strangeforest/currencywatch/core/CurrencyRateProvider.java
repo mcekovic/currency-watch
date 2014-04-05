@@ -4,8 +4,18 @@ import java.util.*;
 
 public interface CurrencyRateProvider extends AutoCloseable {
 
-	void init();
+	default void init() {}
+	@Override default void close() {}
+
 	RateValue getRate(String baseCurrency, String currency, Date date);
-	Map<Date, RateValue> getRates(String baseCurrency, String currency, Collection<Date> dates);
-	@Override void close();
+
+	default Map<Date, RateValue> getRates(String baseCurrency, String currency, Collection<Date> dates) {
+		Map<Date, RateValue> dateRates = new TreeMap<>();
+		for (Date date : dates) {
+			RateValue rateValue = getRate(baseCurrency, currency, date);
+			if (rateValue != null)
+				dateRates.put(date, rateValue);
+		}
+		return dateRates;
+	}
 }

@@ -11,7 +11,7 @@ import org.strangeforest.db.gateway.*;
 
 import static org.strangeforest.db.gateway.DataHelper.*;
 
-public class JDBCCurrencyRateProvider extends BaseCurrencyRateProvider implements UpdatableCurrencyRateProvider {
+public class JDBCCurrencyRateProvider implements UpdatableCurrencyRateProvider {
 
 	private final SchemaManager schemaManager;
 	private final DBGateway db;

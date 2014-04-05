@@ -12,7 +12,7 @@ import static javax.ws.rs.core.MediaType.*;
 import static javax.ws.rs.core.Response.Status.*;
 import static org.strangeforest.currencywatch.rest.CurrencyRateResource.*;
 
-public class RESTCurrencyRateProvider extends BaseCurrencyRateProvider {
+public class RESTCurrencyRateProvider implements CurrencyRateProvider {
 
 	private final URI uri;
 	private Client client;

@@ -7,7 +7,7 @@ import org.strangeforest.util.*;
 
 import static java.lang.String.*;
 
-public class TracingCurrencyRateProviderProxy extends BaseCurrencyRateProvider {
+public class TracingCurrencyRateProviderProxy implements CurrencyRateProvider {
 
 	private final CurrencyRateProvider provider;
 	private final Logger logger;

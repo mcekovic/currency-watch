@@ -9,7 +9,7 @@ import org.strangeforest.currencywatch.core.*;
 import com.db4o.*;
 import com.db4o.config.*;
 
-public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implements UpdatableCurrencyRateProvider {
+public class Db4oCurrencyRateProvider implements UpdatableCurrencyRateProvider {
 
 	private final String dbFileName;
 	private final int dataVersion;
@@ -72,7 +72,6 @@ public class Db4oCurrencyRateProvider extends BaseCurrencyRateProvider implement
 		if (db != null)
 			db.close();
 		closed = true;
-		super.close();
 	}
 
 	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
