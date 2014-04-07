@@ -2,7 +2,6 @@ package org.strangeforest.currencywatch.ui;
 
 import java.time.*;
 
-import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 
 import static org.strangeforest.currencywatch.Util.*;

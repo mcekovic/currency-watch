@@ -2,6 +2,7 @@ package org.strangeforest.currencywatch.db4o;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.*;
 
 import org.slf4j.*;
 import org.strangeforest.currencywatch.core.*;
@@ -127,10 +128,10 @@ public class Db4oCurrencyRateProvider implements UpdatableCurrencyRateProvider {
 		}
 	}
 
-	private synchronized void doInDb4o(Db4oCallback callback) {
+	private synchronized void doInDb4o(Consumer<ObjectContainer> callback) {
 		if (closed) return;
 		try {
-			callback.doInDb4o(db);
+			callback.accept(db);
 			db.commit();
 		}
 		catch (Throwable th) {
@@ -139,15 +140,7 @@ public class Db4oCurrencyRateProvider implements UpdatableCurrencyRateProvider {
 		}
 	}
 
-	private synchronized <T> T queryDb4o(Db4oQueryCallback<T> callback) {
-		return !closed ? callback.queryDb4o(db) : null;
-	}
-
-	private interface Db4oCallback {
-		void doInDb4o(ObjectContainer db);
-	}
-
-	private interface Db4oQueryCallback<T> {
-		T queryDb4o(ObjectContainer db);
+	private synchronized <T> T queryDb4o(Function<ObjectContainer, T> callback) {
+		return !closed ? callback.apply(db) : null;
 	}
 }
