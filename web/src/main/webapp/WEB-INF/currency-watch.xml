@@ -83,7 +83,7 @@
 
 	<bean id="currencyRateProvider" class="org.strangeforest.currencywatch.core.TracingCurrencyRateProviderProxy" init-method="init" destroy-method="close">
 		<constructor-arg index="0" name="provider">
-			<bean id="currencyRateProvider" class="org.strangeforest.currencywatch.core.ChainedCurrencyRateProvider">
+			<bean class="org.strangeforest.currencywatch.core.ChainedCurrencyRateProvider">
 				<constructor-arg index="0" name="localProvider" ref="localCurrencyRateProvider"/>
 				<constructor-arg index="1" name="remoteProvider" ref="remoteCurrencyRateProvider"/>
 			</bean>
