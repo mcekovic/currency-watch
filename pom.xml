@@ -38,7 +38,8 @@
 		<jsf-ri.version>2.2.6</jsf-ri.version>
 		<maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.17</maven-failsafe-plugin.version>
-		<jacoco-maven-plugin.version>0.7.0.201403182114</jacoco-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.7.1.201405082137</jacoco-maven-plugin.version>
+		<ant.version>1.9.4</ant.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
@@ -162,8 +163,13 @@
 					<dependencies>
 						<dependency>
 							<groupId>org.apache.ant</groupId>
+							<artifactId>ant-launcher</artifactId>
+							<version>${ant.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.apache.ant</groupId>
 							<artifactId>ant-jsch</artifactId>
-							<version>1.9.3</version>
+							<version>${ant.version}</version>
 						</dependency>
 						<dependency>
 							<groupId>com.jcraft</groupId>
