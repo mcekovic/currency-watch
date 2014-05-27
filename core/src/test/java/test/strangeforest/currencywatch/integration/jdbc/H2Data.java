@@ -3,7 +3,7 @@ package test.strangeforest.currencywatch.integration.jdbc;
 public abstract class H2Data {
 
 	public static final String DRIVER_CLASS = "org.h2.Driver";
-	public static final String H2_DATA_DIR = "data";
+	public static final String H2_DATA_DIR = "./data";
 	public static final String H2_DATA_FILE_NAME = "test-rates-h2";
 	public static final String H2_DATA_FILE = H2_DATA_DIR + '/' + H2_DATA_FILE_NAME;
 	public static final String ADMIN_JDBC_URL = "jdbc:h2:" + H2_DATA_FILE;
