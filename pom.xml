@@ -51,16 +51,16 @@
 		<module>it-reports</module>
 	</modules>
 
-	<!--<repositories>-->
-		<!--<repository>-->
-			<!--<id>sf-libs-mvn-repo</id>-->
-			<!--<url>https://raw.github.com/mcekovic/sf-libs/mvn-repo/</url>-->
-			<!--<snapshots>-->
-				<!--<enabled>true</enabled>-->
-				<!--<updatePolicy>always</updatePolicy>-->
-			<!--</snapshots>-->
-		<!--</repository>-->
-	<!--</repositories>-->
+	<repositories>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>bintray</id>
+			<name>bintray</name>
+			<url>http://dl.bintray.com/mcekovic/artifacts</url>
+		</repository>
+	</repositories>
 
 	<build>
 
@@ -178,11 +178,11 @@
 						</dependency>
 					</dependencies>
 				</plugin>
-				<plugin>
+				<!--<plugin>
 					<groupId>com.github.github</groupId>
 					<artifactId>downloads-maven-plugin</artifactId>
 					<version>0.6</version>
-				</plugin>
+				</plugin>-->
 				<plugin>
 					<groupId>org.apache.tomcat.maven</groupId>
 					<artifactId>tomcat7-maven-plugin</artifactId>
@@ -224,12 +224,12 @@
 			<dependency>
 				<groupId>org.strangeforest.libs</groupId>
 				<artifactId>sf-util</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
+				<version>1.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.strangeforest.libs</groupId>
 				<artifactId>sf-db</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
+				<version>1.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
