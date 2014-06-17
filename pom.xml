@@ -53,12 +53,12 @@
 
 	<repositories>
 		<repository>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
 			<id>bintray</id>
 			<name>bintray</name>
 			<url>http://dl.bintray.com/mcekovic/artifacts</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 
