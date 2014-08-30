@@ -26,15 +26,15 @@
 	</scm>
 
 	<prerequisites>
-		<maven>3.2.1</maven>
+		<maven>3.2.2</maven>
 	</prerequisites>
 
 	<properties>
 		<base.scm.url>scm:git:git@github.com:mcekovic/currency-watch.git</base.scm.url>
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
 		<slf4j.version>1.7.7</slf4j.version>
-		<spring.version>4.0.5.RELEASE</spring.version>
-		<jaxrs.version>2.9.1</jaxrs.version>
+		<spring.version>4.0.6.RELEASE</spring.version>
+		<jaxrs.version>2.11</jaxrs.version>
 		<jsf-ri.version>2.2.7</jsf-ri.version>
 		<maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.17</maven-failsafe-plugin.version>
@@ -211,7 +211,7 @@
 						<configuration>
 							<rules>
 								<requireMavenVersion>
-									<version>3.2.1</version>
+									<version>3.2.2</version>
 								</requireMavenVersion>
 								<requireJavaVersion>
 									<version>1.8</version>
@@ -280,12 +280,12 @@
 			<dependency>
 				<groupId>com.h2database</groupId>
 				<artifactId>h2</artifactId>
-				<version>1.4.178</version>
+				<version>1.4.180</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jfree</groupId>
 				<artifactId>jfreechart</artifactId>
-				<version>1.0.17</version>
+				<version>1.0.19</version>
 				<exclusions>
 					<exclusion>
 						<groupId>xml-apis</groupId>
