@@ -46,14 +46,22 @@ public class RESTCurrencyRateProvider implements CurrencyRateProvider {
 	}
 
 	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
-		Response response = target.path("rate/" + currency).queryParam("date", formatDate(date))
-			.request(TEXT_XML).get(Response.class);
-		return response.getStatus() != NO_CONTENT.getStatusCode() ? toRateValue(response.readEntity(RateType.class)) : null;
+		Response response = target.path("rate/" + currency).queryParam("date", formatDate(date)).request(TEXT_XML).get(Response.class);
+		int status = response.getStatus();
+		if (status == OK.getStatusCode())
+			return toRateValue(response.readEntity(RateType.class));
+		else if (status == NOT_FOUND.getStatusCode())
+			return null;
+		else
+			throw toException(response);
 	}
 
 	@Override public Map<Date, RateValue> getRates(String baseCurrency, String currency, Collection<Date> dates) {
-		return toRateValuesMap(target.path("rates/" + currency).queryParam("dates", formatDates(dates))
-			.request(TEXT_XML).get(RatesType.class));
+		Response response = target.path("rates/" + currency).queryParam("dates", formatDates(dates)).request(TEXT_XML).get(Response.class);
+		if (response.getStatus() == OK.getStatusCode())
+			return toRateValuesMap(response.readEntity(RatesType.class));
+		else
+			throw toException(response);
 	}
 
 	private String formatDate(Date date) {
@@ -85,5 +93,10 @@ public class RESTCurrencyRateProvider implements CurrencyRateProvider {
 				rateValueMap.put(rate.date, toRateValue(rate));
 		}
 		return rateValueMap;
+	}
+
+	private CurrencyRateException toException(Response response) {
+		String message = response.hasEntity() ? response.readEntity(String.class) : String.format("HTTP error %1$d (%2$s).", response.getStatus(), response.getStatusInfo());
+		throw new CurrencyRateException(message);
 	}
 }
