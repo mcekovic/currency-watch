@@ -33,8 +33,8 @@
 		<base.scm.url>scm:git:git@github.com:mcekovic/currency-watch.git</base.scm.url>
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
 		<slf4j.version>1.7.7</slf4j.version>
-		<spring.version>4.1.0.RELEASE</spring.version>
-		<jaxrs.version>2.12</jaxrs.version>
+		<spring.version>4.1.1.RELEASE</spring.version>
+		<jaxrs.version>2.13</jaxrs.version>
 		<jsf-ri.version>2.2.8-02</jsf-ri.version>
 		<maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.17</maven-failsafe-plugin.version>
