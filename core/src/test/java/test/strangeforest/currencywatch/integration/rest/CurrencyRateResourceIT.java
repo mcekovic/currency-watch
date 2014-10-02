@@ -33,7 +33,9 @@ public class CurrencyRateResourceIT extends CurrencyRateResourceFixture {
 	@Test
 	public void getLastRate() {
 		Response response = target.path("rate/" + CURRENCY).request(TEXT_XML).get();
-		assertEquals(response.getStatus(), NO_CONTENT.getStatusCode());
+		assertEquals(response.getStatus(), NOT_FOUND.getStatusCode());
+		String message = response.readEntity(String.class);
+		assertTrue(message.startsWith("Cannot find"));
 	}
 
 	@Test

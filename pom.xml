@@ -26,19 +26,19 @@
 	</scm>
 
 	<prerequisites>
-		<maven>3.2.2</maven>
+		<maven>3.2.3</maven>
 	</prerequisites>
 
 	<properties>
 		<base.scm.url>scm:git:git@github.com:mcekovic/currency-watch.git</base.scm.url>
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
 		<slf4j.version>1.7.7</slf4j.version>
-		<spring.version>4.0.6.RELEASE</spring.version>
-		<jaxrs.version>2.11</jaxrs.version>
-		<jsf-ri.version>2.2.8</jsf-ri.version>
+		<spring.version>4.1.0.RELEASE</spring.version>
+		<jaxrs.version>2.12</jaxrs.version>
+		<jsf-ri.version>2.2.8-02</jsf-ri.version>
 		<maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.17</maven-failsafe-plugin.version>
-		<jacoco-maven-plugin.version>0.7.1.201405082137</jacoco-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.7.2.201409121644</jacoco-maven-plugin.version>
 		<ant.version>1.9.4</ant.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -60,6 +60,14 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+		<!--<repository>-->
+			<!--<id>oss-jfrog-artifactory</id>-->
+			<!--<name>oss-jfrog-artifactory-snapshots</name>-->
+			<!--<url>http://oss.jfrog.org/artifactory/oss-snapshot-local</url>-->
+			<!--<snapshots>-->
+				<!--<enabled>true</enabled>-->
+			<!--</snapshots>-->
+		<!--</repository>-->
 	</repositories>
 
 	<build>
@@ -104,7 +112,7 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.4</version>
+					<version>2.5</version>
 					<configuration>
 						<archive>
 							<manifest>
@@ -119,7 +127,7 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>2.4</version>
+					<version>2.4.1</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-failsafe-plugin</artifactId>
@@ -127,11 +135,11 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-install-plugin</artifactId>
-					<version>2.5.1</version>
+					<version>2.5.2</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.8.1</version>
+					<version>2.8.2</version>
 					<configuration>
 						<skip>true</skip>
 					</configuration>
@@ -147,11 +155,11 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.3</version>
+					<version>3.4</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>2.2.1</version>
+					<version>2.3</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-javadoc-plugin</artifactId>

@@ -2,7 +2,6 @@ package org.strangeforest.currencywatch.rest;
 
 import java.text.*;
 import java.util.*;
-import java.util.stream.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
@@ -44,7 +43,7 @@ public class CurrencyRateResource {
 	}
 
 	@GET @Path("/rate/{currency}") @Produces(TEXT_XML)
-	public RateType rate(
+	public Response rate(
 		@PathParam("currency") String currency,
 		@QueryParam("date") String date
 	) {
@@ -53,19 +52,22 @@ public class CurrencyRateResource {
 			if (aDate == null)
 				aDate = Util.toDate(Util.getLastDate());
 			RateValue rate = provider.getRate(baseCurrency, currency, aDate);
-			return rate != null ? new RateType(aDate, rate) : null;
+			if (rate != null)
+				return Response.ok(new RateType(aDate, rate), TEXT_XML).build();
 		}
 		catch (ParseException ex) {
-			throw new WebApplicationException(Response.status(BAD_REQUEST).entity(ex.getMessage()).type(TEXT_PLAIN).build());
+			return Response.status(BAD_REQUEST).type(TEXT_PLAIN).entity(ex.getMessage()).build();
 		}
 		catch (Throwable th) {
 			LOGGER.error("Error getting currency rate.", th);
-			throw new WebApplicationException(Response.status(INTERNAL_SERVER_ERROR).entity(th.getMessage()).type(TEXT_PLAIN).build());
+			return Response.status(INTERNAL_SERVER_ERROR).type(TEXT_PLAIN).entity(th.getMessage()).build();
 		}
+		String message = String.format("Cannot find currency rate for currency %1$s and date %2$s", currency, date);
+		return Response.status(NOT_FOUND).type(TEXT_PLAIN).entity(message).build();
 	}
 
 	@GET @Path("/rates/{currency}") @Produces(TEXT_XML)
-	public RatesType rates(
+	public Response rates(
 		@PathParam("currency") String currency,
 		@QueryParam("dates") String dates,
 		@QueryParam("fromDate") String fromDate,
@@ -88,14 +90,14 @@ public class CurrencyRateResource {
 				dateColl = Util.trimDateRange(new DateRange(from, to)).dates();
 			}
 			Map<Date, RateValue> rates = provider.getRates(baseCurrency, currency, dateColl);
-			return new RatesType(rates.entrySet().stream().map(rate -> new RateType(rate.getKey(), rate.getValue())).collect(toList()));
+			return Response.ok(new RatesType(rates.entrySet().stream().map(rate -> new RateType(rate.getKey(), rate.getValue())).collect(toList()))).build();
 		}
 		catch (ParseException ex) {
-			throw new WebApplicationException(Response.status(BAD_REQUEST).entity(ex.getMessage()).type(TEXT_PLAIN).build());
+			return Response.status(BAD_REQUEST).type(TEXT_PLAIN).entity(ex.getMessage()).build();
 		}
 		catch (Throwable th) {
 			LOGGER.error("Error getting currency rates.", th);
-			throw new WebApplicationException(Response.status(INTERNAL_SERVER_ERROR).entity(th.getMessage()).type(TEXT_PLAIN).build());
+			return Response.status(INTERNAL_SERVER_ERROR).type(TEXT_PLAIN).entity(th.getMessage()).build();
 		}
 	}
 
