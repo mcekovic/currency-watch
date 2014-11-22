@@ -40,6 +40,6 @@ public abstract class Util {
 	}
 
 	public static Date extractDate(Date date) {
-		return toDate(LocalDate.from(Instant.ofEpochMilli(date.getTime())));
+		return toDate(toLocalDate(date));
 	}
 }
