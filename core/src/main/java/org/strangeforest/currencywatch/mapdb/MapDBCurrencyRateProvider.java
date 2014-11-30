@@ -41,6 +41,7 @@ public class MapDBCurrencyRateProvider implements UpdatableCurrencyRateProvider 
 		}
 		versionMap.put(VERSION_MAP, version);
 		db.commit();
+		db.compact();
 	}
 
 	@Override public void close() {
