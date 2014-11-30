@@ -1,9 +1,12 @@
 package org.strangeforest.currencywatch.core;
 
+import java.io.*;
 import java.math.*;
 import java.util.*;
 
-public class RateValue {
+import static java.math.RoundingMode.*;
+
+public class RateValue implements Serializable {
 
 	private final BigDecimal bid;
 	private final BigDecimal ask;
@@ -32,8 +35,8 @@ public class RateValue {
 		return middle;
 	}
 
-	public RateValue setScale(int scale) {
-		return new RateValue(bid.setScale(scale), ask.setScale(scale), middle.setScale(scale));
+	public RateValue withScale(int scale) {
+		return new RateValue(bid.setScale(scale, HALF_EVEN), ask.setScale(scale, HALF_EVEN), middle.setScale(scale, HALF_EVEN));
 	}
 
 

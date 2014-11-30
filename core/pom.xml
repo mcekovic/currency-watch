@@ -89,6 +89,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.mapdb</groupId>
+			<artifactId>mapdb</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
 			<groupId>com.db4o</groupId>
 			<artifactId>db4o-core</artifactId>
 			<optional>true</optional>

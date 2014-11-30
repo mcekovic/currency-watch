@@ -18,13 +18,13 @@ public class CurrencyRateTest {
 		when(provider.getRate(BASE_CURRENCY, CURRENCY, DATE)).thenReturn(RATE);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		try (CurrencyRate currencyRate = createCurrencyRate(provider, listener)) {
-			RateValue rate = currencyRate.getRate(DATE);
+		try (CurrencyRates currencyRates = createCurrencyRates(provider, listener)) {
+			RateValue rate = currencyRates.getRate(DATE);
 
 			assertEquals(RATE, rate);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 
-			RateValue cachedRate = currencyRate.getRate(DATE);
+			RateValue cachedRate = currencyRates.getRate(DATE);
 
 			assertEquals(RATE, cachedRate);
 			verifyNoMoreInteractions(listener);
@@ -37,16 +37,16 @@ public class CurrencyRateTest {
 		when(provider.getRates(BASE_CURRENCY, CURRENCY, DATE_LIST)).thenReturn(RATES);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		try (CurrencyRate currencyRate = createCurrencyRate(provider, listener)) {
-			Map<Date, RateValue> rates = currencyRate.getRates(DATES);
+		try (CurrencyRates currencyRates = createCurrencyRates(provider, listener)) {
+			Map<Date, RateValue> rates = currencyRates.getRates(DATES);
 
 			assertEquals(RATES, rates);
 			verify(listener).newRates(argThat(matchesEventCount(5)));
 
-			Map<Date, RateValue> cachedRates = currencyRate.getRates(DATES);
+			Map<Date, RateValue> cachedRates = currencyRates.getRates(DATES);
 
 			assertEquals(RATES, cachedRates);
-			assertEquals(RATES, currencyRate.getRates());
+			assertEquals(RATES, currencyRates.getRates());
 			verifyNoMoreInteractions(listener);
 		}
 	}
@@ -58,13 +58,13 @@ public class CurrencyRateTest {
 		ObservableCurrencyRateProviderProxy observableProvider = new ObservableCurrencyRateProviderProxy(provider);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		try (CurrencyRate currencyRate = createCurrencyRate(observableProvider, listener)) {
-			RateValue rate = currencyRate.getRate(DATE);
+		try (CurrencyRates currencyRates = createCurrencyRates(observableProvider, listener)) {
+			RateValue rate = currencyRates.getRate(DATE);
 
 			assertEquals(RATE, rate);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 
-			RateValue cachedRate = currencyRate.getRate(DATE);
+			RateValue cachedRate = currencyRates.getRate(DATE);
 
 			assertEquals(RATE, cachedRate);
 			verifyNoMoreInteractions(listener);
@@ -78,16 +78,16 @@ public class CurrencyRateTest {
 		ObservableCurrencyRateProviderProxy observableProvider = new ObservableCurrencyRateProviderProxy(provider);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		try (CurrencyRate currencyRate = createCurrencyRate(observableProvider, listener)) {
-			Map<Date, RateValue> rates = currencyRate.getRates(DATES);
+		try (CurrencyRates currencyRates = createCurrencyRates(observableProvider, listener)) {
+			Map<Date, RateValue> rates = currencyRates.getRates(DATES);
 
 			assertEquals(RATES, rates);
 			verify(listener).newRates(argThat(matchesEventCount(5)));
 
-			Map<Date, RateValue> cachedRates = currencyRate.getRates(DATES);
+			Map<Date, RateValue> cachedRates = currencyRates.getRates(DATES);
 
 			assertEquals(RATES, cachedRates);
-			assertEquals(RATES, currencyRate.getRates());
+			assertEquals(RATES, currencyRates.getRates());
 			verifyNoMoreInteractions(listener);
 		}
 	}
@@ -99,13 +99,13 @@ public class CurrencyRateTest {
 		ObservableCurrencyRateProviderProxy observableProvider = new ObservableCurrencyRateProviderProxy(provider);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		try (CurrencyRate currencyRate = createCurrencyRate(observableProvider, listener)) {
+		try (CurrencyRates currencyRates = createCurrencyRates(observableProvider, listener)) {
 			RateValue rate = observableProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
 
 			assertEquals(RATE, rate);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 
-			RateValue cachedRate = currencyRate.getRate(DATE);
+			RateValue cachedRate = currencyRates.getRate(DATE);
 			RateValue rate2 = observableProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
 
 			assertEquals(RATE, cachedRate);
@@ -123,13 +123,13 @@ public class CurrencyRateTest {
 		ObservableCurrencyRateProviderProxy observableProvider = new ObservableCurrencyRateProviderProxy(provider);
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
-		try (CurrencyRate currencyRate = createCurrencyRate(observableProvider, listener)) {
+		try (CurrencyRates currencyRates = createCurrencyRates(observableProvider, listener)) {
 			Map<Date, RateValue> rates = observableProvider.getRates(BASE_CURRENCY, CURRENCY, DATES);
 
 			assertEquals(RATES, rates);
 			verify(listener).newRates(argThat(matchesEventCount(5)));
 
-			Map<Date, RateValue> cachedRates = currencyRate.getRates(DATES);
+			Map<Date, RateValue> cachedRates = currencyRates.getRates(DATES);
 			Map<Date, RateValue> rates2 = observableProvider.getRates(BASE_CURRENCY, CURRENCY, DATES);
 
 			assertEquals(RATES, cachedRates);
@@ -140,10 +140,10 @@ public class CurrencyRateTest {
 		}
 	}
 
-	private CurrencyRate createCurrencyRate(CurrencyRateProvider provider, CurrencyRateListener listener) {
-		CurrencyRate currencyRate = new CurrencyRate(BASE_CURRENCY, CURRENCY, provider);
-		currencyRate.addListener(listener);
-		return currencyRate;
+	private CurrencyRates createCurrencyRates(CurrencyRateProvider provider, CurrencyRateListener listener) {
+		CurrencyRates currencyRates = new CurrencyRates(BASE_CURRENCY, CURRENCY, provider);
+		currencyRates.addListener(listener);
+		return currencyRates;
 	}
 
 	private static Matcher<CurrencyRateEvent[]> matchesEventCount(int count) {

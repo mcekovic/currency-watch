@@ -2,12 +2,12 @@ package org.strangeforest.currencywatch.core;
 
 import java.util.*;
 
-public abstract class BaseCurrencyRate {
+public abstract class BaseCurrencyRates {
 
 	protected final String baseCurrency;
 	protected final String currency;
 
-	protected BaseCurrencyRate(String baseCurrency, String currency) {
+	protected BaseCurrencyRates(String baseCurrency, String currency) {
 		super();
 		this.baseCurrency = baseCurrency;
 		this.currency = currency;
@@ -39,9 +39,9 @@ public abstract class BaseCurrencyRate {
 
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof BaseCurrencyRate)) return false;
-		BaseCurrencyRate rate = (BaseCurrencyRate)o;
-		return baseCurrency.equals(rate.baseCurrency) && currency.equals(rate.currency);
+		if (!(o instanceof BaseCurrencyRates)) return false;
+		BaseCurrencyRates rates = (BaseCurrencyRates)o;
+		return baseCurrency.equals(rates.baseCurrency) && currency.equals(rates.currency);
 	}
 
 	@Override public int hashCode() {
@@ -49,6 +49,6 @@ public abstract class BaseCurrencyRate {
 	}
 
 	@Override public String toString() {
-		return String.format("CurrencyRate{baseCurrency=%1$s, currency=%2$s, rates=%3$s}", baseCurrency, currency, getRates());
+		return String.format("CurrencyRates{baseCurrency=%1$s, currency=%2$s, rates=%3$s}", baseCurrency, currency, getRates());
 	}
 }

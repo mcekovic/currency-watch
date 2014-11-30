@@ -23,7 +23,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	private final Collection<CurrencyRatePresenterListener> listeners = new CopyOnWriteArrayList<>();
 	private ObservableCurrencyRateProvider remoteProvider;
 	private CurrencyRateListener remoteProviderListener;
-	private volatile CurrencyRate currencyRate;
+	private volatile CurrencyRates currencyRates;
 	private volatile Thread dataThread;
 	private volatile Timer speedTimer;
 	private volatile boolean loading;
@@ -46,10 +46,10 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		eventSource = new DefaultCurrencyEventSource();
 		chart = new CurrencyChart();
 		axisChangeListener = event -> {
-			if (currencyRate != null)
-				currencyRate.close();
-			currencyRate = getCurrencyRate(currency.toString(), movAvgPeriod);
-			applyPeriod(currencyRate, chart.getDateRange(), quality.points());
+			if (currencyRates != null)
+				currencyRates.close();
+			currencyRates = getCurrencyRates(currency.toString(), movAvgPeriod);
+			applyPeriod(currencyRates, chart.getDateRange(), quality.points());
 		};
 		setUpSpeedMeasuring();
 	}
@@ -89,8 +89,8 @@ public class CurrencyRatePresenter implements AutoCloseable {
 
 	public void inputDataChanged(CurrencySymbol currency, Period period, SeriesQuality quality, boolean showBidAsk, boolean showMovAvg, boolean showBollBands, int movAvgPeriod) {
 		chart.removeDomainAxisChangeListener(axisChangeListener);
-		if (currencyRate != null)
-			currencyRate.close();
+		if (currencyRates != null)
+			currencyRates.close();
 		this.currency = currency;
 		if (period != this.period) {
 			this.period = period;
@@ -101,15 +101,16 @@ public class CurrencyRatePresenter implements AutoCloseable {
 		chart.createSeries(currency, showBidAsk, showMovAvg, showBollBands);
 		DateRange dateRange = UIUtil.toDateRange(period.days());
 		chart.setDateRange(dateRange);
-		currencyRate = getCurrencyRate(currency.toString(), movAvgPeriod);
-		applyPeriod(currencyRate, dateRange, quality.points());
+		currencyRates = getCurrencyRates(currency.toString(), movAvgPeriod);
+		applyPeriod(currencyRates, dateRange, quality.points());
 		chart.addDomainAxisChangeListener(axisChangeListener);
 	}
 
-	private CurrencyRate getCurrencyRate(String currency, int movAvgPeriod) {
-		CurrencyRate rate = new CurrencyRate(Util.BASE_CURRENCY, currency, provider);
-		rate.addListener(new CurrencyRateListener() {
-			@Override public void newRate(final CurrencyRateEvent rateEvent) {
+	private CurrencyRates getCurrencyRates(String currency, int movAvgPeriod) {
+		CurrencyRates rates = new CurrencyRates(Util.BASE_CURRENCY, currency, provider);
+		rates.addListener(new CurrencyRateListener() {
+			@Override
+			public void newRate(final CurrencyRateEvent rateEvent) {
 				SwingUtilities.invokeLater(() -> {
 					chart.updateBaseSeries(rateEvent);
 					addAnnotation(rateEvent.getDate());
@@ -119,7 +120,9 @@ public class CurrencyRatePresenter implements AutoCloseable {
 					chart.updateDerivedSeries(movAvgPeriod);
 				});
 			}
-			@Override public void newRates(CurrencyRateEvent[] rateEvents) {
+
+			@Override
+			public void newRates(CurrencyRateEvent[] rateEvents) {
 				SwingUtilities.invokeLater(() -> {
 					for (CurrencyRateEvent rateEvent : rateEvents) {
 						chart.updateBaseSeries(rateEvent);
@@ -131,14 +134,16 @@ public class CurrencyRatePresenter implements AutoCloseable {
 					chart.updateDerivedSeries(movAvgPeriod);
 				});
 			}
-			@Override public void error(String message) {
+
+			@Override
+			public void error(String message) {
 				SwingUtilities.invokeLater(() -> notifyStatusChanged(message, true));
 			}
 		});
-		return rate;
+		return rates;
 	}
 
-	private void applyPeriod(CurrencyRate rate, DateRange dateRange, int maxPoints) {
+	private void applyPeriod(CurrencyRates rates, DateRange dateRange, int maxPoints) {
 		if (dataThread != null)
 			dataThread.interrupt();
 		final int step = 1 + dateRange.size()/maxPoints;
@@ -155,8 +160,8 @@ public class CurrencyRatePresenter implements AutoCloseable {
 			try {
 				loading = true;
 				try {
-					notifyForRates(rate.getRates(dateRange.dates(step*10))); // Fetch outline first
-					notifyForRates(rate.getRates(dates));
+					notifyForRates(rates.getRates(dateRange.dates(step * 10))); // Fetch outline first
+					notifyForRates(rates.getRates(dates));
 				}
 				finally {
 					loading = false;
@@ -180,8 +185,8 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	}
 
 	private void addAnnotation(Date date) {
-		addAnnotation(currencyRate.getBaseCurrency(), date);
-		addAnnotation(currencyRate.getCurrency(), date);
+		addAnnotation(currencyRates.getBaseCurrency(), date);
+		addAnnotation(currencyRates.getCurrency(), date);
 	}
 
 	private void addAnnotation(String currency, Date date) {
@@ -191,7 +196,7 @@ public class CurrencyRatePresenter implements AutoCloseable {
 	}
 
 	private void addAnnotationsForMissingDates(DateRange dateRange) {
-		chart.addAnnotationsForMissingDates(eventSource, asList(currencyRate.getBaseCurrency(), currencyRate.getCurrency()), dateRange);
+		chart.addAnnotationsForMissingDates(eventSource, asList(currencyRates.getBaseCurrency(), currencyRates.getCurrency()), dateRange);
 	}
 
 	private void updateProgress() {

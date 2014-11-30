@@ -5,7 +5,7 @@ import java.util.concurrent.*;
 
 import org.strangeforest.concurrent.*;
 
-public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
+public class CurrencyRates extends BaseCurrencyRates implements AutoCloseable {
 
 	private final LockableMap<Date, RateValue> dateRates;
 	private final CurrencyRateProvider provider;
@@ -13,11 +13,11 @@ public class CurrencyRate extends BaseCurrencyRate implements AutoCloseable {
 	private final CurrencyRateListener providerListener;
 	private final Collection<CurrencyRateListener> listeners = new CopyOnWriteArrayList<>();
 
-	public CurrencyRate(String baseCurrency, String currency) {
+	public CurrencyRates(String baseCurrency, String currency) {
 		this(baseCurrency, currency, null);
 	}
 
-	public CurrencyRate(String baseCurrency, String currency, CurrencyRateProvider provider) {
+	public CurrencyRates(String baseCurrency, String currency, CurrencyRateProvider provider) {
 		super(baseCurrency, currency);
 		dateRates = new LockableHashMap<>();
 		this.provider = provider;

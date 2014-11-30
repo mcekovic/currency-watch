@@ -4,11 +4,11 @@ import java.util.*;
 
 import org.strangeforest.currencywatch.core.*;
 
-public class CurrencyRateObject extends BaseCurrencyRate {
+public class CurrencyRatesObject extends BaseCurrencyRates {
 
 	private final Map<Date, RateValue> dateRates;
 
-	public CurrencyRateObject(String baseCurrency, String currency) {
+	public CurrencyRatesObject(String baseCurrency, String currency) {
 		super(baseCurrency, currency);
 		dateRates = new HashMap<>();
 	}

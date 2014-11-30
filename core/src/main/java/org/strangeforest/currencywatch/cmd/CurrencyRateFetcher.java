@@ -80,8 +80,8 @@ public class CurrencyRateFetcher implements AutoCloseable {
 		System.out.printf("Fetching currency rates for currency %1$s from %2$td-%2$tm-%2$tY to %3$td-%3$tm-%3$tY...%n", currency, from, to);
 		initAndPrintProgress();
 		startTime = System.currentTimeMillis();
-		try (CurrencyRate currencyRate = new CurrencyRate(Util.BASE_CURRENCY, currency, provider)) {
-			currencyRate.getRates(dates);
+		try (CurrencyRates currencyRates = new CurrencyRates(Util.BASE_CURRENCY, currency, provider)) {
+			currencyRates.getRates(dates);
 			System.out.printf("%nFetching finished.%n");
 		}
 	}
@@ -92,8 +92,8 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	}
 
 	private synchronized void initAndPrintProgress() {
-		try (CurrencyRate currencyRate = new CurrencyRate(Util.BASE_CURRENCY, currency, provider.getLocalProvider())) {
-			localFetchedDays = currencyRate.getRates(dates).size();
+		try (CurrencyRates currencyRates = new CurrencyRates(Util.BASE_CURRENCY, currency, provider.getLocalProvider())) {
+			localFetchedDays = currencyRates.getRates(dates).size();
 		}
 		fetchedDays = localFetchedDays;
 		System.out.printf("Completed: %1$5.1f%% (%2$d/%3$d)", (100.0*fetchedDays)/totalDays, fetchedDays, totalDays);

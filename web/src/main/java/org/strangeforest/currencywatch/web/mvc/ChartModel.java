@@ -216,23 +216,23 @@ public class ChartModel {
 			chart.setAutoRangeRangeAxis();
 		this.dateRange = dateRange;
 
-		CurrencyRate currencyRate = new CurrencyRate(Util.BASE_CURRENCY, currency.name(), currencyProvider);
+		CurrencyRates currencyRates = new CurrencyRates(Util.BASE_CURRENCY, currency.name(), currencyProvider);
 		Map<Date, RateValue> rates;
 		try {
 			int step = 1 + dateRange.size()/quality.points();
-			currencyRate.getRates(dateRange.dates(step*10)); // Fetch outline first
-			rates = currencyRate.getRates(dateRange.dates(step));
+			currencyRates.getRates(dateRange.dates(step * 10)); // Fetch outline first
+			rates = currencyRates.getRates(dateRange.dates(step));
 		}
 		catch (CurrencyRateException ex) {
 			LOGGER.error("Error getting currency data.", ex);
-			rates = currencyRate.getRates();
+			rates = currencyRates.getRates();
 		}
 
 		currentRate = CurrentRate.forRates(rates);
 
 		chart.updateBaseSeries(rates);
 		chart.updateDerivedSeries(movAvgPeriod);
-		chart.addAnnotations(eventSource, asList(currencyRate.getBaseCurrency(), currencyRate.getCurrency()), dateRange);
+		chart.addAnnotations(eventSource, asList(currencyRates.getBaseCurrency(), currencyRates.getCurrency()), dateRange);
 
 		JFreeChart jFreeChart = chart.getChart();
 		jFreeChart.setBackgroundPaint(Color.WHITE);

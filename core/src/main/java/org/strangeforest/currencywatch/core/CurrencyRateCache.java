@@ -5,29 +5,29 @@ import java.util.concurrent.*;
 
 public class CurrencyRateCache implements UpdatableCurrencyRateProvider {
 
-	private final ConcurrentMap<CurrencyRateKey, CurrencyRate> rateCache;
+	private final ConcurrentMap<CurrencyRateKey, CurrencyRates> ratesCache;
 
 	public CurrencyRateCache() {
 		super();
-		this.rateCache = new ConcurrentHashMap<>();
+		this.ratesCache = new ConcurrentHashMap<>();
 	}
 
 	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
 		CurrencyRateKey key = new CurrencyRateKey(baseCurrency, currency);
-		CurrencyRate rate = rateCache.get(key);
-		return rate != null ? rate.getRate(date) : null;
+		CurrencyRates rates = ratesCache.get(key);
+		return rates != null ? rates.getRate(date) : null;
 	}
 
 	@Override public void setRate(String baseCurrency, String currency, Date date, RateValue rateValue) {
 		CurrencyRateKey key = new CurrencyRateKey(baseCurrency, currency);
-		CurrencyRate rate = rateCache.get(key);
-		if (rate == null) {
-			CurrencyRate newRate = new CurrencyRate(baseCurrency, currency);
-			rate = rateCache.putIfAbsent(key, newRate);
-			if (rate == null)
-				rate = newRate;
+		CurrencyRates rates = ratesCache.get(key);
+		if (rates == null) {
+			CurrencyRates newRates = new CurrencyRates(baseCurrency, currency);
+			rates = ratesCache.putIfAbsent(key, newRates);
+			if (rates == null)
+				rates = newRates;
 		}
-		rate.setRate(date, rateValue);
+		rates.setRate(date, rateValue);
 	}
 
 	private static final class CurrencyRateKey {

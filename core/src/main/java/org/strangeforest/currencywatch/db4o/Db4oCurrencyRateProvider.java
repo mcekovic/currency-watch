@@ -46,7 +46,7 @@ public class Db4oCurrencyRateProvider implements UpdatableCurrencyRateProvider {
 
 	private void openDb() {
 		EmbeddedConfiguration dbConfig = Db4oEmbedded.newConfiguration();
-		ObjectClass currencyRateConfig = dbConfig.common().objectClass(CurrencyRateObject.class);
+		ObjectClass currencyRateConfig = dbConfig.common().objectClass(CurrencyRatesObject.class);
 		currencyRateConfig.objectField("baseCurrency").indexed(true);
 		currencyRateConfig.objectField("currency").indexed(true);
 		currencyRateConfig.cascadeOnUpdate(true);
@@ -77,7 +77,7 @@ public class Db4oCurrencyRateProvider implements UpdatableCurrencyRateProvider {
 
 	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
 		return queryDb4o(db -> {
-			CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
+			CurrencyRatesObject rate = getCurrencyRate(db, baseCurrency, currency);
 			return rate != null ? rate.getRate(date) : null;
 		});
 	}
@@ -85,7 +85,7 @@ public class Db4oCurrencyRateProvider implements UpdatableCurrencyRateProvider {
 	@Override public Map<Date, RateValue> getRates(String baseCurrency, String currency, Collection<Date> dates) {
 		Map<Date, RateValue> rates = queryDb4o(db -> {
 			Map<Date, RateValue> dateRates = new TreeMap<>();
-			CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
+			CurrencyRatesObject rate = getCurrencyRate(db, baseCurrency, currency);
 			if (rate != null) {
 				dateRates.putAll(rate.getRates());
 				dateRates.keySet().retainAll(dates);
@@ -97,9 +97,9 @@ public class Db4oCurrencyRateProvider implements UpdatableCurrencyRateProvider {
 
 	@Override public void setRate(String baseCurrency, String currency, Date date, RateValue rateValue) {
 		doInDb4o(db -> {
-			CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
+			CurrencyRatesObject rate = getCurrencyRate(db, baseCurrency, currency);
 			if (rate == null)
-				rate = new CurrencyRateObject(baseCurrency, currency);
+				rate = new CurrencyRatesObject(baseCurrency, currency);
 			rate.setRate(date, rateValue);
 			db.store(rate);
 		});
@@ -107,17 +107,17 @@ public class Db4oCurrencyRateProvider implements UpdatableCurrencyRateProvider {
 
 	@Override public void setRates(String baseCurrency, String currency, Map<Date, RateValue> dateRates) {
 		doInDb4o(db -> {
-			CurrencyRateObject rate = getCurrencyRate(db, baseCurrency, currency);
-			if (rate == null)
-				rate = new CurrencyRateObject(baseCurrency, currency);
-			rate.setRates(dateRates);
-			db.store(rate);
+			CurrencyRatesObject rates = getCurrencyRate(db, baseCurrency, currency);
+			if (rates == null)
+				rates = new CurrencyRatesObject(baseCurrency, currency);
+			rates.setRates(dateRates);
+			db.store(rates);
 		});
 	}
 
-	private CurrencyRateObject getCurrencyRate(ObjectContainer db, String baseCurrency, String currency) {
-		CurrencyRateObject template = new CurrencyRateObject(baseCurrency, currency);
-		return exactlyOne(db.<CurrencyRateObject>queryByExample(template), template);
+	private CurrencyRatesObject getCurrencyRate(ObjectContainer db, String baseCurrency, String currency) {
+		CurrencyRatesObject template = new CurrencyRatesObject(baseCurrency, currency);
+		return exactlyOne(db.<CurrencyRatesObject>queryByExample(template), template);
 	}
 
 	private <T> T exactlyOne(ObjectSet<T> objectSet, T template) {

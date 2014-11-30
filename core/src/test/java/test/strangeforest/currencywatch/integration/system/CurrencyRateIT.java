@@ -33,15 +33,15 @@ public class CurrencyRateIT {
 
 	@Test
 	public void getRate() {
-		CurrencyRate rate = new CurrencyRate(BASE_CURRENCY, CURRENCY, currencyRateProvider);
-		rate.getRate(DATE);
-		System.out.println(rate);
+		CurrencyRates rates = new CurrencyRates(BASE_CURRENCY, CURRENCY, currencyRateProvider);
+		rates.getRate(DATE);
+		System.out.println(rates);
 	}
 
 	@Test
 	public void getRates() {
-		CurrencyRate rate = new CurrencyRate(BASE_CURRENCY, CURRENCY, currencyRateProvider);
-		rate.getRates(DATES);
-		System.out.println(rate);
+		CurrencyRates rates = new CurrencyRates(BASE_CURRENCY, CURRENCY, currencyRateProvider);
+		rates.getRates(DATES);
+		System.out.println(rates);
 	}
 }

@@ -52,7 +52,7 @@ public class JDBCCurrencyRateProviderIT {
 	@Test(dependsOnMethods = "setRate")
 	public void getRate() {
 		RateValue fetchedRate = currencyRateProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
-		assertEquals(fetchedRate.setScale(1), RATE);
+		assertEquals(fetchedRate.withScale(1), RATE);
 	}
 
 	@Test(dependsOnMethods = "getRate")
@@ -63,6 +63,6 @@ public class JDBCCurrencyRateProviderIT {
 	@Test(dependsOnMethods = "setRates")
 	public void getRates() {
 		final Map<Date, RateValue> fetchedRates = currencyRateProvider.getRates(BASE_CURRENCY, CURRENCY, DATES);
-		assertEquals(fetchedRates.keySet().stream().collect(toMap(identity(), date -> fetchedRates.get(date).setScale(1))), RATES);
+		assertEquals(fetchedRates.keySet().stream().collect(toMap(identity(), date -> fetchedRates.get(date).withScale(1))), RATES);
 	}
 }
