@@ -77,7 +77,7 @@ public class SchemaManager {
 
 	public void upgradeSchema(int oldVersion, int newVersion) {
 		LOGGER.info(String.format("Upgrading database schema from version %1$d to version %2$d...", oldVersion, newVersion));
-		db.executeDDL("DropCurrencyRateTable");
+		dropCurrencyRateTable();
 		createCurrencyRateTable();
 		updateSchemaVersion(newVersion, true);
 		LOGGER.info("Database schema upgraded.");
@@ -87,6 +87,10 @@ public class SchemaManager {
 		db.executeDDL("CreateCurrencyRateTable");
 		db.executeDDL("CreateCurrencyRatePK");
 		db.executeDDL("CreateCurrencyRateDateIndex");
+	}
+
+	private void dropCurrencyRateTable() {
+		db.executeDDL("DropCurrencyRateTable");
 	}
 
 	private void updateSchemaVersion(int version, boolean upgrade) {
