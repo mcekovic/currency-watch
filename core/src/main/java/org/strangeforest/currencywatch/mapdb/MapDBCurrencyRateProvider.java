@@ -35,11 +35,12 @@ public class MapDBCurrencyRateProvider implements UpdatableCurrencyRateProvider 
 		currencyRates = db.getHashMap(CURRENCY_RATES_MAP);
 		Map<String, Integer> versionMap = db.<String, Integer>getHashMap(VERSION_MAP);
 		Integer dbVersion = versionMap.get(VERSION_MAP);
-		if (dbVersion != null && !dbVersion.equals(version)) {
+		if (dbVersion == null || !dbVersion.equals(version)) {
 			currencyRates.clear();
 			LOGGER.info("MapDB cleared as data version is old.");
 		}
 		versionMap.put(VERSION_MAP, version);
+		db.commit();
 	}
 
 	@Override public void close() {
@@ -63,6 +64,7 @@ public class MapDBCurrencyRateProvider implements UpdatableCurrencyRateProvider 
 			dateRates.put(date, rateValue);
 			return new CurrencyRatesValue(baseCurrency, currency, dateRates);
 		});
+		db.commit();
 	}
 
 	@Override public void setRates(String baseCurrency, String currency, Map<Date, RateValue> dateRates) {
@@ -72,5 +74,6 @@ public class MapDBCurrencyRateProvider implements UpdatableCurrencyRateProvider 
 			newDateRates.putAll(dateRates);
 			return new CurrencyRatesValue(baseCurrency, currency, newDateRates);
 		});
+		db.commit();
 	}
 }

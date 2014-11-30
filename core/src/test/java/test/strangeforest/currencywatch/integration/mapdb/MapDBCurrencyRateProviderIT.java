@@ -1,6 +1,7 @@
 package test.strangeforest.currencywatch.integration.mapdb;
 
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 
 import org.strangeforest.currencywatch.core.*;
@@ -20,7 +21,8 @@ public class MapDBCurrencyRateProviderIT {
 	private static final String MAPDB_PATH_NAME_UPGRADE = "target/data/upgrade-rates-db";
 
 	@BeforeClass
-	private void setUp() {
+	private void setUp() throws IOException {
+		Files.createDirectories(Paths.get(MAPDB_PATH_NAME).getParent());
 		ITUtil.deleteFile(MAPDB_PATH_NAME);
 		ITUtil.deleteFile(MAPDB_PATH_NAME_UPGRADE);
 		currencyRateProvider = new MapDBCurrencyRateProvider(MAPDB_PATH_NAME);
@@ -54,7 +56,18 @@ public class MapDBCurrencyRateProviderIT {
 		assertEquals(fetchedRates, RATES);
 	}
 
-	@Test(dependsOnMethods = "getRates")
+	@Test(dependsOnMethods = "setRates")
+	public void getRatesWithOtherProvider() {
+		UpdatableCurrencyRateProvider otherCurrencyRateProvider = new MapDBCurrencyRateProvider(MAPDB_PATH_NAME);
+		otherCurrencyRateProvider.init();
+
+		Map<Date, RateValue> fetchedRates = otherCurrencyRateProvider.getRates(BASE_CURRENCY, CURRENCY, DATES);
+		assertEquals(fetchedRates, RATES);
+
+		otherCurrencyRateProvider.close();
+	}
+
+	@Test(dependsOnMethods = "getRatesWithOtherProvider")
 	public void upgradeData() {
 		try (CurrencyRateProvider provider = new MapDBCurrencyRateProvider(MAPDB_PATH_NAME_UPGRADE)) {
 			provider.init();
