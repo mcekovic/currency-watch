@@ -5,7 +5,7 @@ import java.util.concurrent.*;
 
 public class CurrencyRateCache implements UpdatableCurrencyRateProvider {
 
-	private final ConcurrentMap<CurrencyRateKey, CurrencyRates> ratesCache;
+	private final ConcurrentMap<CurrencyRatesKey, CurrencyRates> ratesCache;
 
 	public CurrencyRateCache() {
 		super();
@@ -13,13 +13,13 @@ public class CurrencyRateCache implements UpdatableCurrencyRateProvider {
 	}
 
 	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
-		CurrencyRateKey key = new CurrencyRateKey(baseCurrency, currency);
+		CurrencyRatesKey key = new CurrencyRatesKey(baseCurrency, currency);
 		CurrencyRates rates = ratesCache.get(key);
 		return rates != null ? rates.getRate(date) : null;
 	}
 
 	@Override public void setRate(String baseCurrency, String currency, Date date, RateValue rateValue) {
-		CurrencyRateKey key = new CurrencyRateKey(baseCurrency, currency);
+		CurrencyRatesKey key = new CurrencyRatesKey(baseCurrency, currency);
 		CurrencyRates rates = ratesCache.get(key);
 		if (rates == null) {
 			CurrencyRates newRates = new CurrencyRates(baseCurrency, currency);
@@ -28,27 +28,5 @@ public class CurrencyRateCache implements UpdatableCurrencyRateProvider {
 				rates = newRates;
 		}
 		rates.setRate(date, rateValue);
-	}
-
-	private static final class CurrencyRateKey {
-
-		private final String baseCurrency;
-		private final String currency;
-
-		public CurrencyRateKey(String baseCurrency, String currency) {
-			this.baseCurrency = baseCurrency;
-			this.currency = currency;
-		}
-
-		@Override public boolean equals(Object o) {
-			if (this == o) return true;
-			if (!(o instanceof CurrencyRateKey)) return false;
-			CurrencyRateKey key = (CurrencyRateKey)o;
-			return baseCurrency.equals(key.baseCurrency) && currency.equals(key.currency);
-		}
-
-		@Override public int hashCode() {
-			return 31 * baseCurrency.hashCode() + currency.hashCode();
-		}
 	}
 }

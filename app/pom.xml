@@ -120,8 +120,8 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.db4o</groupId>
-			<artifactId>db4o-core</artifactId>
+			<groupId>org.mapdb</groupId>
+			<artifactId>mapdb</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jfree</groupId>

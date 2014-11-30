@@ -1,11 +1,12 @@
 package org.strangeforest.currencywatch.core;
 
+import java.io.*;
 import java.util.*;
 
-public abstract class BaseCurrencyRates {
+public abstract class BaseCurrencyRates implements Serializable {
 
-	protected final String baseCurrency;
-	protected final String currency;
+	protected String baseCurrency;
+	protected String currency;
 
 	protected BaseCurrencyRates(String baseCurrency, String currency) {
 		super();
@@ -50,5 +51,15 @@ public abstract class BaseCurrencyRates {
 
 	@Override public String toString() {
 		return String.format("CurrencyRates{baseCurrency=%1$s, currency=%2$s, rates=%3$s}", baseCurrency, currency, getRates());
+	}
+
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeUTF(baseCurrency);
+		out.writeUTF(currency);
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException {
+		baseCurrency = in.readUTF();
+		currency = in.readUTF();
 	}
 }

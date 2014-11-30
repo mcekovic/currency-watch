@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.*;
 
 import org.strangeforest.currencywatch.core.*;
-import org.strangeforest.currencywatch.db4o.*;
 import org.strangeforest.currencywatch.mapdb.*;
 import org.testng.annotations.*;
 
@@ -17,8 +16,8 @@ public class MapDBCurrencyRateProviderIT {
 
 	private UpdatableCurrencyRateProvider currencyRateProvider;
 
-	private static final String MAPDB_PATH_NAME = "data/test-rates-db";
-	private static final String MAPDB_PATH_NAME_UPGRADE = "data/upgrade-rates-db";
+	private static final String MAPDB_PATH_NAME = "target/data/test-rates-db";
+	private static final String MAPDB_PATH_NAME_UPGRADE = "target/data/upgrade-rates-db";
 
 	@BeforeClass
 	private void setUp() {
@@ -62,7 +61,7 @@ public class MapDBCurrencyRateProviderIT {
 		}
 		assertTrue(new File(MAPDB_PATH_NAME_UPGRADE).exists());
 
-		try (CurrencyRateProvider provider = new MapDBCurrencyRateProvider(MAPDB_PATH_NAME_UPGRADE, DataVersion.CURRENT_VERSION + 1)) {
+		try (CurrencyRateProvider provider = new MapDBCurrencyRateProvider(MAPDB_PATH_NAME_UPGRADE, MapDBCurrencyRateProvider.CURRENT_VERSION + 1)) {
 			provider.init();
 		}
 		assertTrue(new File(MAPDB_PATH_NAME_UPGRADE).exists());

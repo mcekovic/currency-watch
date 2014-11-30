@@ -1,11 +1,11 @@
-package org.strangeforest.currencywatch.mapdb;
+package org.strangeforest.currencywatch.core;
 
 import java.io.*;
 
-public class CurrencyRatesKey implements Serializable {
+public final class CurrencyRatesKey implements Serializable {
 
-	private final String baseCurrency;
-	private final String currency;
+	private String baseCurrency;
+	private String currency;
 
 	public CurrencyRatesKey(String baseCurrency, String currency) {
 		this.baseCurrency = baseCurrency;
@@ -24,5 +24,15 @@ public class CurrencyRatesKey implements Serializable {
 
 	@Override public int hashCode() {
 		return 31 * baseCurrency.hashCode() + currency.hashCode();
+	}
+
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeUTF(baseCurrency);
+		out.writeUTF(currency);
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		baseCurrency = in.readUTF();
+		currency = in.readUTF();
 	}
 }

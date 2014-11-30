@@ -2,6 +2,7 @@ package org.strangeforest.currencywatch.mapdb;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 import org.mapdb.*;
 import org.slf4j.*;
@@ -12,11 +13,12 @@ public class MapDBCurrencyRateProvider implements UpdatableCurrencyRateProvider 
 	private final String dbPathName;
 	private final int version;
 	private DB db;
-	private HTreeMap<CurrencyRatesKey, CurrencyRatesValue> currencyRates;
+	private ConcurrentMap<CurrencyRatesKey, CurrencyRatesValue> currencyRates;
+
+	public static final int CURRENT_VERSION = 1;
 
 	private static final String CURRENCY_RATES_MAP = "CurrencyRates";
 	private static final String VERSION_MAP = "Version";
-	private static final int CURRENT_VERSION = 1;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MapDBCurrencyRateProvider.class);
 
@@ -51,7 +53,7 @@ public class MapDBCurrencyRateProvider implements UpdatableCurrencyRateProvider 
 
 	@Override public Map<Date, RateValue> getRates(String baseCurrency, String currency, Collection<Date> dates) {
 		CurrencyRatesValue ratesValue = currencyRates.get(new CurrencyRatesKey(baseCurrency, currency));
-		return ratesValue != null ? new TreeMap<>(ratesValue.getRates(dates)) : Collections.emptyMap();
+		return ratesValue != null ? ratesValue.getRates(dates) : Collections.emptyMap();
 	}
 
 	@Override public void setRate(String baseCurrency, String currency, Date date, RateValue rateValue) {

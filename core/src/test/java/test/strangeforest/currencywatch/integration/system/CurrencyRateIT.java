@@ -1,7 +1,7 @@
 package test.strangeforest.currencywatch.integration.system;
 
 import org.strangeforest.currencywatch.core.*;
-import org.strangeforest.currencywatch.db4o.*;
+import org.strangeforest.currencywatch.mapdb.*;
 import org.strangeforest.currencywatch.nbs.*;
 import org.testng.annotations.*;
 
@@ -13,14 +13,14 @@ public class CurrencyRateIT {
 
 	private CurrencyRateProvider currencyRateProvider;
 
-	private static final String DB4O_DATA_FILE = "data/test-rates.db4o";
+	private static final String MAPDB_PATH_NAME = "target/data/test-rates-db";
 
 	@BeforeClass
 	public void setUp() {
-		ITUtil.deleteFile(DB4O_DATA_FILE);
+		ITUtil.deleteFile(MAPDB_PATH_NAME);
 		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider(new CurrencyRateTracer());
 		currencyRateProvider = new ChainedCurrencyRateProvider(
-			new Db4oCurrencyRateProvider(DB4O_DATA_FILE),
+			new MapDBCurrencyRateProvider(MAPDB_PATH_NAME),
 			new ParallelCurrencyRateProviderProxy(remoteProvider, 5)
 		);
 		currencyRateProvider.init();

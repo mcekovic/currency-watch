@@ -7,7 +7,7 @@ import javax.swing.*;
 
 import org.slf4j.*;
 import org.strangeforest.currencywatch.core.*;
-import org.strangeforest.currencywatch.db4o.*;
+import org.strangeforest.currencywatch.mapdb.*;
 import org.strangeforest.currencywatch.nbs.*;
 import org.strangeforest.currencywatch.rest.*;
 import org.strangeforest.util.*;
@@ -16,8 +16,8 @@ import com.beust.jcommander.*;
 
 public class CurrencyWatch {
 
-	@Parameter(names = {"-db", "-dbFileName"}, description = "DB file used to store currency rates.")
-	private String dbFileName = System.getProperty("user.home") + DB_FILE_NAME;
+	@Parameter(names = {"-db", "-dbPathName"}, description = "DB path used to store currency rates.")
+	private String dbPathName = System.getProperty("user.home") + DB_PATH_NAME;
 
 	@Parameter(names = {"-r", "-useRest"}, description = "Fetch data from REST API.")
 	private boolean useRest = false;
@@ -34,7 +34,7 @@ public class CurrencyWatch {
 	@Parameter(names = {"-?", "-h", "-help"}, description = "Shows usage.", help = true)
 	private boolean help;
 
-	private static final String DB_FILE_NAME = "/.currency-watch/data/currency-rates.db4o";
+	private static final String DB_PATH_NAME = "/.currency-watch/data/currency-rates-db";
 	private static final int REMOTE_PROVIDER_BATCH_SIZE   = 50;
 	private static final int REMOTE_PROVIDER_THREAD_COUNT = 10;
 
@@ -82,7 +82,7 @@ public class CurrencyWatch {
 
 	private CurrencyRateProvider createProvider() throws URISyntaxException {
 		CurrencyRateProvider provider = new ChainedCurrencyRateProvider(
-			new Db4oCurrencyRateProvider(dbFileName),
+			new MapDBCurrencyRateProvider(dbPathName),
 			createRemoteProvider()
 
 		);

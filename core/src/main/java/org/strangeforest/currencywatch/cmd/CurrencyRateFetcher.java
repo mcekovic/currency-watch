@@ -5,17 +5,16 @@ import java.util.*;
 
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
-import org.strangeforest.currencywatch.db4o.*;
+import org.strangeforest.currencywatch.mapdb.*;
 import org.strangeforest.currencywatch.nbs.*;
+import org.strangeforest.currencywatch.ui.*;
 
 import com.beust.jcommander.*;
 
-import org.strangeforest.currencywatch.ui.*;
-
 public class CurrencyRateFetcher implements AutoCloseable {
 
-	@Parameter(names = {"-db", "-dbFileName"}, description = "DB file used to store currency rates.")
-	private String dbFileName = System.getProperty("user.home") + DB_FILE_NAME;
+	@Parameter(names = {"-db", "-dbPathName"}, description = "DB path used to store currency rates.")
+	private String dbPathName = System.getProperty("user.home") + DB_PATH_NAME;
 
 	@Parameter(names = {"-c", "-currency"}, description = "Currency symbol.")
 	private String currency = UIUtil.DEFAULT_CURRENCY.toString();
@@ -32,7 +31,7 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	@Parameter(names = {"-?", "-h", "-help"}, description = "Shows usage.", help = true)
 	private boolean help;
 
-	private static final String DB_FILE_NAME = "/.currency-watch/data/currency-rates.db4o";
+	private static final String DB_PATH_NAME = "/.currency-watch/data/currency-rates-db";
 	private static final int THREAD_COUNT = 20;
 
 	public static void main(String[] args) {
@@ -68,7 +67,7 @@ public class CurrencyRateFetcher implements AutoCloseable {
 	private void init() {
 		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider(rateEvent -> incFetchedAndPrintProgress());
 		provider = new ChainedCurrencyRateProvider(
-			new Db4oCurrencyRateProvider(dbFileName),
+			new MapDBCurrencyRateProvider(dbPathName),
 			new ParallelCurrencyRateProviderProxy(remoteProvider, threadCount)
 		);
 		provider.init();
