@@ -22,7 +22,7 @@ public class MapDBCurrencyRateProviderIT {
 
 	@BeforeClass
 	private void setUp() throws IOException {
-		Files.createDirectories(Paths.get(MAPDB_PATH_NAME).getParent());
+		ITUtil.ensurePath(MAPDB_PATH_NAME);
 		ITUtil.deleteFile(MAPDB_PATH_NAME);
 		ITUtil.deleteFile(MAPDB_PATH_NAME_UPGRADE);
 		currencyRateProvider = new MapDBCurrencyRateProvider(MAPDB_PATH_NAME);
@@ -56,18 +56,7 @@ public class MapDBCurrencyRateProviderIT {
 		assertEquals(fetchedRates, RATES);
 	}
 
-	@Test(dependsOnMethods = "setRates")
-	public void getRatesWithOtherProvider() {
-		UpdatableCurrencyRateProvider otherCurrencyRateProvider = new MapDBCurrencyRateProvider(MAPDB_PATH_NAME);
-		otherCurrencyRateProvider.init();
-
-		Map<Date, RateValue> fetchedRates = otherCurrencyRateProvider.getRates(BASE_CURRENCY, CURRENCY, DATES);
-		assertEquals(fetchedRates, RATES);
-
-		otherCurrencyRateProvider.close();
-	}
-
-	@Test(dependsOnMethods = "getRatesWithOtherProvider")
+	@Test(dependsOnMethods = "getRates")
 	public void upgradeData() {
 		try (CurrencyRateProvider provider = new MapDBCurrencyRateProvider(MAPDB_PATH_NAME_UPGRADE)) {
 			provider.init();

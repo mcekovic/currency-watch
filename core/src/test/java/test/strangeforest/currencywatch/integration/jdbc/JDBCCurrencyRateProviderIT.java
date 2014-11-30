@@ -1,5 +1,6 @@
 package test.strangeforest.currencywatch.integration.jdbc;
 
+import java.io.*;
 import java.util.*;
 
 import org.strangeforest.currencywatch.core.*;
@@ -23,13 +24,14 @@ public class JDBCCurrencyRateProviderIT {
 	private UpdatableCurrencyRateProvider currencyRateProvider;
 
 	@BeforeClass
-	private void setUp() throws ClassNotFoundException {
+	private void setUp() throws ClassNotFoundException, IOException {
+		ITUtil.ensureDirectory(H2_DATA_DIR);
+		ITUtil.deleteFiles(H2_DATA_DIR, H2_DATA_FILE_NAME + "\\..+\\.db");
 		smDataSource = new ConnectionPoolDataSource(DRIVER_CLASS, ADMIN_JDBC_URL, ADMIN_USERNAME, ADMIN_PASSWORD);
 		smDataSource.init();
 		dataSource = new ConnectionPoolDataSource(DRIVER_CLASS, APP_JDBC_URL, APP_USERNAME, APP_PASSWORD);
 		dataSource.setLogger(new DBConnectionPoolLogger(JDBCCurrencyRateProvider.class.getPackage().getName()));
 		dataSource.init();
-		ITUtil.deleteFiles(H2_DATA_DIR, H2_DATA_FILE_NAME + "\\..+\\.db");
 		SchemaManager schemaManager = new SchemaManager(smDataSource, DIALECT);
 		schemaManager.setUsername(APP_USERNAME);
 		schemaManager.setPassword(APP_PASSWORD);

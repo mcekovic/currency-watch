@@ -1,5 +1,7 @@
 package test.strangeforest.currencywatch.integration.jdbc;
 
+import java.io.*;
+
 import org.strangeforest.currencywatch.jdbc.*;
 import org.strangeforest.db.*;
 import org.testng.annotations.*;
@@ -16,10 +18,11 @@ public class SchemaManagerIT {
 	private SchemaManager schemaManager;
 
 	@BeforeClass
-	public void setUp() {
+	public void setUp() throws IOException {
+		ITUtil.ensureDirectory(H2_DATA_DIR);
+		ITUtil.deleteFiles(H2_DATA_DIR, H2_DATA_FILE_NAME + "-sm\\..+\\.db");
 		dataSource = new ConnectionPoolDataSource(DRIVER_CLASS, ADMIN_JDBC_URL + "-sm", ADMIN_USERNAME, ADMIN_PASSWORD);
 		dataSource.init();
-		ITUtil.deleteFiles(H2_DATA_DIR, H2_DATA_FILE_NAME + "-sm\\..+\\.db");
 		schemaManager = new SchemaManager(dataSource, DIALECT);
 		schemaManager.setUsername(APP_USERNAME);
 		schemaManager.setPassword(APP_PASSWORD);

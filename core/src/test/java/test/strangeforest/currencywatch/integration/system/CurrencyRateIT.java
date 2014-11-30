@@ -1,5 +1,7 @@
 package test.strangeforest.currencywatch.integration.system;
 
+import java.io.*;
+
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.mapdb.*;
 import org.strangeforest.currencywatch.nbs.*;
@@ -13,10 +15,11 @@ public class CurrencyRateIT {
 
 	private CurrencyRateProvider currencyRateProvider;
 
-	private static final String MAPDB_PATH_NAME = "target/data/test-rates-db";
+	private static final String MAPDB_PATH_NAME = "target/data/test-rates-system-db";
 
 	@BeforeClass
-	public void setUp() {
+	public void setUp() throws IOException {
+		ITUtil.ensurePath(MAPDB_PATH_NAME);
 		ITUtil.deleteFile(MAPDB_PATH_NAME);
 		ObservableCurrencyRateProvider remoteProvider = new NBSCurrencyRateProvider(new CurrencyRateTracer());
 		currencyRateProvider = new ChainedCurrencyRateProvider(

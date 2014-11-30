@@ -14,7 +14,8 @@ public class CurrencyRateFetcherIT {
 	private static final String MAPDB_PATH_NAME = "target/data/test-rates-fetcher-db";
 
 	@BeforeClass
-	private void setUp() {
+	private void setUp() throws IOException {
+		ITUtil.ensurePath(MAPDB_PATH_NAME);
 		ITUtil.deleteFile(MAPDB_PATH_NAME);
 	}
 
