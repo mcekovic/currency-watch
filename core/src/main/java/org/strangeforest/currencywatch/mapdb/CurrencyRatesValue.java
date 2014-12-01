@@ -1,10 +1,11 @@
 package org.strangeforest.currencywatch.mapdb;
 
 import java.io.*;
-import java.math.*;
 import java.util.*;
 
 import org.strangeforest.currencywatch.core.*;
+
+import static org.strangeforest.currencywatch.mapdb.SerializationUtil.*;
 
 public final class CurrencyRatesValue extends BaseCurrencyRates {
 
@@ -58,13 +59,5 @@ public final class CurrencyRatesValue extends BaseCurrencyRates {
 			RateValue rate = new RateValue(readDecimal(in), readDecimal(in), readDecimal(in));
 			dateRates.put(date, rate);
 		}
-	}
-
-	private void writeDecimal(ObjectOutputStream out, BigDecimal d) throws IOException {
-		out.writeUTF(d.toString());
-	}
-
-	private BigDecimal readDecimal(ObjectInputStream in) throws IOException {
-		return new BigDecimal(in.readUTF());
 	}
 }

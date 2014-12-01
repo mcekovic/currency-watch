@@ -1,6 +1,8 @@
 package org.strangeforest.currencywatch.mapdb;
 
 import java.io.*;
+import java.nio.file.*;
+import java.nio.file.attribute.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -15,7 +17,7 @@ public class MapDBCurrencyRateProvider implements UpdatableCurrencyRateProvider 
 	private DB db;
 	private ConcurrentMap<CurrencyRatesKey, CurrencyRatesValue> currencyRates;
 
-	public static final int CURRENT_VERSION = 1;
+	public static final int CURRENT_VERSION = 2;
 
 	private static final String CURRENCY_RATES_MAP = "CurrencyRates";
 	private static final String VERSION_MAP = "Version";
@@ -31,21 +33,45 @@ public class MapDBCurrencyRateProvider implements UpdatableCurrencyRateProvider 
 	}
 
 	@Override public void init() {
-		db = DBMaker.newFileDB(new File(dbPathName)).closeOnJvmShutdown().make();
-		currencyRates = db.getHashMap(CURRENCY_RATES_MAP);
-		Map<String, Integer> versionMap = db.<String, Integer>getHashMap(VERSION_MAP);
-		Integer dbVersion = versionMap.get(VERSION_MAP);
+		db = createMapDB();
+		Integer dbVersion = getVersionMap().get(VERSION_MAP);
 		if (dbVersion == null || !dbVersion.equals(version)) {
-			currencyRates.clear();
+			db.close();
+			createMapDBForFilesDeletion().close();
+			db = createMapDB();
+			getVersionMap().put(VERSION_MAP, version);
+			db.commit();
 			LOGGER.info("MapDB cleared as data version is old.");
 		}
-		versionMap.put(VERSION_MAP, version);
+		currencyRates = getCurrencyRatesMap();
 		db.commit();
 		db.compact();
 	}
 
+	private DB createMapDB() {
+		return DBMaker.newFileDB(new File(dbPathName)).closeOnJvmShutdown().make();
+	}
+
+	private DB createMapDBForFilesDeletion() {
+		return DBMaker.newFileDB(new File(dbPathName)).deleteFilesAfterClose().make();
+	}
+
+	private HTreeMap<String, Integer> getVersionMap() {
+		return db.<String, Integer>getHashMap(VERSION_MAP);
+	}
+
+	private HTreeMap<CurrencyRatesKey, CurrencyRatesValue> getCurrencyRatesMap() {
+		return db.getHashMap(CURRENCY_RATES_MAP);
+	}
+
 	@Override public void close() {
-		db.close();
+		try {
+			db.commit();
+			db.compact();
+		}
+		finally {
+			db.close();
+		}
 	}
 
 	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
