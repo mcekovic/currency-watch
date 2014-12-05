@@ -237,12 +237,12 @@
 			<dependency>
 				<groupId>org.strangeforest.libs</groupId>
 				<artifactId>sf-util</artifactId>
-				<version>1.0.0</version>
+				<version>1.0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.strangeforest.libs</groupId>
 				<artifactId>sf-db</artifactId>
-				<version>1.0.0</version>
+				<version>1.0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -390,7 +390,7 @@
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.11</version>
+				<version>4.12</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
