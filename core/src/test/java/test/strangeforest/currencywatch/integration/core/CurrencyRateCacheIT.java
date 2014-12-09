@@ -7,9 +7,9 @@ import java.util.concurrent.*;
 
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
-import org.testng.*;
 import org.testng.annotations.*;
 
+import static org.assertj.core.api.Assertions.*;
 import static test.strangeforest.currencywatch.TestData.*;
 
 public class CurrencyRateCacheIT {
@@ -50,7 +50,7 @@ public class CurrencyRateCacheIT {
 		cache.setRate(BASE_CURRENCY, CURRENCY, date, rate);
 		TimeUnit.MILLISECONDS.sleep(1L);
 		RateValue cachedRate = cache.getRate(BASE_CURRENCY, CURRENCY, date);
-		Assert.assertEquals(cachedRate, rate);
+		assertThat(cachedRate).isEqualTo(rate);
 	}
 
 	private Date randomDate() {

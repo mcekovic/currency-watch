@@ -5,7 +5,7 @@ import java.util.*;
 import org.junit.*;
 import org.strangeforest.currencywatch.core.*;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import static test.strangeforest.currencywatch.TestData.*;
 
 public class DateRangeTest {
@@ -13,40 +13,36 @@ public class DateRangeTest {
 	@Test
 	public void boundedDateRange() {
 		DateRange dateRange = new DateRange(DATE1, DATE5);
-		assertEquals(5, dateRange.size());
-		assertCollectionEquals(DATES, dateRange.dates());
-		assertCollectionEquals(Arrays.asList(DATE1, DATE3, DATE5), dateRange.dates(2));
+		assertThat(dateRange).hasSize(5);
+		assertThat(dateRange.dates()).containsExactlyElementsOf(DATES);
+		assertThat(dateRange.dates(2)).containsExactly(DATE1, DATE3, DATE5);
 		DateRange dateRange2 = new DateRange(DATE1, DATE4);
-		assertCollectionEquals(Arrays.asList(DATE1, DATE3, DATE4), dateRange2.dates(2));
+		assertThat(dateRange2.dates(2)).containsExactly(DATE1, DATE3, DATE4);
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void unboundedDateRange() {
 		DateRange dateRange = new DateRange(DATE, null);
-		assertEquals(-1, dateRange.size());
-		assertCollectionEquals(DATES, dateRange.dates());
+		assertThat(dateRange.size()).isEqualTo(-1);
+		assertThat(dateRange.dates()).containsExactlyElementsOf(DATES);
 	}
 
 	@Test
 	public void dateRangeIterator() {
 		Iterator<Date> dates = new DateRange(DATE1, DATE2).iterator();
-		assertTrue(dates.hasNext());
-		assertEquals(DATE1, dates.next());
-		assertTrue(dates.hasNext());
-		assertEquals(DATE2, dates.next());
-		assertFalse(dates.hasNext());
+		assertThat(dates.hasNext()).isTrue();
+		assertThat(dates.next()).isEqualTo(DATE1);
+		assertThat(dates.hasNext()).isTrue();
+		assertThat(dates.next()).isEqualTo(DATE2);
+		assertThat(dates.hasNext()).isFalse();
 	}
 
 	@Test(expected = NoSuchElementException.class)
 	public void dateRangeIteratorFails() {
 		Iterator<Date> dates = new DateRange(DATE1, DATE1).iterator();
-		assertTrue(dates.hasNext());
-		assertEquals(DATE1, dates.next());
-		assertFalse(dates.hasNext());
-		assertEquals(DATE2, dates.next());
-	}
-
-	private <E> void assertCollectionEquals(Collection<E> expected, Collection<E> actual) {
-		assertEquals(new ArrayList<>(expected), new ArrayList<>(actual));
+		assertThat(dates.hasNext()).isTrue();
+		assertThat(dates.next()).isEqualTo(DATE1);
+		assertThat(dates.hasNext()).isFalse();
+		assertThat(dates.next()).isEqualTo(DATE2);
 	}
 }

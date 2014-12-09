@@ -7,7 +7,7 @@ import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.rest.*;
 import org.testng.annotations.*;
 
-import static org.testng.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import static test.strangeforest.currencywatch.TestData.*;
 
 public class RESTCurrencyRateProviderIT extends CurrencyRateResourceFixture{
@@ -27,24 +27,24 @@ public class RESTCurrencyRateProviderIT extends CurrencyRateResourceFixture{
 
 	@Test
 	public void ping() {
-		assertTrue(provider.ping());
+		assertThat(provider.ping()).isTrue();
 	}
 
 	@Test
 	public void getRate() {
 		RateValue rate = provider.getRate(BASE_CURRENCY, CURRENCY, DATE);
-		assertEquals(rate, RATE);
+		assertThat(rate).isEqualTo(RATE);
 	}
 
 	@Test
 	public void getRates() {
 		Map<Date, RateValue> rates = provider.getRates(BASE_CURRENCY, CURRENCY, DATES);
-		assertEquals(rates, RATES);
+		assertThat(rates).isEqualTo(RATES);
 	}
 
 	@Test
 	public void unknownDate() {
 		RateValue rate = provider.getRate(BASE_CURRENCY, CURRENCY, UNKNOWN_DATE);
-		assertEquals(rate, null);
+		assertThat(rate).isNull();
 	}
 }

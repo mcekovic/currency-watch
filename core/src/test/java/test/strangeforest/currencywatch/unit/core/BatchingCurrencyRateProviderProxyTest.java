@@ -8,6 +8,7 @@ import org.mockito.invocation.*;
 import org.mockito.stubbing.*;
 import org.strangeforest.currencywatch.core.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static test.strangeforest.currencywatch.TestData.*;
@@ -23,7 +24,7 @@ public class BatchingCurrencyRateProviderProxyTest {
 		try (CurrencyRateProvider batchingProvider = createBatchingProvider(provider, listener, 1)) {
 			RateValue rate = batchingProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
 
-			assertEquals(RATE, rate);
+			assertThat(rate).isEqualTo(RATE);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 		}
 	}
@@ -46,7 +47,7 @@ public class BatchingCurrencyRateProviderProxyTest {
 		try (CurrencyRateProvider parallelProvider = createBatchingProvider(provider, listener, batchSize)) {
 			Map<Date, RateValue> rates = parallelProvider.getRates(BASE_CURRENCY, CURRENCY, DATES);
 
-			assertEquals(RATES, rates);
+			assertThat(rates).isEqualTo(RATES);
 			int batchCount = 1+(RATES.size()-1)/batchSize;
 			verify(provider, times(batchCount)).getRates(eq(BASE_CURRENCY), eq(CURRENCY), any(Collection.class));
 			verify(listener, times(batchCount)).newRates(any(CurrencyRateEvent[].class));
@@ -64,7 +65,7 @@ public class BatchingCurrencyRateProviderProxyTest {
 		try (CurrencyRateProvider batchingProvider = createBatchingProvider(provider, listener, batchSize)) {
 			Map<Date, RateValue> rates = batchingProvider.getRates(BASE_CURRENCY, CURRENCY, DATES);
 
-			assertEquals(RATES, rates);
+			assertThat(rates).isEqualTo(RATES);
 			int batchCount = 1+(RATES.size()-1)/batchSize;
 			verify(provider, times(1+batchCount)).getRates(eq(BASE_CURRENCY), eq(CURRENCY), any(Collection.class));
 			verify(listener, times(batchCount)).newRates(any(CurrencyRateEvent[].class));

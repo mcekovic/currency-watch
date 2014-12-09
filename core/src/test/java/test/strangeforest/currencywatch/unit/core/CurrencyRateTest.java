@@ -6,7 +6,7 @@ import org.hamcrest.*;
 import org.junit.*;
 import org.strangeforest.currencywatch.core.*;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static test.strangeforest.currencywatch.TestData.*;
 
@@ -21,12 +21,12 @@ public class CurrencyRateTest {
 		try (CurrencyRates currencyRates = createCurrencyRates(provider, listener)) {
 			RateValue rate = currencyRates.getRate(DATE);
 
-			assertEquals(RATE, rate);
+			assertThat(rate).isEqualTo(RATE);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 
 			RateValue cachedRate = currencyRates.getRate(DATE);
 
-			assertEquals(RATE, cachedRate);
+			assertThat(cachedRate).isEqualTo(RATE);
 			verifyNoMoreInteractions(listener);
 		}
 	}
@@ -40,13 +40,13 @@ public class CurrencyRateTest {
 		try (CurrencyRates currencyRates = createCurrencyRates(provider, listener)) {
 			Map<Date, RateValue> rates = currencyRates.getRates(DATES);
 
-			assertEquals(RATES, rates);
+			assertThat(rates).isEqualTo(RATES);
 			verify(listener).newRates(argThat(matchesEventCount(5)));
 
 			Map<Date, RateValue> cachedRates = currencyRates.getRates(DATES);
 
-			assertEquals(RATES, cachedRates);
-			assertEquals(RATES, currencyRates.getRates());
+			assertThat(cachedRates).isEqualTo(RATES);
+			assertThat(currencyRates.getRates()).isEqualTo(RATES);
 			verifyNoMoreInteractions(listener);
 		}
 	}
@@ -61,12 +61,12 @@ public class CurrencyRateTest {
 		try (CurrencyRates currencyRates = createCurrencyRates(observableProvider, listener)) {
 			RateValue rate = currencyRates.getRate(DATE);
 
-			assertEquals(RATE, rate);
+			assertThat(rate).isEqualTo(RATE);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 
 			RateValue cachedRate = currencyRates.getRate(DATE);
 
-			assertEquals(RATE, cachedRate);
+			assertThat(cachedRate).isEqualTo(RATE);
 			verifyNoMoreInteractions(listener);
 		}
 	}
@@ -81,13 +81,13 @@ public class CurrencyRateTest {
 		try (CurrencyRates currencyRates = createCurrencyRates(observableProvider, listener)) {
 			Map<Date, RateValue> rates = currencyRates.getRates(DATES);
 
-			assertEquals(RATES, rates);
+			assertThat(rates).isEqualTo(RATES);
 			verify(listener).newRates(argThat(matchesEventCount(5)));
 
 			Map<Date, RateValue> cachedRates = currencyRates.getRates(DATES);
 
-			assertEquals(RATES, cachedRates);
-			assertEquals(RATES, currencyRates.getRates());
+			assertThat(cachedRates).isEqualTo(RATES);
+			assertThat(currencyRates.getRates()).isEqualTo(RATES);
 			verifyNoMoreInteractions(listener);
 		}
 	}
@@ -102,14 +102,14 @@ public class CurrencyRateTest {
 		try (CurrencyRates currencyRates = createCurrencyRates(observableProvider, listener)) {
 			RateValue rate = observableProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
 
-			assertEquals(RATE, rate);
+			assertThat(rate).isEqualTo(RATE);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 
 			RateValue cachedRate = currencyRates.getRate(DATE);
 			RateValue rate2 = observableProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
 
-			assertEquals(RATE, cachedRate);
-			assertEquals(RATE, rate2);
+			assertThat(cachedRate).isEqualTo(RATE);
+			assertThat(rate2).isEqualTo(RATE);
 			verify(provider, times(2)).getRate(BASE_CURRENCY, CURRENCY, DATE);
 			verifyNoMoreInteractions(provider);
 			verifyNoMoreInteractions(listener);
@@ -126,14 +126,14 @@ public class CurrencyRateTest {
 		try (CurrencyRates currencyRates = createCurrencyRates(observableProvider, listener)) {
 			Map<Date, RateValue> rates = observableProvider.getRates(BASE_CURRENCY, CURRENCY, DATES);
 
-			assertEquals(RATES, rates);
+			assertThat(rates).isEqualTo(RATES);
 			verify(listener).newRates(argThat(matchesEventCount(5)));
 
 			Map<Date, RateValue> cachedRates = currencyRates.getRates(DATES);
 			Map<Date, RateValue> rates2 = observableProvider.getRates(BASE_CURRENCY, CURRENCY, DATES);
 
-			assertEquals(RATES, cachedRates);
-			assertEquals(RATES, rates2);
+			assertThat(cachedRates).isEqualTo(RATES);
+			assertThat(rates2).isEqualTo(RATES);
 			verify(provider, times(2)).getRates(BASE_CURRENCY, CURRENCY, DATES);
 			verifyNoMoreInteractions(provider);
 			verifyNoMoreInteractions(listener);

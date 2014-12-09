@@ -8,8 +8,8 @@ import org.testng.annotations.*;
 
 import test.strangeforest.currencywatch.integration.*;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
 import static test.strangeforest.currencywatch.integration.jdbc.H2Data.*;
 
 public class SchemaManagerIT {
@@ -40,8 +40,8 @@ public class SchemaManagerIT {
 
 		schemaManagerSpy.ensureSchema();
 
-		assertTrue(schemaManager.schemaExists());
-		assertEquals(schemaManager.getSchemaVersion(), SchemaManager.VERSION);
+		assertThat(schemaManager.schemaExists()).isTrue();
+		assertThat(schemaManager.getSchemaVersion()).isEqualTo(SchemaManager.VERSION);
 		verify(schemaManagerSpy).ensureSchema();
 		verify(schemaManagerSpy).schemaExists();
 		verify(schemaManagerSpy).createSchema();
@@ -54,7 +54,7 @@ public class SchemaManagerIT {
 
 		schemaManagerSpy.ensureSchema();
 
-		assertEquals(schemaManager.getSchemaVersion(), SchemaManager.VERSION);
+		assertThat(schemaManager.getSchemaVersion()).isEqualTo(SchemaManager.VERSION);
 		verify(schemaManagerSpy).ensureSchema();
 		verify(schemaManagerSpy).schemaExists();
 		verify(schemaManagerSpy).getSchemaVersion();
@@ -70,7 +70,7 @@ public class SchemaManagerIT {
 
 		schemaManagerSpy.ensureSchema();
 
-		assertEquals(newSchemaManager.getSchemaVersion(), SchemaManager.VERSION + 1);
+		assertThat(newSchemaManager.getSchemaVersion()).isEqualTo(SchemaManager.VERSION + 1);
 		verify(schemaManagerSpy).ensureSchema();
 		verify(schemaManagerSpy).schemaExists();
 		verify(schemaManagerSpy).getSchemaVersion();

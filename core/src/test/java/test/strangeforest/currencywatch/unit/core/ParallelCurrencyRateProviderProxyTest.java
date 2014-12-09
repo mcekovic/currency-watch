@@ -6,7 +6,9 @@ import org.junit.*;
 import org.mockito.*;
 import org.strangeforest.currencywatch.core.*;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.data.MapEntry.entry;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 import static test.strangeforest.currencywatch.TestData.*;
 
@@ -21,7 +23,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 		try (CurrencyRateProvider parallelProvider = createParallelProvider(provider, listener, 1)) {
 			RateValue rate = parallelProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
 
-			assertEquals(RATE, rate);
+			assertThat(rate).isEqualTo(RATE);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 		}
 	}
@@ -35,7 +37,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 		try (CurrencyRateProvider parallelProvider = createParallelProvider(provider, listener, 2)) {
 			Map<Date, RateValue> rates = parallelProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet());
 
-			assertEquals(RATES, rates);
+			assertThat(rates).isEqualTo(RATES);
 			verify(listener, times(RATES.size())).newRate(any(CurrencyRateEvent.class));
 		}
 	}
@@ -49,7 +51,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 		try (CurrencyRateProvider parallelProvider = createParallelProvider(provider, listener, 1)) {
 			Map<Date, RateValue> rates = parallelProvider.getRates(BASE_CURRENCY, CURRENCY, Collections.singleton(DATE));
 
-			assertEquals(Collections.singletonMap(DATE, RATE), rates);
+			assertThat(rates).containsExactly(entry(DATE, RATE));
 			verify(provider, times(2)).getRate(BASE_CURRENCY, CURRENCY, DATE);
 			verify(listener).newRate(any(CurrencyRateEvent.class));
 			verify(listener).error(any(String.class));

@@ -7,7 +7,7 @@ import org.testng.annotations.*;
 
 import test.strangeforest.currencywatch.integration.*;
 
-import static org.testng.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class CurrencyRateFetcherIT {
 
@@ -22,19 +22,19 @@ public class CurrencyRateFetcherIT {
 	@Test
 	public void showUsage() {
 		CurrencyRateFetcher.main(new String[] {"-h"});
-		assertFalse(new File(MAPDB_PATH_NAME).exists());
+		assertThat(new File(MAPDB_PATH_NAME)).doesNotExist();
 	}
 
 	@Test(dependsOnMethods = "showUsage")
 	public void invalidArguments() {
 		CurrencyRateFetcher.main(new String[] {"-i"});
 		CurrencyRateFetcher.main(new String[] {"-from", "32-15-2005"});
-		assertFalse(new File(MAPDB_PATH_NAME).exists());
+		assertThat(new File(MAPDB_PATH_NAME)).doesNotExist();
 	}
 
 	@Test(dependsOnMethods = "invalidArguments")
 	public void fetchRates() {
 		CurrencyRateFetcher.main(new String[] {"-db", MAPDB_PATH_NAME,"-from", "01-01-2012", "-to", "02-01-2012", "-t", "2"});
-		assertTrue(new File(MAPDB_PATH_NAME).exists());
+		assertThat(new File(MAPDB_PATH_NAME)).exists();
 	}
 }

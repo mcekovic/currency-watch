@@ -13,7 +13,7 @@ import test.strangeforest.currencywatch.integration.*;
 
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
-import static org.testng.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import static test.strangeforest.currencywatch.TestData.*;
 import static test.strangeforest.currencywatch.integration.jdbc.H2Data.*;
 
@@ -54,7 +54,7 @@ public class JDBCCurrencyRateProviderIT {
 	@Test(dependsOnMethods = "setRate")
 	public void getRate() {
 		RateValue fetchedRate = currencyRateProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
-		assertEquals(fetchedRate.withScale(1), RATE);
+		assertThat(fetchedRate.withScale(1)).isEqualTo(RATE);
 	}
 
 	@Test(dependsOnMethods = "getRate")
@@ -64,7 +64,7 @@ public class JDBCCurrencyRateProviderIT {
 
 	@Test(dependsOnMethods = "setRates")
 	public void getRates() {
-		final Map<Date, RateValue> fetchedRates = currencyRateProvider.getRates(BASE_CURRENCY, CURRENCY, DATES);
-		assertEquals(fetchedRates.keySet().stream().collect(toMap(identity(), date -> fetchedRates.get(date).withScale(1))), RATES);
+		Map<Date, RateValue> fetchedRates = currencyRateProvider.getRates(BASE_CURRENCY, CURRENCY, DATES);
+		assertThat(fetchedRates.keySet().stream().collect(toMap(identity(), date -> fetchedRates.get(date).withScale(1)))).isEqualTo(RATES);
 	}
 }

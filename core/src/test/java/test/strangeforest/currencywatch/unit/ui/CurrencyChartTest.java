@@ -7,7 +7,7 @@ import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import static test.strangeforest.currencywatch.TestData.*;
 
 public class CurrencyChartTest {
@@ -20,14 +20,14 @@ public class CurrencyChartTest {
 		currencyChart.updateBaseSeries(RATES);
 
 		JFreeChart chart = currencyChart.getChart();
-		assertEquals(2, chart.getXYPlot().getDatasetCount());
+		assertThat(chart.getXYPlot().getDatasetCount()).isEqualTo(2);
 
 		XYDataset dataSet = chart.getXYPlot().getDataset();
-		assertEquals(1, dataSet.getSeriesCount());
-		assertEquals(RATES.size(), dataSet.getItemCount(0));
+		assertThat(dataSet.getSeriesCount()).isEqualTo(1);
+		assertThat(dataSet.getItemCount(0)).isEqualTo(RATES.size());
 
 		XYDataset bbDataSet = chart.getXYPlot().getDataset(1);
-		assertNull(bbDataSet);
+		assertThat(bbDataSet).isNull();
 	}
 
 	@Test
@@ -41,20 +41,20 @@ public class CurrencyChartTest {
 		currencyChart.addAnnotation(event);
 
 		JFreeChart chart = currencyChart.getChart();
-		assertEquals(2, chart.getXYPlot().getDatasetCount());
+		assertThat(chart.getXYPlot().getDatasetCount()).isEqualTo(2);
 
 		XYDataset dataSet = chart.getXYPlot().getDataset(0);
-		assertEquals(4, dataSet.getSeriesCount());
-		assertEquals(RATES.size(), dataSet.getItemCount(0));
-		assertEquals(RATES.size(), dataSet.getItemCount(1));
-		assertEquals(RATES.size(), dataSet.getItemCount(2));
-		assertEquals(RATES.size(), dataSet.getItemCount(3));
+		assertThat(dataSet.getSeriesCount()).isEqualTo(4);
+		assertThat(dataSet.getItemCount(0)).isEqualTo(RATES.size());
+		assertThat(dataSet.getItemCount(1)).isEqualTo(RATES.size());
+		assertThat(dataSet.getItemCount(2)).isEqualTo(RATES.size());
+		assertThat(dataSet.getItemCount(3)).isEqualTo(RATES.size());
 
 		XYDataset bbDataSet = chart.getXYPlot().getDataset(1);
-		assertEquals(2, bbDataSet.getSeriesCount());
-		assertEquals(RATES.size(), bbDataSet.getItemCount(0));
-		assertEquals(RATES.size(), bbDataSet.getItemCount(1));
+		assertThat(bbDataSet.getSeriesCount()).isEqualTo(2);
+		assertThat(bbDataSet.getItemCount(0)).isEqualTo(RATES.size());
+		assertThat(bbDataSet.getItemCount(1)).isEqualTo(RATES.size());
 
-		assertEquals(1, chart.getXYPlot().getAnnotations().size());
+		assertThat(chart.getXYPlot().getAnnotations()).hasSize(1);
 	}
 }

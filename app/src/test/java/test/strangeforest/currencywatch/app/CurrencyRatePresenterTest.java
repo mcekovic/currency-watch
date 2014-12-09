@@ -10,8 +10,6 @@ import javax.swing.*;
 
 import org.hamcrest.*;
 import org.junit.*;
-import org.mockito.*;
-import org.mockito.Matchers;
 import org.strangeforest.currencywatch.app.*;
 import org.strangeforest.currencywatch.core.*;
 import org.strangeforest.currencywatch.ui.*;
@@ -20,6 +18,7 @@ import static java.util.function.Function.*;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyCollectionOf;
+import static org.mockito.Mockito.argThat;
 import static org.mockito.Mockito.*;
 import static org.strangeforest.currencywatch.Util.*;
 
@@ -48,7 +47,7 @@ public class CurrencyRatePresenterTest {
 
 		verify(listener, atLeast(1)).statusChanged(any(String.class), eq(false));
 		verify(listener, times(3)).progressChanged(any(Integer.class));
-		verify(listener, times(2)).currentRate(Matchers.any(CurrentRate.class));
+		verify(listener, times(2)).currentRate(any(CurrentRate.class));
 		verifyNoMoreInteractions(listener);
 
 		presenter.removeListener(listener);
