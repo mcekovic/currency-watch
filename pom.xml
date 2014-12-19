@@ -289,7 +289,7 @@
 			<dependency>
 				<groupId>com.h2database</groupId>
 				<artifactId>h2</artifactId>
-				<version>1.4.183</version>
+				<version>1.4.184</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jfree</groupId>
