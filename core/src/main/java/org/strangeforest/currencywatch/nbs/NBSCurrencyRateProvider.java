@@ -5,6 +5,7 @@ import java.math.*;
 import java.net.*;
 import java.util.*;
 
+import org.slf4j.*;
 import org.strangeforest.currencywatch.core.*;
 
 import static java.math.BigDecimal.*;
@@ -19,6 +20,8 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 
 	private static final String NBS_URL = "http://www.nbs.rs/kursnaListaModul/naZeljeniDan.faces";
 	private static final Format FORMAT = Format.CSV;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(NBSCurrencyRateProvider.class);
 
 	public NBSCurrencyRateProvider() {}
 
@@ -109,15 +112,19 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 
 	private void findSessionId(URLConnection conn) {
 		String cookies = conn.getHeaderField("Set-Cookie");
-		for (String cookie : cookies.split(";")) {
-			int pos = cookie.indexOf('=');
-			String name = cookie.substring(0, pos);
-			String value = cookie.substring(pos+1);
-			if (name.equals("JSESSIONID")) {
-				sessionId = value;
-				break;
+		if (cookies != null) {
+			for (String cookie : cookies.split(";")) {
+				int pos = cookie.indexOf('=');
+				String name = cookie.substring(0, pos);
+				String value = cookie.substring(pos + 1);
+				if (name.equals("JSESSIONID")) {
+					sessionId = value;
+					break;
+				}
 			}
 		}
+		if (sessionId == null)
+			LOGGER.error("Cannot find session ID cookie.");
 	}
 
 	private void findViewId(URLConnection conn) throws IOException {
