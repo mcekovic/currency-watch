@@ -9,7 +9,7 @@
 
 	<description>Currency Watch Web</description>
 
-	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer" p:nullValue="" p:location="${currencyWatchProperties:WEB-INF/currency-watch.properties}">
+	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer" p:nullValue="" p:location="${strangeforest.currencywatch.config:WEB-INF/currency-watch.properties}">
 		<property name="properties">
 			<util:properties location="WEB-INF/currency-watch-default.properties"/>
 		</property>
