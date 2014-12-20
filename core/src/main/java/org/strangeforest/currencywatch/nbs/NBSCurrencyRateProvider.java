@@ -9,6 +9,7 @@ import java.util.*;
 import org.strangeforest.currencywatch.core.*;
 
 import static java.math.BigDecimal.*;
+import static org.strangeforest.util.StringUtil.*;
 
 //TODO: Use https://webservices.nbs.rs/CommunicationOfficeService1_0/ExchangeRateXmlService.asmx?WSDL
 public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider {
@@ -22,6 +23,7 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 	private static final String NBS_URL = "http://www.nbs.rs/kursnaListaModul/naZeljeniDan.faces";
 	private static final Duration SESSION_TIMEOUT = Duration.ofMinutes(30);
 	private static final NBSFormat FORMAT = NBSFormat.CSV;
+	private static final int MAX_RESPONSE_LOG_LENGTH = 100;
 
 	public NBSCurrencyRateProvider() {
 		session = new NBSSession();
@@ -116,10 +118,11 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 				return new RateValue(bid, ask, middle);
 			}
 		}
-		if (sb.toString().equals("null13"))
+		String response = sb.toString();
+		if (response.equals("null13"))
 			throw new CurrencyRateException(true);
 		else
-			throw new CurrencyRateException("Cannot find rate for " + currency + ". Invalid response: " + sb.toString());
+			throw new CurrencyRateException("Cannot find rate for " + currency + ". Invalid response: " + maxLength(response, MAX_RESPONSE_LOG_LENGTH));
 	}
 
 	private RateValue findRateCSV(BufferedReader reader, String currency) throws IOException {
@@ -148,10 +151,11 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 			}
 		}
 		if (!foundCSV) {
-			if (sb.toString().equals("null13"))
+			String response = sb.toString();
+			if (response.equals("null13"))
 				throw new CurrencyRateException(true);
 			else
-				throw new CurrencyRateException("Invalid response: " + sb.toString());
+				throw new CurrencyRateException("Invalid response: " + maxLength(response, MAX_RESPONSE_LOG_LENGTH));
 		}
 		else
 			throw new CurrencyRateException("Cannot find rate for " + currency);
