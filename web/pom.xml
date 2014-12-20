@@ -16,6 +16,14 @@
 	</properties>
 
 	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<warName>currency-watch</warName>
+				</configuration>
+			</plugin>
+		</plugins>
 		<extensions>
 			<extension>
 				<groupId>com.github.shyiko.servers-maven-extension</groupId>
@@ -66,6 +74,10 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.ext</groupId>
 			<artifactId>jersey-spring3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.containers.glassfish</groupId>
+			<artifactId>jersey-gf-cdi</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.faces</groupId>

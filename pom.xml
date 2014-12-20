@@ -369,6 +369,11 @@
 				</exclusions>
 			</dependency>
 			<dependency>
+				<groupId>org.glassfish.jersey.containers.glassfish</groupId>
+				<artifactId>jersey-gf-cdi</artifactId>
+				<version>${jaxrs.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>com.sun.faces</groupId>
 				<artifactId>jsf-api</artifactId>
 				<version>${jsf-ri.version}</version>
