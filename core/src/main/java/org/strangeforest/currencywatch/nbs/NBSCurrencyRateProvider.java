@@ -3,9 +3,9 @@ package org.strangeforest.currencywatch.nbs;
 import java.io.*;
 import java.math.*;
 import java.net.*;
+import java.time.*;
 import java.util.*;
 
-import org.slf4j.*;
 import org.strangeforest.currencywatch.core.*;
 
 import static java.math.BigDecimal.*;
@@ -13,45 +13,45 @@ import static java.math.BigDecimal.*;
 //TODO: Use https://webservices.nbs.rs/CommunicationOfficeService1_0/ExchangeRateXmlService.asmx?WSDL
 public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider {
 
-	private Format format = FORMAT;
+	private String url = NBS_URL;
+	private Duration sessionTimeout = SESSION_TIMEOUT;
+	private NBSFormat format = FORMAT;
 
-	private volatile String sessionId;
-	private volatile String viewId;
+	private final NBSSession session;
 
 	private static final String NBS_URL = "http://www.nbs.rs/kursnaListaModul/naZeljeniDan.faces";
-	private static final Format FORMAT = Format.CSV;
+	private static final Duration SESSION_TIMEOUT = Duration.ofMinutes(30);
+	private static final NBSFormat FORMAT = NBSFormat.CSV;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(NBSCurrencyRateProvider.class);
-
-	public NBSCurrencyRateProvider() {}
+	public NBSCurrencyRateProvider() {
+		session = new NBSSession();
+	}
 
 	public NBSCurrencyRateProvider(CurrencyRateListener listener) {
-		super();
+		this();
 		addListener(listener);
 	}
 
-	public void setFormat(Format format) {
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public void setSessionTimeout(Duration sessionTimeout) {
+		this.sessionTimeout = sessionTimeout;
+	}
+
+	public void setFormat(NBSFormat format) {
 		this.format = format;
 	}
 
-	@Override public void init() {
-		try {
-			URLConnection conn = new URL(NBS_URL + "?lang=lat").openConnection();
-			conn.setDoInput(true);
-			conn.setDoOutput(false);
-			disableCaching(conn);
-			conn.connect();
-
-			findSessionId(conn);
-			findViewId(conn);
-		}
-		catch (Exception ex) {
-			throw new CurrencyRateException("Error getting session ID.", ex);
-		}
+	@Override public void close() {
+		session.close();
 	}
 
 	@Override public RateValue getRate(String baseCurrency, String currency, Date date) {
 		try {
+			if (!session.isValid(sessionTimeout))
+				session.open(url);
 			while (true) {
 				try {
 					RateValue rateValue = doGetRate(currency, date);
@@ -73,19 +73,17 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 	}
 
 	private RateValue doGetRate(String currency, Date date) throws IOException {
-		URLConnection conn = new URL(NBS_URL).openConnection();
+		URLConnection conn = new URL(url).openConnection();
 		conn.setDoInput(true);
 		conn.setDoOutput(true);
-		disableCaching(conn);
-		if (sessionId != null)
-			conn.setRequestProperty("Cookie", "JSESSIONID=" + sessionId);
+		URLConnectionUtil.disableCaching(conn);
+		conn.setRequestProperty("Cookie", "JSESSIONID=" + session.getSessionId());
 
 		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(conn.getOutputStream()))) {
 			out.print("index%3AbrKursneListe=&index%3Ayear=2012");
 			out.printf("&index%%3AinputCalendar1=%1$td.%1$tm.%1$tY.", date);
 			out.printf("&index%%3Avrsta=%1$d&index%%3Aprikaz=%2$d&index%%3AbuttonShow=Prika%%C5%%BEi", 1, format.index());
-			if (viewId != null)
-				out.printf("&com.sun.faces.VIEW=%1$s", viewId);
+			out.printf("&com.sun.faces.VIEW=%1$s", session.getViewId());
 			out.print("&index=index");
 			out.flush();
 		}
@@ -104,42 +102,6 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		}
 	}
 
-	private void disableCaching(URLConnection conn) {
-		conn.setUseCaches(false);
-		conn.setRequestProperty("Pragma", "no-cache");
-		conn.setRequestProperty("Cache-control", "no-cache");
-	}
-
-	private void findSessionId(URLConnection conn) {
-		String cookies = conn.getHeaderField("Set-Cookie");
-		if (cookies != null) {
-			for (String cookie : cookies.split(";")) {
-				int pos = cookie.indexOf('=');
-				String name = cookie.substring(0, pos);
-				String value = cookie.substring(pos + 1);
-				if (name.equals("JSESSIONID")) {
-					sessionId = value;
-					break;
-				}
-			}
-		}
-		if (sessionId == null)
-			LOGGER.error("Cannot find session ID cookie.");
-	}
-
-	private void findViewId(URLConnection conn) throws IOException {
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				int pos = line.indexOf("id=\"com.sun.faces.VIEW\" value=\"");
-				if (pos > 0) {
-					viewId = line.substring(pos + 31, line.indexOf("\"", pos + 31));
-					break;
-				}
-			}
-		}
-	}
-
 	private RateValue findRateASCII(BufferedReader reader, String currency) throws IOException {
 		String line;
 		StringBuilder sb = new StringBuilder(500);
@@ -148,9 +110,9 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 			String[] fields = line.split(";");
 			if (fields.length >= 9 && currency.equals(fields[4])) {
 				int unit = Integer.parseInt(fields[5]);
-				BigDecimal bid = new BigDecimal(fields[8]).divide(valueOf(unit));
-				BigDecimal middle = new BigDecimal(fields[9]).divide(valueOf(unit));
-				BigDecimal ask = new BigDecimal(fields[10]).divide(valueOf(unit));
+				BigDecimal bid = new BigDecimal(fields[8]).divide(valueOf(unit), RoundingMode.HALF_EVEN);
+				BigDecimal middle = new BigDecimal(fields[9]).divide(valueOf(unit), RoundingMode.HALF_EVEN);
+				BigDecimal ask = new BigDecimal(fields[10]).divide(valueOf(unit), RoundingMode.HALF_EVEN);
 				return new RateValue(bid, ask, middle);
 			}
 		}
@@ -178,9 +140,9 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 				String[] fields = line.split(",");
 				if (fields.length >= 7 && currency.equals(fields[4])) {
 					int unit = Integer.parseInt(fields[5]);
-					BigDecimal bid = new BigDecimal(fields[6]).divide(valueOf(unit));
-					BigDecimal ask = new BigDecimal(fields[7]).divide(valueOf(unit));
-					BigDecimal middle = bid.add(ask).divide(valueOf(2L));
+					BigDecimal bid = new BigDecimal(fields[6]).divide(valueOf(unit), RoundingMode.HALF_EVEN);
+					BigDecimal ask = new BigDecimal(fields[7]).divide(valueOf(unit), RoundingMode.HALF_EVEN);
+					BigDecimal middle = bid.add(ask).divide(valueOf(2L), RoundingMode.HALF_EVEN);
 					return new RateValue(bid, ask, middle);
 				}
 			}
@@ -193,19 +155,5 @@ public class NBSCurrencyRateProvider extends BaseObservableCurrencyRateProvider 
 		}
 		else
 			throw new CurrencyRateException("Cannot find rate for " + currency);
-	}
-
-	public enum Format {
-		CSV(1), ASCII(5);
-
-		private int index;
-
-		private Format(int index) {
-			this.index = index;
-		}
-
-		public int index() {
-			return index;
-		}
 	}
 }

@@ -15,7 +15,7 @@ public class NBSCurrencyRateProviderASCIIIT {
 	@BeforeClass
 	public void setUp() {
 		currencyRateProvider = new NBSCurrencyRateProvider();
-		currencyRateProvider.setFormat(NBSCurrencyRateProvider.Format.ASCII);
+		currencyRateProvider.setFormat(NBSFormat.ASCII);
 		currencyRateProvider.init();
 	}
 
