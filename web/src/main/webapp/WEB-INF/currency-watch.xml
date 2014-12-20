@@ -97,8 +97,10 @@
 		<constructor-arg index="0" name="provider" ref="currencyRateProvider"/>
 	</bean>
 
-	<bean id="h2Server" class="org.h2.tools.Server" factory-method="createTcpServer" init-method="start" destroy-method="stop">
-		<constructor-arg index="0" value="-tcpPort,${h2-server.port},-tcpAllowOthers,-tcpDaemon"/>
-	</bean>
+	<beans profile="h2-server">
+		<bean id="h2Server" class="org.h2.tools.Server" factory-method="createTcpServer" init-method="start" destroy-method="stop">
+			<constructor-arg index="0" value="-tcpPort,${h2-server.port},-tcpAllowOthers,-tcpDaemon"/>
+		</bean>
+	</beans>
 
 </beans>
