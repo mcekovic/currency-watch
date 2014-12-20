@@ -15,16 +15,20 @@ public class NBSSession {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(NBSSession.class);
 
-	public boolean isValid(Duration sessionTimeout) {
-		return sessionId == null || viewId == null || sessionStart == null || sessionStart.plus(sessionTimeout).isBefore(LocalTime.now());
-	}
-
 	public String getSessionId() {
 		return sessionId;
 	}
 
 	public String getViewId() {
 		return viewId;
+	}
+
+	private boolean isOpen() {
+		return sessionId != null && viewId != null;
+	}
+
+	public boolean isValid(Duration sessionTimeout) {
+		return isOpen() && sessionStart != null && sessionStart.plus(sessionTimeout).isAfter(LocalTime.now());
 	}
 
 	public void open(String url) {
@@ -37,12 +41,14 @@ public class NBSSession {
 
 			findSessionId(conn);
 			findViewId(conn);
-			if (sessionId != null && viewId != null)
-				sessionStart = LocalTime.now();
 		}
 		catch (Exception ex) {
-			throw new CurrencyRateException("Error creating NBS session.", ex);
+			throw new CurrencyRateException("Error opening NBS session.", ex);
 		}
+		if (isOpen())
+			sessionStart = LocalTime.now();
+		else
+			throw new CurrencyRateException("Cannot open NBS session.");
 	}
 
 	public void close() {
