@@ -2,13 +2,11 @@ package org.strangeforest.currencywatch.ui;
 
 public enum SeriesQuality {
 
-	MINIMUM("Minimum", 10),
-	POOR("Poor", 25),
-	LOW("Low", 50),
-	NORMAL("Normal", 100),
-	HIGH("High", 200),
-	EXTRA("Extra", 400),
-	MAXIMUM("Maximum", 1000);
+	POOR("Poor", 50),
+	LOW("Low", 100),
+	NORMAL("Normal", 200),
+	HIGH("High", 400),
+	EXTRA("Extra", 1000);
 
 	private final String label;
 	private final int points;
