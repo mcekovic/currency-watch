@@ -12,11 +12,12 @@ public abstract class Util {
 
 	public static final LocalDate START_DATE = LocalDate.of(2002, 5, 15);
 
+	public static final ZoneId BASE_CURRENCY_TIME_ZONE = ZoneId.of("CET");
 	public static final long MILLISECONDS_PER_DAY = Duration.ofDays(1).toMillis();
 
 	public static LocalDate getLastDate() {
 		LocalDate lastDate = LocalDate.now();
-		if (LocalTime.now().isBefore(LocalTime.of(8, 0)))
+		if (LocalTime.now(BASE_CURRENCY_TIME_ZONE).isBefore(LocalTime.of(8, 0)))
 			lastDate = lastDate.minusDays(1);
 		return lastDate;
 	}
