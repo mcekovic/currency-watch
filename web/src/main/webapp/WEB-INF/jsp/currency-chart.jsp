@@ -106,7 +106,9 @@
 	<f:form id="chartForm" method="GET" action="currency-chart" commandName="chart">
 		<input type="hidden" id="command" name="command"/>
 		<table style="text-align: center"><tr>
-			<td><h1 style="width: ${chart.chartWidth}">Currency Watch</h1></td>
+			<td><h1 style="width: ${chart.chartWidth}; margin-bottom: 0px">Currency Watch</h1></td>
+		</tr><tr>
+			<td><p style="width: ${chart.chartWidth}">(monitor foreign currency rates for Serbian Dinar)</p></td>
 		</tr><tr>
 			<td align="center"><table cellspacing="0" cellpadding="0"><tr>
 				<td class="toolbar">
