@@ -111,7 +111,7 @@ public class CurrencyWatch {
 	private static final URI LOCAL_REST_URI = URI.create("http://localhost:8080/currency-watch-web-1.3/api");
 
 	private static final URI[] REST_URIS = new URI[] {
-		URI.create("http://ubuntu.beg.finsoft.com:8080/currency-watch/api")
+		URI.create("http://jbosswildfly-strangeforest.rhcloud.com/currency-watch/api")
 	};
 
 	private CurrencyRateProvider tryUseRESTProvider(URI uri) {

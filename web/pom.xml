@@ -12,7 +12,7 @@
 	<name>Currency Watch Web Application</name>
 
 	<properties>
-		<deploy.server>ubuntu.beg.finsoft.com</deploy.server>
+		<deploy.server>localhost</deploy.server>
 	</properties>
 
 	<build>
@@ -74,10 +74,6 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.ext</groupId>
 			<artifactId>jersey-spring3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.containers.glassfish</groupId>
-			<artifactId>jersey-gf-cdi</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.faces</groupId>
@@ -223,6 +219,15 @@
 					</plugin>
 				</plugins>
 			</build>
+		</profile>
+		<profile>
+			<id>jboss</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.glassfish.jersey.containers.glassfish</groupId>
+					<artifactId>jersey-gf-cdi</artifactId>
+				</dependency>
+			</dependencies>
 		</profile>
 	</profiles>
 
