@@ -7,6 +7,7 @@ import javax.ws.rs.core.*;
 
 import org.slf4j.*;
 import org.strangeforest.currencywatch.core.*;
+import org.strangeforest.currencywatch.rest.model.*;
 
 import static javax.ws.rs.core.MediaType.*;
 import static javax.ws.rs.core.Response.Status.*;

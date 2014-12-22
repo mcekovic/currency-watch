@@ -9,6 +9,7 @@ import org.slf4j.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.currencywatch.*;
 import org.strangeforest.currencywatch.core.*;
+import org.strangeforest.currencywatch.rest.model.*;
 import org.strangeforest.util.*;
 
 import static java.util.stream.Collectors.*;

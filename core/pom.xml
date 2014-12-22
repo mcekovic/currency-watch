@@ -56,6 +56,31 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>**/rest/model/*.java</include>
+					</includes>
+					<outputDirectory>${project.basedir}/src/main/resources</outputDirectory>
+					<transformSchemas>
+						<schema>
+							<uri>http://www.strangeforest.org/currency-watch</uri>
+							<toPrefix>cw</toPrefix>
+							<toFile>org/strangeforest/currencywatch/rest/currency-watch.xsd</toFile>
+						</schema>
+					</transformSchemas>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>schemagen</goal>
+						</goals>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 
 	</build>

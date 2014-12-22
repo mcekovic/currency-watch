@@ -4,7 +4,7 @@ import java.io.*;
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.*;
 
-import org.strangeforest.currencywatch.rest.*;
+import org.strangeforest.currencywatch.rest.model.*;
 import org.testng.annotations.*;
 
 import static javax.ws.rs.core.MediaType.*;

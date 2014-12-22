@@ -1,4 +1,4 @@
-package org.strangeforest.currencywatch.rest;
+package org.strangeforest.currencywatch.rest.model;
 
 import java.util.*;
 import javax.xml.bind.annotation.*;
