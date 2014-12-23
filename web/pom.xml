@@ -114,6 +114,7 @@
 	</dependencies>
 
 	<profiles>
+
 		<profile>
 			<id>integration-tests</id>
 			<build>
@@ -167,6 +168,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>tomcat</id>
 			<build>
@@ -192,6 +194,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>jetty</id>
 			<build>
@@ -220,6 +223,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>jboss</id>
 			<dependencies>
@@ -227,8 +231,35 @@
 					<groupId>org.glassfish.jersey.containers.glassfish</groupId>
 					<artifactId>jersey-gf-cdi</artifactId>
 				</dependency>
+				<!-- Provided -->
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>jcl-over-slf4j</artifactId>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>com.sun.faces</groupId>
+					<artifactId>jsf-api</artifactId>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>com.sun.faces</groupId>
+					<artifactId>jsf-impl</artifactId>
+					<scope>provided</scope>
+				</dependency>
 			</dependencies>
 		</profile>
+
 	</profiles>
 
 </project>
