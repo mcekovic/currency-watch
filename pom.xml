@@ -26,18 +26,18 @@
 	</scm>
 
 	<prerequisites>
-		<maven>3.2.3</maven>
+		<maven>3.2.5</maven>
 	</prerequisites>
 
 	<properties>
 		<base.scm.url>scm:git:git@github.com:mcekovic/currency-watch.git</base.scm.url>
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
 		<slf4j.version>1.7.10</slf4j.version>
-		<spring.version>4.1.4.RELEASE</spring.version>
-		<jaxrs.version>2.14</jaxrs.version>
-		<jsf-ri.version>2.2.9</jsf-ri.version>
-		<maven-surefire-plugin.version>2.18</maven-surefire-plugin.version>
-		<maven-failsafe-plugin.version>2.18</maven-failsafe-plugin.version>
+		<spring.version>4.1.5.RELEASE</spring.version>
+		<jaxrs.version>2.16</jaxrs.version>
+		<jsf-ri.version>2.2.10</jsf-ri.version>
+		<maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
 		<jacoco-maven-plugin.version>0.7.2.201409121644</jacoco-maven-plugin.version>
 		<ant.version>1.9.4</ant.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -123,11 +123,11 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-war-plugin</artifactId>
-					<version>2.5</version>
+					<version>2.6</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>2.5.2</version>
+					<version>2.5.3</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-failsafe-plugin</artifactId>
@@ -171,7 +171,7 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-antrun-plugin</artifactId>
-					<version>1.7</version>
+					<version>1.8</version>
 					<dependencies>
 						<dependency>
 							<groupId>org.apache.ant</groupId>
@@ -220,7 +220,7 @@
 						<configuration>
 							<rules>
 								<requireMavenVersion>
-									<version>3.2.3</version>
+									<version>3.2.5</version>
 								</requireMavenVersion>
 								<requireJavaVersion>
 									<version>1.8</version>
@@ -289,12 +289,12 @@
 			<dependency>
 				<groupId>org.mapdb</groupId>
 				<artifactId>mapdb</artifactId>
-				<version>1.0.6</version>
+				<version>1.0.7</version>
 			</dependency>
 			<dependency>
 				<groupId>com.h2database</groupId>
 				<artifactId>h2</artifactId>
-				<version>1.4.184</version>
+				<version>1.4.185</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jfree</groupId>
@@ -376,7 +376,13 @@
 			<dependency>
 				<groupId>org.glassfish.jersey.containers.glassfish</groupId>
 				<artifactId>jersey-gf-cdi</artifactId>
-				<version>${jaxrs.version}</version>
+				<version>2.14</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.glassfish.jersey.core</groupId>
+						<artifactId>jersey-common</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.faces</groupId>
@@ -422,7 +428,7 @@
 			<dependency>
 				<groupId>org.testng</groupId>
 				<artifactId>testng</artifactId>
-				<version>6.8.17</version>
+				<version>6.8.21</version>
 				<scope>test</scope>
 				<exclusions>
 					<exclusion>
