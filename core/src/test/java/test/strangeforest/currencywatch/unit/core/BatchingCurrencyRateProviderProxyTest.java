@@ -8,8 +8,7 @@ import org.mockito.invocation.*;
 import org.mockito.stubbing.*;
 import org.strangeforest.currencywatch.core.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static test.strangeforest.currencywatch.TestData.*;
 
@@ -85,7 +84,7 @@ public class BatchingCurrencyRateProviderProxyTest {
 			batchingProvider.setRetryCount(retryCount);
 			try {
 				batchingProvider.getRates(BASE_CURRENCY, CURRENCY, DATES);
-				fail("Exception is not thrown.");
+				failBecauseExceptionWasNotThrown(CurrencyRateException.class);
 			}
 			catch (CurrencyRateException ex) {
 				InOrder inOrder = inOrder(provider);

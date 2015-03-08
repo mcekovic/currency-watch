@@ -6,9 +6,8 @@ import org.junit.*;
 import org.mockito.*;
 import org.strangeforest.currencywatch.core.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.data.MapEntry.entry;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 import static test.strangeforest.currencywatch.TestData.*;
 
@@ -70,7 +69,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 			parallelProvider.setMaxExceptions(0);
 			try {
 				parallelProvider.getRates(BASE_CURRENCY, CURRENCY, Collections.singleton(DATE));
-				fail("Exception is not thrown.");
+				failBecauseExceptionWasNotThrown(CurrencyRateException.class);
 			}
 			catch (CurrencyRateException ex) {
 				InOrder inOrder = inOrder(provider);
