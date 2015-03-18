@@ -34,7 +34,7 @@
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
 		<slf4j.version>1.7.10</slf4j.version>
 		<spring.version>4.1.5.RELEASE</spring.version>
-		<jaxrs.version>2.16</jaxrs.version>
+		<jaxrs.version>2.17</jaxrs.version>
 		<jsf-ri.version>2.2.10</jsf-ri.version>
 		<maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
@@ -372,6 +372,11 @@
 						<artifactId>hk2</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.glassfish.jersey.media</groupId>
+				<artifactId>jersey-media-jaxb</artifactId>
+				<version>${jaxrs.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.containers.glassfish</groupId>
