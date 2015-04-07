@@ -38,7 +38,7 @@
 		<jsf-ri.version>2.2.10</jsf-ri.version>
 		<maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
-		<jacoco-maven-plugin.version>0.7.2.201409121644</jacoco-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
 		<ant.version>1.9.4</ant.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -421,7 +421,7 @@
 			<dependency>
 				<groupId>org.assertj</groupId>
 				<artifactId>assertj-core</artifactId>
-				<version>2.0.0</version>
+				<version>3.0.0</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>

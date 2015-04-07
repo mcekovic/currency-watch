@@ -115,8 +115,8 @@ public class ChainedCurrencyRateProviderTest {
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
 		try (CurrencyRateProvider chainedProvider = createChainedProvider(localProvider, observableRemoteProvider, listener)) {
-			RateValue rate = observableRemoteProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
-			Map<Date, RateValue> rates = observableRemoteProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet());
+			RateValue rate = chainedProvider.getRate(BASE_CURRENCY, CURRENCY, DATE);
+			Map<Date, RateValue> rates = chainedProvider.getRates(BASE_CURRENCY, CURRENCY, RATES.keySet());
 
 			assertThat(rate).isEqualTo(RATE);
 			assertThat(rates).isEqualTo(RATES);
