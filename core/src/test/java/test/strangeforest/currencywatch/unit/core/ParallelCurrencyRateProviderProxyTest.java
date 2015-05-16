@@ -30,7 +30,7 @@ public class ParallelCurrencyRateProviderProxyTest {
 	@Test
 	public void getRates() {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
-		when(provider.getRate(eq(BASE_CURRENCY), eq(CURRENCY), any(Date.class))).thenAnswer(invocation -> RATES.get(invocation.getArguments()[2]));
+		when(provider.getRate(eq(BASE_CURRENCY), eq(CURRENCY), any(Date.class))).thenAnswer(invocation -> RATES.get(invocation.getArgumentAt(2, Date.class)));
 		CurrencyRateListener listener = mock(CurrencyRateListener.class);
 
 		try (CurrencyRateProvider parallelProvider = createParallelProvider(provider, listener, 2)) {

@@ -28,7 +28,7 @@ public class CurrencyRatePresenterTest {
 	public void currencyRatesArePresented() throws InterruptedException, InvocationTargetException {
 		CurrencyRateProvider provider = mock(CurrencyRateProvider.class);
 		when(provider.getRates(eq(BASE_CURRENCY), eq(CurrencySymbol.EUR.name()), anyCollectionOf(Date.class))).thenAnswer(invocation -> {
-         Collection<Date> dates = (Collection<Date>)invocation.getArguments()[2];
+         Collection<Date> dates = invocation.getArgumentAt(2, Collection.class);
          return dates.stream().collect(Collectors.toMap(identity(), date -> new RateValue(BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN)));
       });
 		CurrencyRatePresenterListener listener = mock(CurrencyRatePresenterListener.class);

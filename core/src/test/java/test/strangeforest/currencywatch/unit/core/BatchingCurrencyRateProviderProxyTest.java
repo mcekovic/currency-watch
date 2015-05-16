@@ -106,7 +106,7 @@ public class BatchingCurrencyRateProviderProxyTest {
 	private static class MockProviderGetRatesAnswer implements Answer<Map<Date, RateValue>> {
 		@Override public Map<Date, RateValue> answer(InvocationOnMock invocation) throws Throwable {
 			Map<Date, RateValue> dateRates = new TreeMap<>(RATES);
-			dateRates.keySet().retainAll((Collection<Date>)invocation.getArguments()[2]);
+			dateRates.keySet().retainAll(invocation.getArgumentAt(2, Collection.class));
 			return dateRates;
 		}
 	}
