@@ -33,13 +33,13 @@
 		<base.scm.url>scm:git:git@github.com:mcekovic/currency-watch.git</base.scm.url>
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
 		<slf4j.version>1.7.12</slf4j.version>
-		<spring.version>4.2.0.RELEASE</spring.version>
-		<jaxrs.version>2.19</jaxrs.version>
+		<spring.version>4.2.1.RELEASE</spring.version>
+		<jaxrs.version>2.22</jaxrs.version>
 		<jsf-ri.version>2.2.12</jsf-ri.version>
 		<maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
 		<jacoco-maven-plugin.version>0.7.5.201505241946</jacoco-maven-plugin.version>
-		<ant.version>1.9.4</ant.version>
+		<ant.version>1.9.6</ant.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
@@ -294,7 +294,7 @@
 			<dependency>
 				<groupId>com.h2database</groupId>
 				<artifactId>h2</artifactId>
-				<version>1.4.187</version>
+				<version>1.4.189</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jfree</groupId>
@@ -421,7 +421,7 @@
 			<dependency>
 				<groupId>org.assertj</groupId>
 				<artifactId>assertj-core</artifactId>
-				<version>3.1.0</version>
+				<version>3.2.0</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
