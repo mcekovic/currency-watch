@@ -43,29 +43,27 @@ public class MapDBCurrencyRateProvider implements UpdatableCurrencyRateProvider 
 		}
 		currencyRates = getCurrencyRatesMap();
 		db.commit();
-		db.compact();
 	}
 
 	private DB createMapDB() {
-		return DBMaker.newFileDB(new File(dbPathName)).closeOnJvmShutdown().make();
+		return DBMaker.fileDB(new File(dbPathName)).closeOnJvmShutdown().make();
 	}
 
 	private DB createMapDBForFilesDeletion() {
-		return DBMaker.newFileDB(new File(dbPathName)).deleteFilesAfterClose().make();
+		return DBMaker.fileDB(new File(dbPathName)).deleteFilesAfterClose().make();
 	}
 
 	private HTreeMap<String, Integer> getVersionMap() {
-		return db.<String, Integer>getHashMap(VERSION_MAP);
+		return db.hashMap(VERSION_MAP, Serializer.STRING, Serializer.INTEGER).createOrOpen();
 	}
 
 	private HTreeMap<CurrencyRatesKey, CurrencyRatesValue> getCurrencyRatesMap() {
-		return db.getHashMap(CURRENCY_RATES_MAP);
+		return db.hashMap(CURRENCY_RATES_MAP, Serializer.JAVA, Serializer.JAVA).createOrOpen();
 	}
 
 	@Override public void close() {
 		try {
 			db.commit();
-			db.compact();
 		}
 		finally {
 			db.close();

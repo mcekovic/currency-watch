@@ -11,85 +11,40 @@
 	<packaging>pom</packaging>
 	<name>Currency Watch IT Reports</name>
 
-	<profiles>
-		<profile>
-			<id>integration-tests</id>
-			<properties>
-				<project.parent.basedir>${project.basedir}/..</project.parent.basedir>
-			</properties>
-			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<artifactId>maven-antrun-plugin</artifactId>
-							<dependencies>
-								<dependency>
-									<groupId>org.jacoco</groupId>
-									<artifactId>org.jacoco.ant</artifactId>
-									<version>${jacoco-maven-plugin.version}</version>
-								</dependency>
-							</dependencies>
-						</plugin>
-					</plugins>
-				</pluginManagement>
-				<plugins>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>merge-jacoco-coverage</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<target xmlns:jacoco="antlib:org.jacoco.ant">
-										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml"/>
-										<jacoco:merge destfile="${project.parent.basedir}/target/jacoco.exec">
-											<fileset dir="${project.parent.basedir}">
-												<include name="core/target/*.exec"/>
-												<include name="app/target/*.exec"/>
-												<include name="web/target/*.exec"/>
-											</fileset>
-										</jacoco:merge>
-									</target>
-								</configuration>
-							</execution>
-							<execution>
-								<id>report-jacoco-coverage</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<target xmlns:jacoco="antlib:org.jacoco.ant">
-										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml"/>
-										<jacoco:report>
-											<executiondata>
-												<file file="${project.parent.basedir}/target/jacoco.exec"/>
-											</executiondata>
-											<structure name="Currency Watch">
-												<classfiles>
-													<fileset dir="${project.parent.basedir}/core/target/classes"/>
-													<fileset dir="${project.parent.basedir}/app/target/classes"/>
-													<fileset dir="${project.parent.basedir}/web/target/classes"/>
-												</classfiles>
-												<sourcefiles encoding="UTF-8">
-													<fileset dir="${project.parent.basedir}/core/src/main/java"/>
-													<fileset dir="${project.parent.basedir}/app/src/main/java"/>
-													<fileset dir="${project.parent.basedir}/web/src/main/java"/>
-												</sourcefiles>
-											</structure>
-											<html destdir="${project.parent.basedir}/target/site/jacoco"/>
-										</jacoco:report>
-									</target>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+	<dependencies>
+		<dependency>
+			<groupId>org.strangeforest.currencywatch</groupId>
+			<artifactId>currency-watch-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.strangeforest.currencywatch</groupId>
+			<artifactId>currency-watch-app</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.strangeforest.currencywatch</groupId>
+			<artifactId>currency-watch-web</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>report-aggregate</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report-aggregate</goal>
+						</goals>
+						<configuration>
+							<title>Currency Watch</title>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

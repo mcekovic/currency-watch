@@ -31,7 +31,7 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<configuration>
 					<includes>
-						<include>org/strangeforest/**</include>
+						<include>org/strangeforest/currencywatch/**</include>
 					</includes>
 				</configuration>
 				<executions>
@@ -43,7 +43,6 @@
 					</execution>
 					<execution>
 						<id>report</id>
-						<phase>prepare-package</phase>
 						<goals>
 							<goal>report</goal>
 						</goals>

@@ -33,12 +33,12 @@
 		<base.scm.url>scm:git:git@github.com:mcekovic/currency-watch.git</base.scm.url>
 		<base.browse.url>https://github.com/mcekovic/currency-watch</base.browse.url>
 		<slf4j.version>1.7.21</slf4j.version>
-		<spring.version>4.2.5.RELEASE</spring.version>
-		<jaxrs.version>2.22.2</jaxrs.version>
+		<spring.version>4.3.1.RELEASE</spring.version>
+		<jaxrs.version>2.23.1</jaxrs.version>
 		<jsf-ri.version>2.2.13</jsf-ri.version>
 		<maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.19.1</maven-failsafe-plugin.version>
-		<jacoco-maven-plugin.version>0.7.6.201602180812</jacoco-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.7.7.201606060606</jacoco-maven-plugin.version>
 		<ant.version>1.9.7</ant.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -92,7 +92,7 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.7</version>
+					<version>3.0.1</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
@@ -112,7 +112,7 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.6</version>
+					<version>3.0.2</version>
 					<configuration>
 						<archive>
 							<manifest>
@@ -146,7 +146,7 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-scm-plugin</artifactId>
-					<version>1.9.4</version>
+					<version>1.9.5</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-release-plugin</artifactId>
@@ -163,11 +163,11 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>3.0.1</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.10.3</version>
+					<version>2.10.4</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-antrun-plugin</artifactId>
@@ -244,6 +244,16 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.strangeforest.currencywatch</groupId>
+				<artifactId>currency-watch-app</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.strangeforest.currencywatch</groupId>
+				<artifactId>currency-watch-web</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.strangeforest.libs</groupId>
 				<artifactId>sf-util</artifactId>
 				<version>1.0.3</version>
@@ -289,12 +299,12 @@
 			<dependency>
 				<groupId>org.mapdb</groupId>
 				<artifactId>mapdb</artifactId>
-				<version>1.0.9</version>
+				<version>3.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.h2database</groupId>
 				<artifactId>h2</artifactId>
-				<version>1.4.191</version>
+				<version>1.4.192</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jfree</groupId>
@@ -421,7 +431,7 @@
 			<dependency>
 				<groupId>org.assertj</groupId>
 				<artifactId>assertj-core</artifactId>
-				<version>3.4.1</version>
+				<version>3.5.2</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
