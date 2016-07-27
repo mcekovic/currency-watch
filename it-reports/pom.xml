@@ -37,71 +37,50 @@
 						<artifactId>maven-antrun-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>merge-core-jacoco-coverage</id>
+								<id>merge-jacoco-coverage</id>
 								<phase>post-integration-test</phase>
 								<goals>
 									<goal>run</goal>
 								</goals>
 								<configuration>
 									<target xmlns:jacoco="antlib:org.jacoco.ant">
-										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" />
-										<jacoco:merge destfile="${project.parent.basedir}/core/target/jacoco-all.exec">
+										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml"/>
+										<jacoco:merge destfile="${project.parent.basedir}/target/jacoco.exec">
 											<fileset dir="${project.parent.basedir}">
-												<include name="core/target/*.exec" />
-												<include name="app/target/*.exec" />
-												<include name="web/target/*.exec" />
-												<exclude name="**/jacoco-all.exec" />
+												<include name="core/target/*.exec"/>
+												<include name="app/target/*.exec"/>
+												<include name="web/target/*.exec"/>
 											</fileset>
 										</jacoco:merge>
 									</target>
 								</configuration>
 							</execution>
 							<execution>
-								<id>merge-app-jacoco-coverage</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<target>
-										<copy file="${project.parent.basedir}/app/target/jacoco.exec" tofile="${project.parent.basedir}/app/target/jacoco-all.exec" />
-									</target>
-								</configuration>
-							</execution>
-							<execution>
-								<id>merge-web-jacoco-coverage</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<target>
-										<copy file="${project.parent.basedir}/web/target/jacoco-it.exec" tofile="${project.parent.basedir}/web/target/jacoco-all.exec" />
-									</target>
-								</configuration>
-							</execution>
-							<execution>
-								<id>report-core-jacoco-coverage</id>
+								<id>report-jacoco-coverage</id>
 								<phase>verify</phase>
 								<goals>
 									<goal>run</goal>
 								</goals>
 								<configuration>
 									<target xmlns:jacoco="antlib:org.jacoco.ant">
-										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" />
+										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml"/>
 										<jacoco:report>
 											<executiondata>
-												<file file="${project.parent.basedir}/core/target/jacoco-all.exec" />
+												<file file="${project.parent.basedir}/target/jacoco.exec"/>
 											</executiondata>
-											<structure name="Currency Watch Core">
+											<structure name="Currency Watch">
 												<classfiles>
-													<fileset dir="${project.parent.basedir}/core/target/classes" />
+													<fileset dir="${project.parent.basedir}/core/target/classes"/>
+													<fileset dir="${project.parent.basedir}/app/target/classes"/>
+													<fileset dir="${project.parent.basedir}/web/target/classes"/>
 												</classfiles>
 												<sourcefiles encoding="UTF-8">
-													<fileset dir="${project.parent.basedir}/core/src/main/java" />
+													<fileset dir="${project.parent.basedir}/core/src/main/java"/>
+													<fileset dir="${project.parent.basedir}/app/src/main/java"/>
+													<fileset dir="${project.parent.basedir}/web/src/main/java"/>
 												</sourcefiles>
 											</structure>
-											<html destdir="${project.parent.basedir}/core/target/site/jacoco-all" />
+											<html destdir="${project.parent.basedir}/target/site/jacoco"/>
 										</jacoco:report>
 									</target>
 								</configuration>
