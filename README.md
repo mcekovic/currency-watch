@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/mcekovic/currency-watch.svg?branch=master)](https://travis-ci.org/mcekovic/currency-watch)
 [![Test Coverage](https://img.shields.io/codecov/c/github/mcekovic/currency-watch.svg)](https://codecov.io/gh/mcekovic/currency-watch)
+[![Dependencies](https://img.shields.io/versioneye/d/user/projects/5798cb5674848d002b4b9faa.svg)](https://www.versioneye.com/user/projects/5798cb5674848d002b4b9faa)
 
 Currency Watch shows currency chart for foreign currencies in Serbian Dinars (RSD).
 
