@@ -46,11 +46,11 @@ public class MapDBCurrencyRateProvider implements UpdatableCurrencyRateProvider 
 	}
 
 	private DB createMapDB() {
-		return DBMaker.fileDB(new File(dbPathName)).closeOnJvmShutdown().make();
+		return DBMaker.fileDB(new File(dbPathName)).closeOnJvmShutdown().transactionEnable().make();
 	}
 
 	private DB createMapDBForFilesDeletion() {
-		return DBMaker.fileDB(new File(dbPathName)).deleteFilesAfterClose().make();
+		return DBMaker.fileDB(new File(dbPathName)).deleteFilesAfterClose().transactionEnable().make();
 	}
 
 	private HTreeMap<String, Integer> getVersionMap() {
